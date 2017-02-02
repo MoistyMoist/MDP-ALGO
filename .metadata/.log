@@ -28,3 +28,9 @@ The release after Mars (4.5) will no longer support the deprecated usage!
 !MESSAGE The 'org.eclipse.ui.startup' extension from 'com.google.gdt.eclipse.designer.UiBinder' does not provide a 'class' attribute.
 This usage is deprecated and a 'class' attribute should be provided.
 The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-02-01 10:00:00.955
+!MESSAGE Unable to acquire PluginConverter service during generation for: /Applications/Eclipse.app/Contents/Eclipse/plugins/configuration.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-02-01 10:00:01.114
+!MESSAGE Unable to acquire PluginConverter service during generation for: /Applications/Eclipse.app/Contents/Eclipse/plugins/configuration.
