@@ -107,6 +107,7 @@ public class MapUI {
 		
 		buildWall(panel);
 		buildMapFields(panel);
+		buildRobot(panel);
 	}
 	private void buildWall(JLayeredPane panel){
 		//top wall
@@ -197,10 +198,9 @@ public class MapUI {
 				{  
 				    public void mouseClicked(MouseEvent e)  
 				    {  
+				    	//TODO: change this tile to a blocker 
 				    	field.setText("3.00");
-				    	panels[Integer.parseInt(field.getName().substring(0, field.getName().indexOf("/")))]
-				    			[Integer.parseInt(field.getName().substring(field.getName().indexOf("/")+1,field.getName().length()))].
-				    			setBackground(Color.LIGHT_GRAY);
+				    	panels[Integer.parseInt(field.getName().substring(0, field.getName().indexOf("/")))][Integer.parseInt(field.getName().substring(field.getName().indexOf("/"),field.getName().length() ))].setBackground(Color.LIGHT_GRAY);
 				    }  
 				});
 				field.setName(i+"/"+j);
@@ -290,7 +290,7 @@ public class MapUI {
 		}
 	}
 
-	//TODO: not done call this method after start button is clicked
+	//TODO: not done
 	private void buildRobot(JLayeredPane panel){
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(BorderFactory.createLineBorder(Color.BLUE, 5));

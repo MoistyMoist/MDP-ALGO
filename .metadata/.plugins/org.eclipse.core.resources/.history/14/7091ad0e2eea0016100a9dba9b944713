@@ -18,11 +18,7 @@ import javax.swing.JCheckBox;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 
 public class MapUI {
 
@@ -89,7 +85,7 @@ public class MapUI {
 
 
 	private void buildMapEnvironment(JSplitPane splitPane){
-		JLayeredPane panel = new JLayeredPane();
+		JPanel panel = new JPanel();
 		Border border = BorderFactory.createLineBorder(Color.BLACK, 5);
 		panel.setBorder(border);
 		
@@ -107,8 +103,9 @@ public class MapUI {
 		
 		buildWall(panel);
 		buildMapFields(panel);
+		buildRobot(panel);
 	}
-	private void buildWall(JLayeredPane panel){
+	private void buildWall(JPanel panel){
 		//top wall
 		for(int i=0;i<22;i++){
 			JPanel panel_1 = new JPanel();
@@ -120,7 +117,7 @@ public class MapUI {
 			gbc_TopWall.weighty = 17;
 			gbc_TopWall.gridx = i;
 			gbc_TopWall.gridy = 0;
-			panel.add(panel_1, gbc_TopWall,0);
+			panel.add(panel_1, gbc_TopWall);
 			
 			JLabel TopWall = new JLabel("9.99");
 			TopWall.setForeground(Color.WHITE);
@@ -136,7 +133,7 @@ public class MapUI {
 			gbc_BottomWall.weighty = 17;
 			gbc_BottomWall.gridx = i;
 			gbc_BottomWall.gridy = 16;
-			panel.add(panel_1, gbc_BottomWall,0);
+			panel.add(panel_1, gbc_BottomWall);
 			
 			JLabel BottomWall = new JLabel("9.99");
 			BottomWall.setForeground(Color.WHITE);
@@ -153,7 +150,7 @@ public class MapUI {
 			gbc_LeftWall.weighty = 17;
 			gbc_LeftWall.gridx = 0;
 			gbc_LeftWall.gridy = i;
-			panel.add(panel_1, gbc_LeftWall,0);
+			panel.add(panel_1, gbc_LeftWall);
 			
 			JLabel LeftWall = new JLabel("9.99");
 			LeftWall.setForeground(Color.WHITE);
@@ -170,7 +167,7 @@ public class MapUI {
 			gbc_RightWall.weighty = 17;
 			gbc_RightWall.gridx = 21;
 			gbc_RightWall.gridy = i;
-			panel.add(panel_1, gbc_RightWall,0);
+			panel.add(panel_1, gbc_RightWall);
 			
 			JLabel RightWall = new JLabel("9.99");
 			RightWall.setForeground(Color.WHITE);
@@ -179,7 +176,7 @@ public class MapUI {
 		//bottom wall
 		
 	}
-	private void buildMapFields(JLayeredPane panel){
+	private void buildMapFields(JPanel panel){
 		for(int i=0;i<20;i++){
 			for(int j=0;j<15;j++){
 				JPanel panel_1 = new JPanel();
@@ -191,24 +188,14 @@ public class MapUI {
 				gbc_field.weighty = 15;
 				gbc_field.gridx = i+1;
 				gbc_field.gridy = j+1;
-				panel.add(panel_1, gbc_field,0);
+				panel.add(panel_1, gbc_field);
 				JLabel field = new JLabel("  0  ");
-				field.addMouseListener(new MouseAdapter()  
-				{  
-				    public void mouseClicked(MouseEvent e)  
-				    {  
-				    	field.setText("3.00");
-				    	panels[Integer.parseInt(field.getName().substring(0, field.getName().indexOf("/")))]
-				    			[Integer.parseInt(field.getName().substring(field.getName().indexOf("/")+1,field.getName().length()))].
-				    			setBackground(Color.LIGHT_GRAY);
-				    }  
-				});
-				field.setName(i+"/"+j);
+				field.setName(i+j+"");
 				field.setForeground(Color.BLACK);
 				panel_1.add(field);
 				
 				//store the object so we can reference it and update the UI
-				panels[i][j] = panel_1;
+				panels[i][j] = panel;
 				labels[i][j]=field;
 				
 				
@@ -290,24 +277,23 @@ public class MapUI {
 		}
 	}
 
-	//TODO: not done call this method after start button is clicked
-	private void buildRobot(JLayeredPane panel){
+	//TODO: not done
+	private void buildRobot(JPanel panel){
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(BorderFactory.createLineBorder(Color.BLUE, 5));
 		panel_1.setBackground(Color.BLUE);
-		panel_1.setOpaque(true);
 		GridBagConstraints gbc_robot = new GridBagConstraints();
 		gbc_robot.fill = GridBagConstraints.BOTH;
 		gbc_robot.weightx = 2;
 		gbc_robot.weighty = 2;
 		gbc_robot.gridx = 1;
 		gbc_robot.gridy = 1;
-		gbc_robot.gridheight=3;
-		gbc_robot.gridwidth=3;
-		panel.add(panel_1, gbc_robot,1);
+		gbc_robot.gridheight=2;
+		gbc_robot.gridwidth=2;
+		panel.add(panel_1, gbc_robot);
 	}
 	//TODO: not done
-	private void setAsBlock(JLayeredPane panel, JLabel label){
+	private void setAsBlock(JPanel panel, JLabel label){
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
 	}
 }
