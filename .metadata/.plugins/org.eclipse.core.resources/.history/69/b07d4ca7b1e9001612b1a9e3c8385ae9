@@ -1,0 +1,239 @@
+package com.sg.ntu.mdp.simulator;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JSplitPane;
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import java.awt.GridLayout;
+import java.awt.CardLayout;
+import javax.swing.JPanel;
+import javax.swing.JCheckBox;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JLabel;
+
+public class MapUI {
+
+	private JFrame frame;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MapUI window = new MapUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public MapUI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.9);
+		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		frame.getContentPane().add(splitPane);
+		
+		JSplitPane splitPane_1 = new JSplitPane();
+		splitPane_1.setResizeWeight(0.3);
+		splitPane.setRightComponent(splitPane_1);
+		
+		JSplitPane splitPane_2 = new JSplitPane();
+		splitPane_2.setResizeWeight(0.5);
+		splitPane_1.setRightComponent(splitPane_2);
+		
+		JButton btnStartSp = new JButton("Start SP");
+		splitPane_2.setLeftComponent(btnStartSp);
+		
+		JButton btnSaveMd = new JButton("Save MD");
+		splitPane_2.setRightComponent(btnSaveMd);
+		
+		JButton btnStartExpore = new JButton("Start Expore");
+		splitPane_1.setLeftComponent(btnStartExpore);
+		
+		JPanel panel = new JPanel();
+		splitPane.setLeftComponent(panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{148, 148, 148, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{207, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
+		JLabel wall = new JLabel("3.00");
+		GridBagConstraints gbc_wall = new GridBagConstraints();
+		gbc_wall.insets = new Insets(0, 0, 5, 5);
+		gbc_wall.gridx = 0;
+		gbc_wall.gridy = 0;
+		panel.add(wall, gbc_wall);
+		
+		JLabel wall_1 = new JLabel("3.00");
+		GridBagConstraints gbc_wall_1 = new GridBagConstraints();
+		gbc_wall_1.insets = new Insets(0, 0, 5, 5);
+		gbc_wall_1.gridx = 1;
+		gbc_wall_1.gridy = 0;
+		panel.add(wall_1, gbc_wall_1);
+		
+		JLabel label = new JLabel("3.00");
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.insets = new Insets(0, 0, 5, 5);
+		gbc_label.gridx = 2;
+		gbc_label.gridy = 0;
+		panel.add(label, gbc_label);
+		
+		JLabel label_1 = new JLabel("3.00");
+		GridBagConstraints gbc_label_1 = new GridBagConstraints();
+		gbc_label_1.insets = new Insets(0, 0, 5, 5);
+		gbc_label_1.gridx = 3;
+		gbc_label_1.gridy = 0;
+		panel.add(label_1, gbc_label_1);
+		
+		JLabel label_2 = new JLabel("3.00");
+		GridBagConstraints gbc_label_2 = new GridBagConstraints();
+		gbc_label_2.insets = new Insets(0, 0, 5, 0);
+		gbc_label_2.gridx = 4;
+		gbc_label_2.gridy = 0;
+		panel.add(label_2, gbc_label_2);
+		
+		JLabel label_3 = new JLabel("3.00");
+		GridBagConstraints gbc_label_3 = new GridBagConstraints();
+		gbc_label_3.insets = new Insets(0, 0, 5, 5);
+		gbc_label_3.gridx = 0;
+		gbc_label_3.gridy = 1;
+		panel.add(label_3, gbc_label_3);
+		
+		JLabel label_4 = new JLabel("3.00");
+		GridBagConstraints gbc_label_4 = new GridBagConstraints();
+		gbc_label_4.insets = new Insets(0, 0, 5, 5);
+		gbc_label_4.gridx = 1;
+		gbc_label_4.gridy = 1;
+		panel.add(label_4, gbc_label_4);
+		
+		JLabel label_5 = new JLabel("3.00");
+		GridBagConstraints gbc_label_5 = new GridBagConstraints();
+		gbc_label_5.insets = new Insets(0, 0, 5, 5);
+		gbc_label_5.gridx = 2;
+		gbc_label_5.gridy = 1;
+		panel.add(label_5, gbc_label_5);
+		
+		JLabel label_6 = new JLabel("3.00");
+		GridBagConstraints gbc_label_6 = new GridBagConstraints();
+		gbc_label_6.insets = new Insets(0, 0, 5, 5);
+		gbc_label_6.gridx = 3;
+		gbc_label_6.gridy = 1;
+		panel.add(label_6, gbc_label_6);
+		
+		JLabel label_7 = new JLabel("3.00");
+		GridBagConstraints gbc_label_7 = new GridBagConstraints();
+		gbc_label_7.insets = new Insets(0, 0, 5, 0);
+		gbc_label_7.gridx = 4;
+		gbc_label_7.gridy = 1;
+		panel.add(label_7, gbc_label_7);
+		
+		JLabel label_8 = new JLabel("3.00");
+		GridBagConstraints gbc_label_8 = new GridBagConstraints();
+		gbc_label_8.insets = new Insets(0, 0, 5, 5);
+		gbc_label_8.gridx = 0;
+		gbc_label_8.gridy = 2;
+		panel.add(label_8, gbc_label_8);
+		
+		JLabel label_9 = new JLabel("3.00");
+		GridBagConstraints gbc_label_9 = new GridBagConstraints();
+		gbc_label_9.insets = new Insets(0, 0, 5, 5);
+		gbc_label_9.gridx = 1;
+		gbc_label_9.gridy = 2;
+		panel.add(label_9, gbc_label_9);
+		
+		JLabel label_10 = new JLabel("3.00");
+		GridBagConstraints gbc_label_10 = new GridBagConstraints();
+		gbc_label_10.insets = new Insets(0, 0, 5, 5);
+		gbc_label_10.gridx = 2;
+		gbc_label_10.gridy = 2;
+		panel.add(label_10, gbc_label_10);
+		
+		JLabel label_11 = new JLabel("3.00");
+		GridBagConstraints gbc_label_11 = new GridBagConstraints();
+		gbc_label_11.insets = new Insets(0, 0, 5, 5);
+		gbc_label_11.gridx = 3;
+		gbc_label_11.gridy = 2;
+		panel.add(label_11, gbc_label_11);
+		
+		JLabel label_12 = new JLabel("3.00");
+		GridBagConstraints gbc_label_12 = new GridBagConstraints();
+		gbc_label_12.insets = new Insets(0, 0, 5, 0);
+		gbc_label_12.gridx = 4;
+		gbc_label_12.gridy = 2;
+		panel.add(label_12, gbc_label_12);
+		
+		JLabel label_13 = new JLabel("3.00");
+		GridBagConstraints gbc_label_13 = new GridBagConstraints();
+		gbc_label_13.insets = new Insets(0, 0, 5, 5);
+		gbc_label_13.gridx = 0;
+		gbc_label_13.gridy = 3;
+		panel.add(label_13, gbc_label_13);
+		
+		JLabel label_14 = new JLabel("3.00");
+		GridBagConstraints gbc_label_14 = new GridBagConstraints();
+		gbc_label_14.insets = new Insets(0, 0, 5, 5);
+		gbc_label_14.gridx = 1;
+		gbc_label_14.gridy = 3;
+		panel.add(label_14, gbc_label_14);
+		
+		JLabel label_15 = new JLabel("3.00");
+		GridBagConstraints gbc_label_15 = new GridBagConstraints();
+		gbc_label_15.insets = new Insets(0, 0, 5, 5);
+		gbc_label_15.gridx = 2;
+		gbc_label_15.gridy = 3;
+		panel.add(label_15, gbc_label_15);
+		
+		JLabel label_16 = new JLabel("3.00");
+		GridBagConstraints gbc_label_16 = new GridBagConstraints();
+		gbc_label_16.insets = new Insets(0, 0, 5, 5);
+		gbc_label_16.gridx = 3;
+		gbc_label_16.gridy = 3;
+		panel.add(label_16, gbc_label_16);
+		
+		JLabel label_17 = new JLabel("3.00");
+		GridBagConstraints gbc_label_17 = new GridBagConstraints();
+		gbc_label_17.insets = new Insets(0, 0, 5, 0);
+		gbc_label_17.gridx = 4;
+		gbc_label_17.gridy = 3;
+		panel.add(label_17, gbc_label_17);
+		
+		JLabel label_18 = new JLabel("3.00");
+		GridBagConstraints gbc_label_18 = new GridBagConstraints();
+		gbc_label_18.insets = new Insets(0, 0, 0, 5);
+		gbc_label_18.gridx = 0;
+		gbc_label_18.gridy = 4;
+		panel.add(label_18, gbc_label_18);
+		
+		JLabel label_19 = new JLabel("3.00");
+		GridBagConstraints gbc_label_19 = new GridBagConstraints();
+		gbc_label_19.insets = new Insets(0, 0, 0, 5);
+		gbc_label_19.gridx = 1;
+		gbc_label_19.gridy = 4;
+		panel.add(label_19, gbc_label_19);
+	}
+
+}

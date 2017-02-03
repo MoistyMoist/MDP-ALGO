@@ -1,0 +1,140 @@
+package com.sg.ntu.mdp.simulator;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JSplitPane;
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import java.awt.GridLayout;
+import java.awt.CardLayout;
+import javax.swing.JPanel;
+import javax.swing.JCheckBox;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JLabel;
+
+public class MapUI {
+
+	private JFrame frame;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MapUI window = new MapUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public MapUI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 1000, 1500);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.9);
+		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		frame.getContentPane().add(splitPane);
+		
+		JSplitPane splitPane_1 = new JSplitPane();
+		splitPane_1.setResizeWeight(0.3);
+		splitPane.setRightComponent(splitPane_1);
+		
+		JSplitPane splitPane_2 = new JSplitPane();
+		
+		splitPane_1.setRightComponent(splitPane_2);
+		
+		JButton btnStartSp = new JButton("Start SP");
+		splitPane_2.setLeftComponent(btnStartSp);
+		
+		JButton btnSaveMd = new JButton("Save MD");
+		splitPane_2.setRightComponent(btnSaveMd);
+		
+		JButton btnStartExpore = new JButton("Start Expore");
+		splitPane_1.setLeftComponent(btnStartExpore);
+		
+		buildMapEnvironment(splitPane);
+		JPanel panel = new JPanel();
+		splitPane.setLeftComponent(panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
+		JLabel TopWall_1 = new JLabel("3.00");
+		GridBagConstraints gbc_TopWall_1 = new GridBagConstraints();
+		gbc_TopWall_1.weightx = 1.0;
+		gbc_TopWall_1.insets = new Insets(0, 0, 5, 5);
+		gbc_TopWall_1.gridx = 0;
+		gbc_TopWall_1.gridy = 0;
+		panel.add(TopWall_1, gbc_TopWall_1);
+		
+		JLabel TopWall_2 = new JLabel("3.00");
+		GridBagConstraints gbc_TopWall_2 = new GridBagConstraints();
+		gbc_TopWall_2.weightx = 1.0;
+		gbc_TopWall_2.weighty = 1.0;
+		gbc_TopWall_2.insets = new Insets(0, 0, 5, 5);
+		gbc_TopWall_2.gridx = 1;
+		gbc_TopWall_2.gridy = 0;
+		panel.add(TopWall_2, gbc_TopWall_2);
+		
+		JLabel TopWall_3 = new JLabel("3.00");
+		GridBagConstraints gbc_TopWall_3 = new GridBagConstraints();
+		gbc_TopWall_3.insets = new Insets(0, 0, 5, 5);
+		gbc_TopWall_3.gridx = 2;
+		gbc_TopWall_3.gridy = 0;
+		panel.add(TopWall_3, gbc_TopWall_3);
+		
+	}
+
+
+	private void buildMapEnvironment(JSplitPane splitPane){
+		JPanel panel = new JPanel();
+		splitPane.setLeftComponent(panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
+		buildWall(panel);
+		
+	}
+	private void buildWall(JPanel panel){
+		for(int i=0;i<22;i++){
+			JLabel TopWall = new JLabel("3.00");
+			GridBagConstraints gbc_TopWall_1 = new GridBagConstraints();
+			gbc_TopWall_1.weightx = 1.0;
+			gbc_TopWall_1.insets = new Insets(0, 0, 5, 5);
+			gbc_TopWall_1.gridx = 0;
+			gbc_TopWall_1.gridy = 0;
+			panel.add(TopWall, gbc_TopWall_1);
+		}
+		
+	}
+	private void buildMapFields(){
+		
+	}
+}

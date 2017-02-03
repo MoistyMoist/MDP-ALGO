@@ -1,0 +1,180 @@
+package com.sg.ntu.mdp.simulator;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JSplitPane;
+import javax.swing.border.Border;
+
+import java.awt.BorderLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import java.awt.GridLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+
+import javax.swing.JPanel;
+import javax.swing.JCheckBox;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JLabel;
+
+public class MapUI {
+
+	private JFrame frame;
+	private JLabel[][] labels;
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MapUI window = new MapUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public MapUI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 1000, 1500);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.9);
+		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		frame.getContentPane().add(splitPane);
+		
+		JSplitPane splitPane_1 = new JSplitPane();
+		splitPane_1.setResizeWeight(0.3);
+		splitPane.setRightComponent(splitPane_1);
+		
+		JSplitPane splitPane_2 = new JSplitPane();
+		
+		splitPane_1.setRightComponent(splitPane_2);
+		
+		JButton btnStartSp = new JButton("Start SP");
+		splitPane_2.setLeftComponent(btnStartSp);
+		
+		JButton btnSaveMd = new JButton("Save MD");
+		splitPane_2.setRightComponent(btnSaveMd);
+		
+		JButton btnStartExpore = new JButton("Start Expore");
+		splitPane_1.setLeftComponent(btnStartExpore);
+		
+		buildMapEnvironment(splitPane);		
+	}
+
+
+	private void buildMapEnvironment(JSplitPane splitPane){
+		JPanel panel = new JPanel();
+		Border border = BorderFactory.createLineBorder(Color.BLACK, 5);
+		panel.setBorder(border);
+		
+		splitPane.setLeftComponent(panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.BOTH;
+		c.insets = new Insets(0,0,0,0);
+		gbl_panel.setConstraints(panel, c);
+		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
+		buildWall(panel);
+		
+	}
+	private void buildWall(JPanel panel){
+		//top wall
+		for(int i=0;i<22;i++){
+			JPanel panel_1 = new JPanel();
+			panel_1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+			GridBagConstraints gbc_TopWall = new GridBagConstraints();
+			gbc_TopWall.fill = GridBagConstraints.BOTH;
+			gbc_TopWall.weightx = 22;
+			gbc_TopWall.weighty = 17;
+			gbc_TopWall.gridx = i;
+			gbc_TopWall.gridy = 0;
+			panel.add(panel_1, gbc_TopWall);
+			
+			JLabel TopWall = new JLabel("9.99");
+			TopWall.setForeground(Color.BLACK);
+			panel_1.add(TopWall);
+		}
+		//left wall
+		for(int i=0;i<16;i++){
+			JLabel LeftWall = new JLabel("9.99");
+			GridBagConstraints gbc_LeftWall = new GridBagConstraints();
+			gbc_LeftWall.weightx = 1;
+			gbc_LeftWall.weighty = 17;
+//			gbc_LeftWall.weightx = 1.0;
+			gbc_LeftWall.gridx = 0;
+			gbc_LeftWall.gridy = i;
+			LeftWall.setBackground(Color.BLACK);
+			LeftWall.setForeground(Color.WHITE);
+			Border border = BorderFactory.createLineBorder(Color.BLUE, 5);
+			LeftWall.setBorder(border);
+			panel.add(LeftWall, gbc_LeftWall);
+		}
+		//right wall
+		for(int i=0;i<16;i++){
+			JPanel panel_1 = new JPanel();
+			panel_1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+			GridBagConstraints gbc_LeftWall = new GridBagConstraints();
+			gbc_LeftWall.weightx = 22;
+			gbc_LeftWall.weighty = 17;
+			gbc_LeftWall.insets = new Insets(0, 0, 5, 5);
+			gbc_LeftWall.gridx = 21;
+			gbc_LeftWall.gridy = i;
+			panel.add(panel_1, gbc_LeftWall);
+			
+			JLabel LeftWall = new JLabel("9.99");
+			LeftWall.setForeground(Color.WHITE);
+			panel.add(LeftWall, gbc_LeftWall);
+		}
+		
+		
+		//bottom wall
+		for(int i=0;i<22;i++){
+			JPanel panel_1 = new JPanel();
+			panel_1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+			GridBagConstraints gbc_BottomWall = new GridBagConstraints();
+			gbc_BottomWall.weightx = 22;
+			gbc_BottomWall.weighty = 17;
+			gbc_BottomWall.gridx = i;
+			gbc_BottomWall.gridy = 16;
+			
+			
+			JLabel BottomWall = new JLabel("9.99");
+			BottomWall.setForeground(Color.BLACK);
+			panel_1.add(BottomWall);
+		}
+		
+	}
+	private void buildMapFields(JPanel panel){
+		
+	}
+	
+	private void setMapWall(){
+		
+	}
+}

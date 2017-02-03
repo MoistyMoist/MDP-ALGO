@@ -1,0 +1,69 @@
+package com.sg.ntu.mdp.simulator;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JSplitPane;
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import java.awt.GridLayout;
+
+public class MapUI {
+
+	private JFrame frame;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MapUI window = new MapUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public MapUI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.9);
+		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		frame.getContentPane().add(splitPane);
+		
+		JSplitPane splitPane_1 = new JSplitPane();
+		splitPane_1.setResizeWeight(0.3);
+		splitPane.setRightComponent(splitPane_1);
+		
+		JSplitPane splitPane_2 = new JSplitPane();
+		splitPane_2.setResizeWeight(0.5);
+		splitPane_1.setRightComponent(splitPane_2);
+		
+		JButton btnStartSp = new JButton("Start SP");
+		splitPane_2.setLeftComponent(btnStartSp);
+		
+		JButton btnSaveMd = new JButton("Save MD");
+		splitPane_2.setRightComponent(btnSaveMd);
+		
+		JButton btnStartExpore = new JButton("Start Expore");
+		splitPane_1.setLeftComponent(btnStartExpore);
+	}
+
+}
