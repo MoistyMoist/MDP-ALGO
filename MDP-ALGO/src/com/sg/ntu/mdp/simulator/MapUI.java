@@ -5,6 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.border.Border;
 
+import com.sg.ntu.mdp.Descriptor;
+
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
@@ -30,9 +32,7 @@ public class MapUI {
 	private JLabel[][] labels = new JLabel[20][15];
 	private JPanel[][] panels = new JPanel[20][15];
 	
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -45,17 +45,9 @@ public class MapUI {
 			}
 		});
 	}
-
-	/**
-	 * Create the application.
-	 */
 	public MapUI() {
 		initialize();
 	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1000, 700);
@@ -80,6 +72,13 @@ public class MapUI {
 		
 		JButton btnSaveMd = new JButton("Save MD");
 		splitPane_2.setRightComponent(btnSaveMd);
+		btnSaveMd.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent e)  
+		    {  
+				saveMapData();
+		    } 
+		});
 		
 		JButton btnStartExpore = new JButton("Start Expore");
 		splitPane_1.setLeftComponent(btnStartExpore);
@@ -88,6 +87,7 @@ public class MapUI {
 	}
 
 
+	//////////////////////////////////////////////////////////////
 	private void buildMapEnvironment(JSplitPane splitPane){
 		JLayeredPane panel = new JLayeredPane();
 		Border border = BorderFactory.createLineBorder(Color.BLACK, 5);
@@ -306,8 +306,73 @@ public class MapUI {
 		gbc_robot.gridwidth=3;
 		panel.add(panel_1, gbc_robot,1);
 	}
-	//TODO: not done
-	private void setAsBlock(JLayeredPane panel, JLabel label){
-		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+	//////////////////////////////////////////////////////////
+
+	
+	//////////////////////////////////////////////////////////
+	///					DESCRIPTOR TASK						///
+	//////////////////////////////////////////////////////////
+	//TODO:load map from descriptor
+	public void loadMapFromDescriptor(){
+		loadExploredData();
+		loadObstacleData();
+	}
+	public void loadExploredData(){
+		Descriptor descriptor = new Descriptor();
+		int[][] data = descriptor.getExploredDataToSimulator();
+		updateMap(data,0);
+	}
+	public void loadObstacleData(){
+		Descriptor descriptor = new Descriptor();
+		int[][] data = descriptor.getObstacleDataToSimulator();
+		updateMap(data,1);
+	}
+	//TODO:save the map data to descriptor type
+	public void saveMapData(){
+		saveExploredData(labels);
+		saveObstacleData(labels);
+	}
+	public void saveExploredData(JLabel[][] labels){
+		int[][]binarydata = new int[20][15];
+		for(int i=0;i<labels.length;i++){
+			
+		}
+	}
+	public void saveObstacleData(JLabel[][] labels){
+		int[][]binarydata = new int[20][15];
+		for(int i=0;i<labels.length;i++){
+			
+		}
+	}
+	//TODO: pass the descriptor in to update the map see pdf
+	public void updateMap(int[][] data, int type){
+		if(type==0)
+			updateExploredDataOnMap(data);
+		else
+			updateObstacleDataOnMap(data);
+	}
+	public void updateExploredDataOnMap(int[][] data){
+		
+	}
+	public void updateObstacleDataOnMap(int[][] data){
+		
+	}
+	//////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+	
+	
+	
+	//TODO: add the timer function
+	
+	
+	
+	//TODO: move the robot forward
+	public static void moveRobot(){
+		
+	}
+	//TODO:turn the robot
+	public static void turnRobot(int direction){
+		
 	}
 }

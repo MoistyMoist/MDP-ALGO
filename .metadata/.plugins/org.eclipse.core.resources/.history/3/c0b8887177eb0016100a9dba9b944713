@@ -1,0 +1,37 @@
+package com.sg.ntu.mdp;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
+public class Descriptor {
+	
+	private int exloredData[][];
+	private int bloakedData[][];
+	
+	private String fileName = "MDFStrings_week4.txt";
+	
+	public void writeDescriptorFromFile(){
+		try{
+		    PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+		    writer.println("The first line");
+		    writer.println("The second line");
+		    writer.close();
+		} catch (IOException e) {
+		   // do something
+		}
+	}
+	
+	public void readDescriptorFromFile(){
+		
+	}
+	public String binaryToHex(String binary){
+		return "";
+	}
+	public int[][] getExploredDataToSimulator(){
+		return null;
+	}
+	public int[][] getObstacleDataToSimulator(){
+		return null;
+	}
+}
