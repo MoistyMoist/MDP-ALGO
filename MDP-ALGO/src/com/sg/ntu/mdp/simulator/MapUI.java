@@ -76,7 +76,7 @@ public class MapUI {
 		{
 			public void mouseClicked(MouseEvent e)  
 		    {  
-				saveMapData();
+				saveMapToDescriptor();
 		    } 
 		});
 		
@@ -209,7 +209,7 @@ public class MapUI {
 				
 				//store the object so we can reference it and update the UI
 				panels[i][j] = panel_1;
-				labels[i][j]=field;
+				labels[i][j] = field;
 				
 				
 				//highlight the start area
@@ -312,7 +312,7 @@ public class MapUI {
 	//////////////////////////////////////////////////////////
 	///					DESCRIPTOR TASK						///
 	//////////////////////////////////////////////////////////
-	//TODO:load map from descriptor
+
 	public void loadMapFromDescriptor(){
 		loadExploredData();
 		loadObstacleData();
@@ -327,24 +327,52 @@ public class MapUI {
 		int[][] data = descriptor.getObstacleDataToSimulator();
 		updateMap(data,1);
 	}
-	//TODO:save the map data to descriptor type
-	public void saveMapData(){
-		saveExploredData(labels);
-		saveObstacleData(labels);
+	
+	public void saveMapToDescriptor(){
+		int [][] exploredData = saveExploredData(labels);
+		int [][] obstacledData = saveObstacleData(labels);
+		
+		Descriptor descriptor = new Descriptor();
+		
 	}
-	public void saveExploredData(JLabel[][] labels){
-		int[][]binarydata = new int[20][15];
-		for(int i=0;i<labels.length;i++){
-			
+	public int[][] saveExploredData(JLabel[][] labels){
+		int col=0;
+		int row=0;
+		int[][]binaryData = new int[20][15];
+		
+		for(int i=19;i>=0;i--){
+			for(int j=0;j<=14;j++){
+				if(labels[i][j].getText().equals("1")||labels[i][j].getText().equals("9.99")){
+					binaryData[row][col]=1;
+				}else{
+					binaryData[row][col]=0;
+				}
+				col++;
+			}
+			row++;
+			col=0;
 		}
+		return binaryData;
 	}
-	public void saveObstacleData(JLabel[][] labels){
-		int[][]binarydata = new int[20][15];
-		for(int i=0;i<labels.length;i++){
-			
+	public int[][] saveObstacleData(JLabel[][] labels){
+		int col=0;
+		int row=0;
+		int[][]binaryData = new int[20][15];
+		
+		for(int i=19;i>=0;i--){
+			for(int j=0;j<=14;j++){
+				if(labels[i][j].getText().equals("3.00")){
+					binaryData[row][col]=1;
+				}else{
+					binaryData[row][col]=0;
+				}
+				col++;
+			}
+			row++;
+			col=0;
 		}
+		return binaryData;
 	}
-	//TODO: pass the descriptor in to update the map see pdf
 	public void updateMap(int[][] data, int type){
 		if(type==0)
 			updateExploredDataOnMap(data);
@@ -352,11 +380,38 @@ public class MapUI {
 			updateObstacleDataOnMap(data);
 	}
 	public void updateExploredDataOnMap(int[][] data){
-		
+		int col=0;
+		int row=14;
+		for(int i=0;i<data.length;i++){
+			for(int j=0;j<data[i].length;j++){
+				if(data[i][j]==1){
+					labels[row][col].setText("1");
+				}else{
+					labels[row][col].setText("0");
+				}
+				col++;
+			}
+			col=0;
+			row--;
+		}
 	}
 	public void updateObstacleDataOnMap(int[][] data){
-		
+		int col=0;
+		int row=14;
+		for(int i=0;i<data.length;i++){
+			for(int j=0;j<data[i].length;j++){
+				if(data[i][j]==1){
+					labels[row][col].setText("3.00");
+				}else{
+					labels[row][col].setText("0");
+				}
+				col++;
+			}
+			col=0;
+			row--;
+		}
 	}
+	
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////

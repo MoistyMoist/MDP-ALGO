@@ -1306,3 +1306,1073 @@ The release after Mars (4.5) will no longer support the deprecated usage!
 !MESSAGE The 'org.eclipse.ui.startup' extension from 'com.google.gdt.eclipse.designer.UiBinder' does not provide a 'class' attribute.
 This usage is deprecated and a 'class' attribute should be provided.
 The release after Mars (4.5) will no longer support the deprecated usage!
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:06:37.594
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:06:37.596
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:06:37.596
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:06:37.596
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:06:37.596
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:06:37.596
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:06:37.596
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:06:37.596
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:06:37.596
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:06:37.596
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:06:37.596
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:08:43.081
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:08:43.081
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:08:43.081
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:08:43.081
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:08:43.081
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:08:43.081
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:08:43.081
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:08:43.081
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:08:43.081
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:08:43.081
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:08:43.081
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:09:00.986
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:09:00.986
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:09:00.986
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:09:00.986
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:09:00.986
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:09:00.986
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:09:00.986
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:09:00.986
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:09:00.986
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:09:00.986
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:09:00.986
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:11:22.003
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:11:22.004
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:11:22.004
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:11:22.004
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:11:22.004
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:11:22.004
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:11:22.004
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:11:22.004
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:11:22.004
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:11:22.004
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:11:22.004
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:13:34.041
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:13:34.041
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:13:34.041
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:13:34.041
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:13:34.041
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:13:34.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:13:34.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:13:34.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:13:34.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:13:34.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:13:34.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:15:33.126
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:15:33.126
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:15:33.126
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:15:33.126
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:15:33.126
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:15:33.126
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:15:33.126
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:15:33.126
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:15:33.126
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:15:33.126
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:15:33.126
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:16:55.008
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:16:55.008
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:16:55.008
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:16:55.008
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:16:55.008
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:16:55.008
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:16:55.008
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:16:55.008
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:16:55.008
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:16:55.008
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:16:55.008
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:17:38.041
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:17:38.041
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:17:38.041
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:17:38.041
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:38.041
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:38.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:38.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:38.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:38.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:38.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:38.041
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:17:49.508
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:17:49.509
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:17:49.509
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:17:49.509
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:49.509
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:49.509
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:49.509
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:49.509
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:49.509
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:49.509
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:17:49.509
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.jdt.core 4 4 2017-02-06 12:18:05.779
+!MESSAGE JavaBuilder handling CoreException while cleaning: AlmightyAlgorithm
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:794)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Could not delete '/AlmightyAlgorithm/bin/map'.
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 1 org.eclipse.core.resources 4 273 2017-02-06 12:18:05.779
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 2 org.eclipse.core.resources 4 273 2017-02-06 12:18:05.779
+!MESSAGE Could not delete '/AlmightyAlgorithm/bin/map'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Problems encountered while deleting resources.
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.delete(FileSystemResourceManager.java:354)
+	at org.eclipse.core.internal.resources.ResourceTree.internalDeleteFolder(ResourceTree.java:358)
+	at org.eclipse.core.internal.resources.ResourceTree.standardDeleteFolder(ResourceTree.java:810)
+	at org.eclipse.core.internal.resources.Resource.unprotectedDelete(Resource.java:1831)
+	at org.eclipse.core.internal.resources.Resource.delete(Resource.java:781)
+	at org.eclipse.jdt.internal.core.builder.BatchImageBuilder.cleanOutputFolders(BatchImageBuilder.java:115)
+	at org.eclipse.jdt.internal.core.builder.JavaBuilder.clean(JavaBuilder.java:293)
+	at org.eclipse.core.internal.events.BuildManager$2.run(BuildManager.java:736)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:205)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:245)
+	at org.eclipse.core.internal.events.BuildManager$1.run(BuildManager.java:300)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.core.internal.events.BuildManager.basicBuild(BuildManager.java:303)
+	at org.eclipse.core.internal.events.BuildManager.basicBuildLoop(BuildManager.java:359)
+	at org.eclipse.core.internal.events.BuildManager.build(BuildManager.java:382)
+	at org.eclipse.core.internal.resources.Workspace.buildInternal(Workspace.java:486)
+	at org.eclipse.core.internal.resources.Workspace.build(Workspace.java:398)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog.doClean(CleanDialog.java:318)
+	at org.eclipse.ui.internal.ide.dialogs.CleanDialog$1.runInWorkspace(CleanDialog.java:153)
+	at org.eclipse.core.internal.resources.InternalWorkspaceJob.run(InternalWorkspaceJob.java:39)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+Contains: Problems encountered while deleting files.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+Contains: Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+!SUBENTRY 3 org.eclipse.core.resources 4 273 2017-02-06 12:18:05.779
+!MESSAGE Problems encountered while deleting resources.
+!SUBENTRY 4 org.eclipse.core.filesystem 4 273 2017-02-06 12:18:05.779
+!MESSAGE Problems encountered while deleting files.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:18:05.779
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Grid.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:18:05.779
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/Map.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:18:05.779
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/MapConstants.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:18:05.779
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap$1.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:18:05.779
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map/RealMap.class.
+!SUBENTRY 5 org.eclipse.core.filesystem 4 273 2017-02-06 12:18:05.779
+!MESSAGE Could not delete read-only file: /Users/Moistyburger/Dropbox/MDP/A+ MDP/Algorithm/bin/map.
+
+!ENTRY org.eclipse.recommenders.rcp 4 18 2017-02-06 12:44:20.161
+!MESSAGE Failed to resolve selection in ‘=MDP-ALGO/src<com.sg.ntu.mdp{Algothrim.java’ at offset 71.
+!STACK 0
+org.eclipse.recommenders.utils.Logs$LogTraceException
+	at org.eclipse.recommenders.utils.Logs$LogTraceException.newTrace(Logs.java:381)
+	at org.eclipse.recommenders.utils.Logs.log(Logs.java:134)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelections.resolveJavaElementFromTypeRootInEditor(JavaElementSelections.java:164)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelections.resolveJavaElementFromEditor(JavaElementSelections.java:119)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelections.resolveJavaElementFromEditor(JavaElementSelections.java:102)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelectionService.handleSelectionInEditor(JavaElementSelectionService.java:108)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelectionService.access$1(JavaElementSelectionService.java:105)
+	at org.eclipse.recommenders.internal.rcp.JavaElementSelectionService$1.run(JavaElementSelectionService.java:82)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
