@@ -5,7 +5,10 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.border.Border;
 
-import com.sg.ntu.mdp.Descriptor;
+import com.sg.ntu.mdp.Algothrim;
+import com.sg.ntu.mdp.Direction;
+import com.sg.ntu.mdp.RobotCallback;
+import com.sg.ntu.mdp.communication.Descriptor;
 
 import java.awt.BorderLayout;
 
@@ -22,6 +25,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Timer;
 
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -310,7 +314,7 @@ public class MapUI {
 
 	
 	//////////////////////////////////////////////////////////
-	///					DESCRIPTOR TASK						///
+	///					DESCRIPTOR TASK					   ///
 	//////////////////////////////////////////////////////////
 
 	public void loadMapFromDescriptor(){
@@ -418,16 +422,68 @@ public class MapUI {
 	
 	
 	
+	
+	
+	
+	//////////////////////////////////////////////////////////
+	///					EXPLORATION TASK				   ///
+	//////////////////////////////////////////////////////////
+	public void startExploreTask(){
+		showRobot();
+		Boolean stopExploration = false;
+		startExplorationTimer(stopExploration);
+		Algothrim algothrim = new Algothrim(null,null,17,2); 
+		
+		try{
+			while(stopExploration!=true){
+				try {
+					//Do a 1 sec delay for every explore call;
+					Thread.sleep(500);
+	            } catch (InterruptedException x) {
+	                System.out.println("hi");
+	            }
+				finally{
+					//TODO: get the sensor forward color if grey means obstacle
+					/*algothrim.explore(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
+						@Override
+						public void changeDirection(Direction direction) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						@Override
+						public void moveForward(int distance) {
+							// TODO Auto-generated method stub
+							
+						}
+					});*/
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			//RETURN TO START POINT
+		}
+		
+	}
+	public void showRobot(){
+		//TODO:show the robot on the ui
+	}
 	//TODO: add the timer function
-	
-	
-	
+	public void startExplorationTimer(boolean stopExploration){
+		
+	}
 	//TODO: move the robot forward
-	public static void moveRobot(){
+	public  void moveRobotForward(){
 		
 	}
 	//TODO:turn the robot
-	public static void turnRobot(int direction){
+	public void turnRobot(Direction direction){
 		
 	}
+	//////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+
 }

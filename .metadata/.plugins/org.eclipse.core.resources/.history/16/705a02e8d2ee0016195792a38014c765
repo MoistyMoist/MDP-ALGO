@@ -1,0 +1,119 @@
+package com.sg.ntu.mdp;
+
+public class Algothrim {
+	private float frontMidSensor;
+	private float frontLeftSensor;
+	private float frontRightSensor;
+	private float rightSensor;
+	private float leftSensor5;
+	
+	private Direction currentDirection = Direction.East;
+	private float sensorTrashold = 4.00f;
+	
+	private static int[][]exploredData;
+	private static int[][]obstacleData;
+	private static int currentLocationFrontRow;
+	private static int currentLocationFrontCol;
+	
+	private Algothrim(int[][] exploredData, int[][]obstacleData, int currentLocationFrontRow, int currentLocationFrontCol){
+		this.exploredData = exploredData;
+		this.obstacleData = obstacleData;
+		if(currentLocationFrontRow != -1 && currentLocationFrontCol!=-1){
+			this.currentLocationFrontRow = currentLocationFrontRow;
+		}
+	}
+	
+	
+	//***********************************//
+	//		EXPLORATION METHODS			 //
+	//***********************************//
+	private void explore(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
+		//TODO: algo to moce the next move
+		if(leftSensor<=sensorTrashold){
+			//obstacle on robot left
+			//update the obstacle data
+			switch(currentDirection){
+				case North: 
+					break;
+				case South:
+					break;
+				case East:
+					break;
+				case West:
+					break;
+			}
+		}
+		if(rightSensor<=sensorTrashold){
+			//obstacle on robot right
+			//update the obstacle data
+			switch(currentDirection){
+				case North:
+					break;
+				case South:
+					break;
+				case East:
+					break;
+				case West:
+					break;
+			}
+		}
+		
+		
+		if(currentDirection == Direction.North){
+			if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+				//nothing infront move forward
+			}
+		}
+		if(currentDirection == Direction.South){
+			if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+				//nothing infront move forward
+			}
+		}
+		if(currentDirection == Direction.East){
+			if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+				//nothing infront move forward
+			}
+		}
+		if(currentDirection == Direction.West){
+			if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+				//nothing infront move forward
+			}
+		}
+	}
+	
+	private void addObstacle(int row, int col){
+		this.obstacleData[row][col] = 1;
+	}
+	private void addExploredArea(int midFrontRow, int midFrontCol, Direction robotDirection){
+		this.exploredData[midFrontRow][midFrontCol] = 1;
+		if(robotDirection == Direction.North){
+			
+		}
+		if(robotDirection == Direction.South){
+					
+		}
+		if(robotDirection == Direction.East){
+			
+		}
+		if(robotDirection == Direction.West){
+			
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	//***********************************//
+	//		SHORTEST PATH METHODS		 //
+	//***********************************//
+	private void findPath(int[][] currentLocation){
+		//TODO: get the shortest path;
+	}
+	private void returnToStart(){
+		//TODO: algo to make the robot go back to start line;
+	}
+	
+}
