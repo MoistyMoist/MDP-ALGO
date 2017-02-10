@@ -673,12 +673,22 @@ public class MapUI {
 		labels[robotBodyConstrain.gridx+1][robotBodyConstrain.gridy-1].setText("1");
 		labels[robotBodyConstrain.gridx-1][robotBodyConstrain.gridy-1].setText("1");
 
-		Algothrim.exploredData=saveExploredData(labels);
-		
 		mapPanel.add(robotHead, robotHeadConstrain,1);
 		mapPanel.add(robotBody, robotBodyConstrain,2);
 		mapPanel.repaint();
 		mapPanel.revalidate();
+	}
+	private static void UpdateExploredMap(int robotMapCenterRow, int robotMapCenterCol){
+		labels[robotMapCenterRow+1][robotMapCenterCol].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow+1][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow+1][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol].setText("1");
+		Algothrim.exploredData=saveExploredData(labels);
 	}
 	
 	//todo:

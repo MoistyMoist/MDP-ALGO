@@ -353,10 +353,7 @@ public class MapUI {
 		
 	}
 	//////////////////////////////////////////////////////////
-	
-	private void resetMap(){
-		
-	}
+
 	
 	//////////////////////////////////////////////////////////
 	///					DESCRIPTOR TASK					   ///
@@ -381,10 +378,9 @@ public class MapUI {
 		int [][] obstacledData = saveObstacleData(labels);
 		
 		Descriptor descriptor = new Descriptor();
-		descriptor.saveDataFromSimulatorToFile(exploredData,obstacledData);
 		
 	}
-	public static int[][] saveExploredData(JLabel[][] labels){
+	public int[][] saveExploredData(JLabel[][] labels){
 		int col=0;
 		int row=0;
 		int[][]binaryData = new int[20][15];
@@ -403,7 +399,7 @@ public class MapUI {
 		}
 		return binaryData;
 	}
-	public static int[][] saveObstacleData(JLabel[][] labels){
+	public int[][] saveObstacleData(JLabel[][] labels){
 		int col=0;
 		int row=0;
 		int[][]binaryData = new int[20][15];
@@ -423,6 +419,7 @@ public class MapUI {
 		return binaryData;
 	}
 	
+	//TODO: update this add if else from descriptor or simulation start
 	public static void updateMap(int[][] data, int type){
 		if(type==0)
 			updateExploredDataOnMap(data);
@@ -626,7 +623,7 @@ public class MapUI {
 			});
 	    }else{
 	    	--interval;
-	    	moveRobotForward(1);//remove this when tesing algo
+//	    	moveRobotForward(1);
 	    	
 		    exploreBtn.setText(interval+"sec left");
 	    }
@@ -634,6 +631,7 @@ public class MapUI {
 	   return interval;
 	}
 	
+
 	public static void moveRobotForward(int distance){
 		mapPanel.remove(robotHead);
 		mapPanel.remove(robotBody);
@@ -663,24 +661,47 @@ public class MapUI {
 				robotBodyConstrain.gridy = robotBodyConstrain.gridy+distance;
 				break;
 		}
-		
-		labels[robotBodyConstrain.gridx+1][robotBodyConstrain.gridy].setText("1");
-		labels[robotBodyConstrain.gridx-1][robotBodyConstrain.gridy].setText("1");
-		labels[robotBodyConstrain.gridx][robotBodyConstrain.gridy+1].setText("1");
-		labels[robotBodyConstrain.gridx+1][robotBodyConstrain.gridy+1].setText("1");
-		labels[robotBodyConstrain.gridx-1][robotBodyConstrain.gridy+1].setText("1");
-		labels[robotBodyConstrain.gridx][robotBodyConstrain.gridy-1].setText("1");
-		labels[robotBodyConstrain.gridx+1][robotBodyConstrain.gridy-1].setText("1");
-		labels[robotBodyConstrain.gridx-1][robotBodyConstrain.gridy-1].setText("1");
+		UpdateExploredMap(robotBodyConstrain.gridx,robotBodyConstrain.gridy);
 
-		Algothrim.exploredData=saveExploredData(labels);
-		
 		mapPanel.add(robotHead, robotHeadConstrain,1);
 		mapPanel.add(robotBody, robotBodyConstrain,2);
 		mapPanel.repaint();
 		mapPanel.revalidate();
 	}
+	private static void UpdateExploredMap(int robotMapCenterRow, int robotMapCenterCol){
+		//updates the ui as the robot passes
+		System.out.println("MAP COORidinates"+robotMapCenterRow+","+robotMapCenterCol);
+		labels[robotMapCenterRow+1][robotMapCenterCol].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow+1][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow+1][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol].setText("1");
+		//update the algothrim exploredData as the robot pass
+		
+		Algothrim.exploredData[20-robotMapCenterRow][robotMapCenterCol]=1;
+	}
 	
+	private static int[][] algothrimToSimulatorData(int[][] mapData){
+		int[][] simMapData = new int[20][15];
+		int row = 0;
+		int col = 19;
+		for(int i=0;i<=14;i++){
+			for(int j=0;j<=19;j++){
+					if(mapData[j][i]==1){
+						simMapData[col][row]=1;
+					}
+				col--;
+			}
+			col=19;
+			row++;
+		}
+		
+		return simMapData;
+	}
 	//todo:
 	public static void turnRobot(Direction direction,int times){
 		mapPanel.remove(robotHead);

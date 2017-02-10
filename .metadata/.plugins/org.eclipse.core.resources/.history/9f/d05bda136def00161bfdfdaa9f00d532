@@ -50,11 +50,11 @@ public class Descriptor {
 	}
 	//TODO:[20][15]
 	public int[][] getExploredDataToSimulator(){
-		return null;
+		return this.exloredData;
 	}
 	//TODO:[20][15]
 	public int[][] getObstacleDataToSimulator(){
-		return null;
+		return this.obstacleData;
 	}
 	
 	

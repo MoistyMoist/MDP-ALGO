@@ -420,6 +420,7 @@ public class MapUI {
 			row++;
 			col=0;
 		}
+		updateExploredDataOnMap(binaryData);
 		return binaryData;
 	}
 	

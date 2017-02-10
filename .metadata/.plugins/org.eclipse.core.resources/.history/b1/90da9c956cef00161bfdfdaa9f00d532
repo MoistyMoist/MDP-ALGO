@@ -624,6 +624,7 @@ public class MapUI {
 					startExploreSimulatorTask();
 			    } 
 			});
+	    	updateExploredDataOnMap(Algothrim.exploredData);
 	    }else{
 	    	--interval;
 	    	moveRobotForward(1);//remove this when tesing algo

@@ -72,30 +72,25 @@ public class Descriptor {
 	}
 	public String saveExploredDataToFile(int[][] data){
 		String stringData = "11";
-		String temp="";
+		String temp=""
 		for(int i=0;i<data.length;i++){
 			for(int j =0;j<data[i].length;j++){
 				stringData+=data[i][j];
 				temp+=data[i][j];
 			}
-			System.out.println(temp);
+			System.out.print(temp);
 			temp="";
 		}
-		this.exloredData = data;
 		return binaryToHex(stringData+="11");
 	}
 	public String saveObstacleDataToFile(int[][] data){
 		String stringData = "00";
-		String temp="";
 		for(int i=0;i<data.length;i++){
 			for(int j =0;j<data[i].length;j++){
 				stringData+=data[i][j];
-				temp+=data[i][j];
 			}
-			System.out.println(temp);
-			temp="";
+			System.out.println(stringData);
 		}
-		this.obstacleData = data;
 		return binaryToHex(stringData+="00");
 	}
 }

@@ -680,6 +680,10 @@ public class MapUI {
 		mapPanel.repaint();
 		mapPanel.revalidate();
 	}
+	private static void UpdateExploredMap(int robotMapCenterRow, int robotMapCenterCol){
+		
+		
+	}
 	
 	//todo:
 	public static void turnRobot(Direction direction,int times){

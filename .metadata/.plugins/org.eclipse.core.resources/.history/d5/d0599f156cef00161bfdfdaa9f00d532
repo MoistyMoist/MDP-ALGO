@@ -401,6 +401,11 @@ public class MapUI {
 			row++;
 			col=0;
 		}
+		
+		for(int i=0;i<binaryData.length;i++){
+			for(int j=0;j<binaryData[i].lengthj++)
+		}
+		
 		return binaryData;
 	}
 	public static int[][] saveObstacleData(JLabel[][] labels){
