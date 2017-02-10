@@ -18,4 +18,8 @@
 <fullyQualifiedTypeName name="java.io.FileReader"/>
 <fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="com.sg.ntu.mdp.Direction"/>
+<fullyQualifiedTypeName name="com.sg.ntu.mdp.Algothrim"/>
+<fullyQualifiedTypeName name="java.util.Timer"/>
+<fullyQualifiedTypeName name="com.sg.ntu.mdp.RobotCallback"/>
 </qualifiedTypeNameHistroy>

@@ -201,7 +201,7 @@ public class MapUI {
 				{  
 				    public void mouseClicked(MouseEvent e)  
 				    {  
-				    	field.setText("3.00");
+				    	field.setText("1");//CHANGE THIS LATER
 				    	panels[Integer.parseInt(field.getName().substring(0, field.getName().indexOf("/")))]
 				    			[Integer.parseInt(field.getName().substring(field.getName().indexOf("/")+1,field.getName().length()))].
 				    			setBackground(Color.LIGHT_GRAY);
@@ -365,7 +365,7 @@ public class MapUI {
 		
 		for(int i=19;i>=0;i--){
 			for(int j=0;j<=14;j++){
-				if(labels[i][j].getText().equals("3.00")){
+				if(labels[i][j].getText().equals("1")){
 					binaryData[row][col]=1;
 				}else{
 					binaryData[row][col]=0;
@@ -377,6 +377,8 @@ public class MapUI {
 		}
 		return binaryData;
 	}
+	
+	//TODO: update this add if else from descriptor or simulation start
 	public void updateMap(int[][] data, int type){
 		if(type==0)
 			updateExploredDataOnMap(data);
@@ -405,7 +407,7 @@ public class MapUI {
 		for(int i=0;i<data.length;i++){
 			for(int j=0;j<data[i].length;j++){
 				if(data[i][j]==1){
-					labels[row][col].setText("3.00");
+					labels[row][col].setText("1");
 				}else{
 					labels[row][col].setText("0");
 				}
@@ -443,20 +445,40 @@ public class MapUI {
 	                System.out.println("hi");
 	            }
 				finally{
-					//TODO: get the sensor forward color if grey means obstacle
-					/*algothrim.explore(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
+					int currentLocationFrontRow = Algothrim.currentLocationFrontRow;
+					int currentLocationFrontCol = Algothrim.currentLocationFrontCol;
+					int frontMidSensor = 0;
+					int frontLeftSensor = 0;
+					int frontRightSensor = 0;
+					int rightSensor = 0;
+					int leftSensor = 0;
+					switch(Algothrim.currentDirection){
+						case North:
+							//TODO:check this
+							frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY?1:0;
+							break;
+						case South:
+							break;
+						case East:
+							break;
+						case West:
+							break;
+					}
+					
+				
+					algothrim.explore(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
+						
 						@Override
-						public void changeDirection(Direction direction) {
-							// TODO Auto-generated method stub
-							
+						public void moveForward(int distance) {
+							moveRobotForward(distance);
 						}
 
 						@Override
-						public void moveForward(int distance) {
-							// TODO Auto-generated method stub
+						public void changeDirection(Direction direction, int times) {
+							turnRobot(direction, times);
 							
 						}
-					});*/
+					});
 				}
 			}
 		}catch(Exception e){
@@ -475,11 +497,11 @@ public class MapUI {
 		
 	}
 	//TODO: move the robot forward
-	public  void moveRobotForward(){
-		
+	public  void moveRobotForward(int distance){
+		//update the map updateMap();
 	}
 	//TODO:turn the robot
-	public void turnRobot(Direction direction){
+	public void turnRobot(Direction direction,int times){
 		
 	}
 	//////////////////////////////////////////////////////////

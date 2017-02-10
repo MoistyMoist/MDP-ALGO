@@ -1,0 +1,7 @@
+package com.sg.ntu.mdp;
+
+public interface RobotCallback {
+	//TODO:add int times so  turn south 
+	public void changeDirection(Direction direction);
+	public void moveForward(int distance);
+}

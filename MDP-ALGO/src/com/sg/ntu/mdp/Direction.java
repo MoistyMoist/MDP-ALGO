@@ -1,5 +1,6 @@
 package com.sg.ntu.mdp;
 
 public enum Direction {
-	North,South,East, West;
+	North,South,East, West,
+	LEFT,RIGHT;
 }
