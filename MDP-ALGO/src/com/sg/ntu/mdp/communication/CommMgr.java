@@ -14,8 +14,8 @@ public class CommMgr {
 	private static CommMgr _commMgr = null;
 	
 	// For communication with the Raspberry-Pi
-	private static final String HOST = "192.168.18.1";
-	//private static final String HOST = "localhost";
+//	private static final String HOST = "192.168.13.13";
+	private static final String HOST = "localhost";
 	private static final int PORT = 8181;
 	
 	public static final String MSG_TYPE_ANDROID = "1,";
@@ -31,7 +31,7 @@ public class CommMgr {
 	 * Private constructor used to support the Singleton design pattern
 	 * <p>
 	 */
-	private CommMgr()
+	public CommMgr()
 	{
 		
 	}
@@ -73,6 +73,7 @@ public class CommMgr {
 		} catch(UnknownHostException e) {
 			System.out.println("setConnection() -> Unknown Host Exception");
 		} catch(IOException e) {
+			e.printStackTrace();
 			System.out.println("setConnection() -> IO Exception");
 		} catch(Exception e) {
 			System.out.println("setConnection() -> Exception");

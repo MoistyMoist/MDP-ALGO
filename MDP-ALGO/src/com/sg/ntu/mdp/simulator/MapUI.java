@@ -13,6 +13,7 @@ import com.sg.ntu.mdp.communication.Descriptor;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.GridLayout;
 import java.awt.CardLayout;
@@ -26,6 +27,7 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -33,10 +35,15 @@ import javax.swing.JLayeredPane;
 public class MapUI {
 
 	private JFrame frame;
+	private static JButton exploreBtn;
 	private JLabel[][] labels = new JLabel[20][15];
 	private JPanel[][] panels = new JPanel[20][15];
 	
-
+	private static JPanel robotBody;
+	private static GridBagConstraints robotBodyConstrain;
+	private static JPanel robotHead;
+	private static GridBagConstraints robotHeadConstrain;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -84,8 +91,15 @@ public class MapUI {
 		    } 
 		});
 		
-		JButton btnStartExpore = new JButton("Start Expore");
-		splitPane_1.setLeftComponent(btnStartExpore);
+		exploreBtn = new JButton("Start Expore");
+		splitPane_1.setLeftComponent(exploreBtn);
+		exploreBtn.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent e)  
+		    {  
+				startExploreSimulatorTask();
+		    } 
+		});
 		
 		buildMapEnvironment(splitPane);		
 	}
@@ -111,6 +125,7 @@ public class MapUI {
 		
 		buildWall(panel);
 		buildMapFields(panel);
+		buildRobot(panel);
 	}
 	private void buildWall(JLayeredPane panel){
 		//top wall
@@ -219,87 +234,89 @@ public class MapUI {
 				//highlight the start area
 				if((i+1)==1&&(j+1)==1){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==2&&(j+1)==1){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==3&&(j+1)==1){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==1&&(j+1)==2){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==2&&(j+1)==2){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==3&&(j+1)==2){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==1&&(j+1)==3){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==2&&(j+1)==3){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==3&&(j+1)==3){
 					panel_1.setBackground(Color.BLUE);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				//highlight the end area
 				if((i+1)==18&&(j+1)==13){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==19&&(j+1)==13){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==20&&(j+1)==13){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==18&&(j+1)==14){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==19&&(j+1)==14){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==20&&(j+1)==14){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==18&&(j+1)==15){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==19&&(j+1)==15){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 				if((i+1)==20&&(j+1)==15){
 					panel_1.setBackground(Color.RED);
-					field.setText("9.99");
+					field.setText("1");
 				}
 			}	
 		}
 	}
-
-	//TODO: not done call this method after start button is clicked
 	private void buildRobot(JLayeredPane panel){
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(BorderFactory.createLineBorder(Color.BLUE, 5));
-		panel_1.setBackground(Color.BLUE);
 		panel_1.setOpaque(true);
+		
+		ImageIcon image = new ImageIcon("/MDP-ALGO/src/Simulator_Robot_Editor_1.png");
+		JLabel label = new JLabel("", image, JLabel.CENTER);
+		panel_1.add( label, BorderLayout.CENTER );
+		
 		GridBagConstraints gbc_robot = new GridBagConstraints();
 		gbc_robot.fill = GridBagConstraints.BOTH;
 		gbc_robot.weightx = 2;
@@ -309,6 +326,28 @@ public class MapUI {
 		gbc_robot.gridheight=3;
 		gbc_robot.gridwidth=3;
 		panel.add(panel_1, gbc_robot,1);
+		this.robotBody = panel_1;
+		this.robotBodyConstrain = gbc_robot;
+		panel_1.setVisible(false);
+		
+		//set the front head to yellow
+		GridBagConstraints gbc_robot2 = new GridBagConstraints();
+		gbc_robot2.fill = GridBagConstraints.BOTH;
+		gbc_robot2.weightx = 2;
+		gbc_robot2.weighty = 2;
+		gbc_robot2.gridx = 2;
+		gbc_robot2.gridy = 3;
+		gbc_robot2.gridheight=1;
+		gbc_robot2.gridwidth=1;
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(BorderFactory.createLineBorder(Color.BLUE, 5));
+		panel_2.setBackground(Color.YELLOW);
+		panel_2.setOpaque(true);
+		panel.add(panel_2, gbc_robot2,2);
+		this.robotHead = panel_2;
+		this.robotHeadConstrain = gbc_robot2;
+		panel_2.setVisible(false);
+		
 	}
 	//////////////////////////////////////////////////////////
 
@@ -430,11 +469,11 @@ public class MapUI {
 	//////////////////////////////////////////////////////////
 	///					EXPLORATION TASK				   ///
 	//////////////////////////////////////////////////////////
-	public void startExploreTask(){
+	public static void startExploreSimulatorTask(){
 		showRobot();
 		Boolean stopExploration = false;
 		startExplorationTimer(stopExploration);
-		Algothrim algothrim = new Algothrim(null,null,17,2); 
+		/*Algothrim algothrim = new Algothrim(null,null,17,2); 
 		
 		try{
 			while(stopExploration!=true){
@@ -445,8 +484,8 @@ public class MapUI {
 	                System.out.println("hi");
 	            }
 				finally{
-					int currentLocationFrontRow = Algothrim.currentLocationFrontRow;
-					int currentLocationFrontCol = Algothrim.currentLocationFrontCol;
+					int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
+					int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
 					int frontMidSensor = 0;
 					int frontLeftSensor = 0;
 					int frontRightSensor = 0;
@@ -454,14 +493,69 @@ public class MapUI {
 					int leftSensor = 0;
 					switch(Algothrim.currentDirection){
 						case North:
-							//TODO:check this
-							frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY?1:0;
+							frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
+							
+							frontLeftSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							frontRightSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							rightSensor = panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							leftSensor = panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
 							break;
 						case South:
+							frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
+							 		panels[currentLocationFrontCol][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
+							
+							frontLeftSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							frontRightSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							rightSensor = panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							leftSensor = panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
 							break;
 						case East:
+							frontMidSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+					 				panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							frontLeftSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
+							
+							frontRightSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
+							
+							rightSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.BLACK?1:0;
+							
+							leftSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.BLACK?1:0;
+							
 							break;
 						case West:
+							frontMidSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+			 						panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+							
+							frontLeftSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
+							
+							rightSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
+							
+							rightSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.BLACK?1:0;
+							
+							leftSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.LIGHT_GRAY||
+									 panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.BLACK?1:0;
 							break;
 					}
 					
@@ -487,22 +581,103 @@ public class MapUI {
 		finally{
 			//RETURN TO START POINT
 		}
+		*/
+	}
+	public static void showRobot(){
+		robotHead.setVisible(true);
+		robotBody.setVisible(true);
+	}
+	
+	private static int interval = 10;//10sec for exploration
+	private static Timer explorerTimer;
+	public static void startExplorationTimer(boolean stopExploration){
+		int delay = 1000;
+	    int period = 1000;
+	    interval = 10;//10sec for exploration
+	    explorerTimer = new Timer();
+	    explorerTimer.scheduleAtFixedRate(new TimerTask() {
+	        public void run() {
+	            System.out.println(clockTick(stopExploration));
+
+	        }
+	    }, delay, period);
+	    
+	    exploreBtn.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent e)  
+		    {  
+				stopExploration(stopExploration);
+		    } 
+		});
 		
 	}
-	public void showRobot(){
-		//TODO:show the robot on the ui
+	private static final int clockTick(boolean stopExploration) {
+	    if (interval == 1){
+	    	explorerTimer.cancel();
+	    	exploreBtn.setText("Start Exploration");
+	    	exploreBtn.addMouseListener(new MouseAdapter()
+			{
+				public void mouseClicked(MouseEvent e)  
+			    {  
+					startExploreSimulatorTask();
+			    } 
+			});
+			
+	    }else{
+	    	--interval;
+		    exploreBtn.setText(interval+"sec left");
+	    }
+	    
+	   return interval;
 	}
-	//TODO: add the timer function
-	public void startExplorationTimer(boolean stopExploration){
-		
-	}
+	
 	//TODO: move the robot forward
-	public  void moveRobotForward(int distance){
+	public static void moveRobotForward(int distance){
 		//update the map updateMap();
+		//update the gridbag?
 	}
 	//TODO:turn the robot
-	public void turnRobot(Direction direction,int times){
-		
+	public static void turnRobot(Direction direction,int times){
+		//update the map updateMap();//can add in real time turning later
+		switch(direction){
+			case LEFT:
+				if(times==1){
+					
+				}
+				if(times==2){
+					
+				}
+				if(times==3){
+					
+				}
+				break;
+			case RIGHT:
+				if(times==1){
+					
+				}
+				if(times==2){
+					
+				}
+				if(times==3){
+					
+				}
+				break;
+		}
+	}
+	
+	public static void stopExploration(boolean stopExploration){
+		stopExploration = true;
+		explorerTimer.cancel();
+		exploreBtn.setText("Start Exploration");
+    	exploreBtn.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent e)  
+		    {  
+				startExploreSimulatorTask();
+		    } 
+		});
+    	
+    	//TODO: move robot to start area
 	}
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////
