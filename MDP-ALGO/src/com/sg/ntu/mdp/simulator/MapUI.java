@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import java.awt.GridLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
@@ -36,6 +37,7 @@ public class MapUI {
 
 	private JFrame frame;
 	private static JButton exploreBtn;
+	private static JLayeredPane mapPanel;
 	private JLabel[][] labels = new JLabel[20][15];
 	private JPanel[][] panels = new JPanel[20][15];
 	
@@ -108,6 +110,7 @@ public class MapUI {
 	//////////////////////////////////////////////////////////////
 	private void buildMapEnvironment(JSplitPane splitPane){
 		JLayeredPane panel = new JLayeredPane();
+		mapPanel = panel;
 		Border border = BorderFactory.createLineBorder(Color.BLACK, 5);
 		panel.setBorder(border);
 		
@@ -117,17 +120,17 @@ public class MapUI {
 		c.fill = GridBagConstraints.BOTH;
 		c.insets = new Insets(0,0,0,0);
 		gbl_panel.setConstraints(panel, c);
-		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
+//		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+//		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+//		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
-		buildWall(panel);
-		buildMapFields(panel);
-		buildRobot(panel);
+		buildWall();
+		buildMapFields();
+		buildRobot();
 	}
-	private void buildWall(JLayeredPane panel){
+	private void buildWall(){
 		//top wall
 		for(int i=0;i<22;i++){
 			JPanel panel_1 = new JPanel();
@@ -139,7 +142,7 @@ public class MapUI {
 			gbc_TopWall.weighty = 17;
 			gbc_TopWall.gridx = i;
 			gbc_TopWall.gridy = 0;
-			panel.add(panel_1, gbc_TopWall,0);
+			mapPanel.add(panel_1, gbc_TopWall,0);
 			
 			JLabel TopWall = new JLabel("9.99");
 			TopWall.setForeground(Color.WHITE);
@@ -155,7 +158,7 @@ public class MapUI {
 			gbc_BottomWall.weighty = 17;
 			gbc_BottomWall.gridx = i;
 			gbc_BottomWall.gridy = 16;
-			panel.add(panel_1, gbc_BottomWall,0);
+			mapPanel.add(panel_1, gbc_BottomWall,0);
 			
 			JLabel BottomWall = new JLabel("9.99");
 			BottomWall.setForeground(Color.WHITE);
@@ -172,7 +175,7 @@ public class MapUI {
 			gbc_LeftWall.weighty = 17;
 			gbc_LeftWall.gridx = 0;
 			gbc_LeftWall.gridy = i;
-			panel.add(panel_1, gbc_LeftWall,0);
+			mapPanel.add(panel_1, gbc_LeftWall,0);
 			
 			JLabel LeftWall = new JLabel("9.99");
 			LeftWall.setForeground(Color.WHITE);
@@ -189,7 +192,7 @@ public class MapUI {
 			gbc_RightWall.weighty = 17;
 			gbc_RightWall.gridx = 21;
 			gbc_RightWall.gridy = i;
-			panel.add(panel_1, gbc_RightWall,0);
+			mapPanel.add(panel_1, gbc_RightWall,0);
 			
 			JLabel RightWall = new JLabel("9.99");
 			RightWall.setForeground(Color.WHITE);
@@ -198,7 +201,7 @@ public class MapUI {
 		//bottom wall
 		
 	}
-	private void buildMapFields(JLayeredPane panel){
+	private void buildMapFields(){
 		for(int i=0;i<20;i++){
 			for(int j=0;j<15;j++){
 				JPanel panel_1 = new JPanel();
@@ -210,7 +213,7 @@ public class MapUI {
 				gbc_field.weighty = 15;
 				gbc_field.gridx = i+1;
 				gbc_field.gridy = j+1;
-				panel.add(panel_1, gbc_field,0);
+				mapPanel.add(panel_1, gbc_field,0);
 				JLabel field = new JLabel("  0  ");
 				field.addMouseListener(new MouseAdapter()  
 				{  
@@ -308,7 +311,7 @@ public class MapUI {
 			}	
 		}
 	}
-	private void buildRobot(JLayeredPane panel){
+	private void buildRobot(){
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(BorderFactory.createLineBorder(Color.BLUE, 5));
 		panel_1.setOpaque(true);
@@ -325,9 +328,9 @@ public class MapUI {
 		gbc_robot.gridy = 1;
 		gbc_robot.gridheight=3;
 		gbc_robot.gridwidth=3;
-		panel.add(panel_1, gbc_robot,1);
-		this.robotBody = panel_1;
-		this.robotBodyConstrain = gbc_robot;
+		mapPanel.add(panel_1, gbc_robot,2);
+		robotBody = panel_1;
+		robotBodyConstrain = gbc_robot;
 		panel_1.setVisible(false);
 		
 		//set the front head to yellow
@@ -343,9 +346,9 @@ public class MapUI {
 		panel_2.setBorder(BorderFactory.createLineBorder(Color.BLUE, 5));
 		panel_2.setBackground(Color.YELLOW);
 		panel_2.setOpaque(true);
-		panel.add(panel_2, gbc_robot2,2);
-		this.robotHead = panel_2;
-		this.robotHeadConstrain = gbc_robot2;
+		mapPanel.add(panel_2, gbc_robot2,1);
+		robotHead = panel_2;
+		robotHeadConstrain = gbc_robot2;
 		panel_2.setVisible(false);
 		
 	}
@@ -584,11 +587,12 @@ public class MapUI {
 		*/
 	}
 	public static void showRobot(){
-		robotHead.setVisible(true);
 		robotBody.setVisible(true);
+		robotHead.setVisible(true);
+		mapPanel.repaint();
 	}
 	
-	private static int interval = 10;//10sec for exploration
+	private static int interval;//10sec for exploration
 	private static Timer explorerTimer;
 	public static void startExplorationTimer(boolean stopExploration){
 		int delay = 1000;
@@ -597,8 +601,8 @@ public class MapUI {
 	    explorerTimer = new Timer();
 	    explorerTimer.scheduleAtFixedRate(new TimerTask() {
 	        public void run() {
-	            System.out.println(clockTick(stopExploration));
-
+	        	clockTick(stopExploration);
+//	            System.out.println(clockTick(stopExploration));
 	        }
 	    }, delay, period);
 	    
@@ -625,6 +629,7 @@ public class MapUI {
 			
 	    }else{
 	    	--interval;
+	    	moveRobotForward(1);
 		    exploreBtn.setText(interval+"sec left");
 	    }
 	    
@@ -633,8 +638,39 @@ public class MapUI {
 	
 	//TODO: move the robot forward
 	public static void moveRobotForward(int distance){
-		//update the map updateMap();
-		//update the gridbag?
+		mapPanel.remove(robotHead);
+		mapPanel.remove(robotBody);
+		
+		switch(Algothrim.currentDirection){
+			case North:
+				robotHeadConstrain.gridx = robotHeadConstrain.gridx+distance;
+				robotHeadConstrain.gridy = robotHeadConstrain.gridy;
+				robotBodyConstrain.gridx = robotBodyConstrain.gridx+distance;
+				robotBodyConstrain.gridy = robotBodyConstrain.gridy;
+				break;
+			case South:
+				robotHeadConstrain.gridx = robotHeadConstrain.gridx-distance;
+				robotHeadConstrain.gridy = robotHeadConstrain.gridy;
+				robotBodyConstrain.gridx = robotBodyConstrain.gridx-distance;
+				robotBodyConstrain.gridy = robotBodyConstrain.gridy;
+				break;
+			case East:
+				robotHeadConstrain.gridx = robotHeadConstrain.gridx;
+				robotHeadConstrain.gridy = robotHeadConstrain.gridy+distance;
+				robotBodyConstrain.gridx = robotBodyConstrain.gridx;
+				robotBodyConstrain.gridy = robotBodyConstrain.gridy+distance;
+				break;
+			case West:
+				robotHeadConstrain.gridx = robotHeadConstrain.gridx;
+				robotHeadConstrain.gridy = robotHeadConstrain.gridy-distance;
+				robotBodyConstrain.gridx = robotBodyConstrain.gridx;
+				robotBodyConstrain.gridy = robotBodyConstrain.gridy+distance;
+				break;
+		}
+		mapPanel.add(robotHead, robotHeadConstrain,1);
+		mapPanel.add(robotBody, robotBodyConstrain,2);
+		mapPanel.repaint();
+		mapPanel.revalidate();
 	}
 	//TODO:turn the robot
 	public static void turnRobot(Direction direction,int times){
