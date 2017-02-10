@@ -38,7 +38,7 @@ public class MapUI {
 	private JFrame frame;
 	private static JButton exploreBtn;
 	private static JLayeredPane mapPanel;
-	private JLabel[][] labels = new JLabel[20][15];
+	private static JLabel[][] labels = new JLabel[20][15];
 	private JPanel[][] panels = new JPanel[20][15];
 	
 	private static JPanel robotBody;
@@ -214,7 +214,7 @@ public class MapUI {
 				gbc_field.gridx = i+1;
 				gbc_field.gridy = j+1;
 				mapPanel.add(panel_1, gbc_field,0);
-				JLabel field = new JLabel("  0  ");
+				JLabel field = new JLabel("  "+i+","+j+"  ");
 				field.addMouseListener(new MouseAdapter()  
 				{  
 				    public void mouseClicked(MouseEvent e)  
@@ -358,14 +358,13 @@ public class MapUI {
 	//////////////////////////////////////////////////////////
 	///					DESCRIPTOR TASK					   ///
 	//////////////////////////////////////////////////////////
-
 	public void loadMapFromDescriptor(){
 		loadExploredData();
 		loadObstacleData();
 	}
 	public void loadExploredData(){
 		Descriptor descriptor = new Descriptor();
-		int[][] data = descriptor.getExploredDataToSimulator();
+		int[][] data = descriptor.getExploredDataToSimulator();//
 		updateMap(data,0);
 	}
 	public void loadObstacleData(){
@@ -421,42 +420,38 @@ public class MapUI {
 	}
 	
 	//TODO: update this add if else from descriptor or simulation start
-	public void updateMap(int[][] data, int type){
+	public static void updateMap(int[][] data, int type){
 		if(type==0)
 			updateExploredDataOnMap(data);
 		else
 			updateObstacleDataOnMap(data);
 	}
-	public void updateExploredDataOnMap(int[][] data){
-		int col=0;
-		int row=14;
-		for(int i=0;i<data.length;i++){
-			for(int j=0;j<data[i].length;j++){
-				if(data[i][j]==1){
-					labels[row][col].setText("1");
-				}else{
-					labels[row][col].setText("0");
+	public static void updateExploredDataOnMap(int[][] data){
+		int row = 0;
+		int col = 19;
+		for(int i=0;i<=14;i++){
+			for(int j=0;j<=19;j++){
+				if(data[j][i]==1){
+					labels[col][row].setText("1");
 				}
-				col++;
+				col--;
 			}
-			col=0;
-			row--;
+			col=19;
+			row++;
 		}
 	}
-	public void updateObstacleDataOnMap(int[][] data){
-		int col=0;
-		int row=14;
-		for(int i=0;i<data.length;i++){
-			for(int j=0;j<data[i].length;j++){
-				if(data[i][j]==1){
-					labels[row][col].setText("1");
-				}else{
-					labels[row][col].setText("0");
+	public static void updateObstacleDataOnMap(int[][] data){
+		int row = 0;
+		int col = 19;
+		for(int i=0;i<=14;i++){
+			for(int j=0;j<=19;j++){
+				if(data[j][i]==1){
+					labels[col][row].setText("1");
 				}
-				col++;
+				col--;
 			}
-			col=0;
-			row--;
+			col=19;
+			row++;
 		}
 	}
 	
@@ -626,21 +621,20 @@ public class MapUI {
 					startExploreSimulatorTask();
 			    } 
 			});
-			
 	    }else{
 	    	--interval;
-	    	moveRobotForward(1);
+//	    	moveRobotForward(1);
+	    	
 		    exploreBtn.setText(interval+"sec left");
 	    }
 	    
 	   return interval;
 	}
 	
-	//TODO: move the robot forward
+
 	public static void moveRobotForward(int distance){
 		mapPanel.remove(robotHead);
 		mapPanel.remove(robotBody);
-		
 		switch(Algothrim.currentDirection){
 			case North:
 				robotHeadConstrain.gridx = robotHeadConstrain.gridx+distance;
@@ -667,38 +661,105 @@ public class MapUI {
 				robotBodyConstrain.gridy = robotBodyConstrain.gridy+distance;
 				break;
 		}
+		UpdateExploredMap(robotBodyConstrain.gridx,robotBodyConstrain.gridy);
+
 		mapPanel.add(robotHead, robotHeadConstrain,1);
 		mapPanel.add(robotBody, robotBodyConstrain,2);
 		mapPanel.repaint();
 		mapPanel.revalidate();
 	}
-	//TODO:turn the robot
+	private static void UpdateExploredMap(int robotMapCenterRow, int robotMapCenterCol){
+		//updates the ui as the robot passes
+		System.out.println("MAP COORidinates"+robotMapCenterRow+","+robotMapCenterCol);
+		labels[robotMapCenterRow+1][robotMapCenterCol].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow+1][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol+1].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow+1][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow-1][robotMapCenterCol-1].setText("1");
+		labels[robotMapCenterRow][robotMapCenterCol].setText("1");
+		//update the algothrim exploredData as the robot pass
+		
+		Algothrim.exploredData[20-robotMapCenterRow][robotMapCenterCol]=1;
+	}
+	
+	private static int[][] algothrimToSimulatorData(int[][] mapData){
+		int[][] simMapData = new int[20][15];
+		int row = 0;
+		int col = 19;
+		for(int i=0;i<=14;i++){
+			for(int j=0;j<=19;j++){
+					if(mapData[j][i]==1){
+						simMapData[col][row]=1;
+					}
+				col--;
+			}
+			col=19;
+			row++;
+		}
+		
+		return simMapData;
+	}
+	//todo:
 	public static void turnRobot(Direction direction,int times){
-		//update the map updateMap();//can add in real time turning later
+		mapPanel.remove(robotHead);
 		switch(direction){
 			case LEFT:
-				if(times==1){
-					
-				}
-				if(times==2){
-					
-				}
-				if(times==3){
-					
+				switch(Algothrim.currentDirection){
+					case North:
+						if(times==1){
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
+							Algothrim.currentDirection=Direction.West;
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx-2;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
+							Algothrim.currentDirection=Direction.South;
+//							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+						}
+						break;
+					case South:
+						break;
+					case East:
+						break;
+					case West:
+						break;
 				}
 				break;
 			case RIGHT:
-				if(times==1){
-					
-				}
-				if(times==2){
-					
-				}
-				if(times==3){
-					
+				switch(Algothrim.currentDirection){
+					case North:
+						if(times==1){
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
+							Algothrim.currentDirection=Direction.East;
+//							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+//							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+						}else{
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx+2;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
+							Algothrim.currentDirection=Direction.South;
+//							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+						}
+						break;
+					case South:
+						break;
+					case East:
+						break;
+					case West:
+						break;
 				}
 				break;
 		}
+		mapPanel.add(robotHead, robotHeadConstrain,1);
+		mapPanel.repaint();
+		mapPanel.revalidate();
 	}
 	
 	public static void stopExploration(boolean stopExploration){
@@ -714,6 +775,7 @@ public class MapUI {
 		});
     	
     	//TODO: move robot to start area
+    	
 	}
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////

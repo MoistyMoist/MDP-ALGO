@@ -7,16 +7,22 @@ public class Algothrim {
 	public static Direction currentDirection = Direction.East;
 	private float sensorTrashold = 4.00f;
 	
-	private static int[][]exploredData;
-	private static int[][]obstacleData;
+	public static int[][]exploredData = new int[20][15];
+	public static int[][]obstacleData = new int[20][15];
 	public static int currentLocationFrontRow;
 	public static int currentLocationFrontCol;
 	
 	public Algothrim(int[][] exploredData, int[][]obstacleData, int currentLocationFrontRow, int currentLocationFrontCol){
-		if(exploredData!=null)
-			this.exploredData = exploredData;
-		if(obstacleData!=null)
-			this.obstacleData = obstacleData;
+		//set the goal and start area to explored
+		exploredData[19][0] = 1; exploredData[0][14] = 1;
+		exploredData[19][1] = 1; exploredData[0][13] = 1;
+		exploredData[19][2] = 1; exploredData[0][12] = 1;
+		exploredData[18][0] = 1; exploredData[1][14] = 1;
+		exploredData[18][1] = 1; exploredData[1][13] = 1;
+		exploredData[18][2] = 1; exploredData[1][12] = 1;
+		exploredData[17][0] = 1; exploredData[2][14] = 1;
+		exploredData[17][1] = 1; exploredData[2][13] = 1;
+		exploredData[17][2] = 1; exploredData[2][12] = 1;
 		if(currentLocationFrontRow != -1 && currentLocationFrontCol!=-1){
 			//TODO:change the starting direction base on the row,col (17,2[east),etc
 			this.currentLocationFrontRow = currentLocationFrontRow;
