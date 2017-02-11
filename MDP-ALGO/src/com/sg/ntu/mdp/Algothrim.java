@@ -191,6 +191,9 @@ public class Algothrim {
 		}else{
 			//continue exploring row by row
 			
+			//check if row 19 is explored
+			//check if that row/col area is blocked else move to that direction
+			//else 18,17,16,
 		}
 		
 		

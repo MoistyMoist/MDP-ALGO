@@ -590,7 +590,7 @@ public class MapUI {
 		mapPanel.repaint();
 	}
 	
-	private static int interval;//10sec for exploration
+	private static int interval;
 	private static Timer explorerTimer;
 	public static void startExplorationTimer(boolean stopExploration){
 		int delay = 1000;
@@ -600,7 +600,6 @@ public class MapUI {
 	    explorerTimer.scheduleAtFixedRate(new TimerTask() {
 	        public void run() {
 	        	clockTick(stopExploration);
-//	            System.out.println(clockTick(stopExploration));
 	        }
 	    }, delay, period);
 	    
@@ -611,7 +610,6 @@ public class MapUI {
 				stopExploration(stopExploration);
 		    } 
 		});
-		
 	}
 	private static final int clockTick(boolean stopExploration) {
 	    if (interval == 1){
@@ -626,11 +624,45 @@ public class MapUI {
 			});
 	    }else{
 	    	--interval;
-	    	moveRobotForward(1);//remove this when tesing algo
+	    	
+	    	if(interval==9){
+	    		turnRobot(Direction.LEFT,1);
+	    		try {
+					Thread.sleep(400);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    		moveRobotForward(1);
+	    	}
+	    	if(interval==8){
+	    		moveRobotForward(2);
+	    		try {
+					Thread.sleep(400);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    		turnRobot(Direction.RIGHT,1);
+	    	}
+	    	if(interval==7)
+	    		moveRobotForward(1);
+	    	if(interval==6)
+	    		moveRobotForward(1);
+	    	if(interval==5)
+	    		
+	    	if(interval==4)
+	    		moveRobotForward(1);
+	    	if(interval==3)
+	    		moveRobotForward(1);
+	    	if(interval==2)
+	    		turnRobot(Direction.LEFT,1);
+	    	if(interval==1)
+	    		moveRobotForward(1);
+	    	
 	    	
 		    exploreBtn.setText(interval+"sec left");
 	    }
-	    
 	   return interval;
 	}
 	
@@ -680,8 +712,6 @@ public class MapUI {
 		mapPanel.repaint();
 		mapPanel.revalidate();
 	}
-	
-	//todo:
 	public static void turnRobot(Direction direction,int times){
 		mapPanel.remove(robotHead);
 		switch(direction){
@@ -689,24 +719,72 @@ public class MapUI {
 				switch(Algothrim.currentDirection){
 					case North:
 						if(times==1){
+							Algothrim.currentDirection=Direction.West;
+							
 							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
 							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
-							Algothrim.currentDirection=Direction.West;
+							
 							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
 						}else{
+							Algothrim.currentDirection=Direction.South;
+							
 							robotHeadConstrain.gridx = robotHeadConstrain.gridx-2;
 							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
-							Algothrim.currentDirection=Direction.South;
-//							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +2;
 						}
 						break;
 					case South:
+						if(times==1){
+							Algothrim.currentDirection=Direction.East;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.North;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx-2;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+						}
 						break;
 					case East:
+						if(times==1){
+							Algothrim.currentDirection=Direction.North;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.West;
+							
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy-2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -2;
+						}
 						break;
 					case West:
+						if(times==1){
+							Algothrim.currentDirection=Direction.South;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+						}else{
+							Algothrim.currentDirection=Direction.East;
+							
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy+2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +2;
+						}
 						break;
 				}
 				break;
@@ -714,28 +792,80 @@ public class MapUI {
 				switch(Algothrim.currentDirection){
 					case North:
 						if(times==1){
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
 							Algothrim.currentDirection=Direction.East;
-//							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
-//							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
 						}else{
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx+2;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
 							Algothrim.currentDirection=Direction.South;
-//							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx-2;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +2;
 						}
 						break;
 					case South:
+						if(times==1){
+							Algothrim.currentDirection=Direction.West;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.North;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx+2;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+						}
 						break;
 					case East:
+						if(times==1){
+							Algothrim.currentDirection=Direction.South;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+						}else{
+							Algothrim.currentDirection=Direction.West;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy-2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -2;
+						}
 						break;
 					case West:
+						if(times==1){
+							Algothrim.currentDirection=Direction.North;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.East;
+							
+							robotHeadConstrain.gridx = robotHeadConstrain.gridx;
+							robotHeadConstrain.gridy = robotHeadConstrain.gridy+2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +2;
+						}
 						break;
 				}
 				break;
 		}
+		System.out.println("ROBOT FACING : "+Algothrim.currentDirection);
 		mapPanel.add(robotHead, robotHeadConstrain,1);
 		mapPanel.repaint();
 		mapPanel.revalidate();
