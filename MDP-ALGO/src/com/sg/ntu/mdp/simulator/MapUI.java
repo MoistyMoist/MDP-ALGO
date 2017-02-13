@@ -27,8 +27,11 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -37,14 +40,17 @@ public class MapUI {
 
 	private JFrame frame;
 	private static JButton exploreBtn;
-	private static JLayeredPane mapPanel;
-	private static JLabel[][] labels = new JLabel[20][15];
-	private JPanel[][] panels = new JPanel[20][15];
+	public static JLayeredPane mapPanel;
+	public static JLabel[][] labels = new JLabel[20][15];
+	public static JPanel[][] panels = new JPanel[20][15];
 	
-	private static JPanel robotBody;
-	private static GridBagConstraints robotBodyConstrain;
-	private static JPanel robotHead;
-	private static GridBagConstraints robotHeadConstrain;
+	public static JPanel robotBody;
+	public static GridBagConstraints robotBodyConstrain;
+	public static JPanel robotHead;
+	public static GridBagConstraints robotHeadConstrain;
+	
+	public static Queue instructionQueue = new ArrayBlockingQueue(1000);
+	
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -463,8 +469,31 @@ public class MapUI {
 	//////////////////////////////////////////////////////////
 	
 	
-	
-	
+	//////////////////////////////////////////////////////////
+	///					MOVEMENT THREAD 			 	   ///
+	//////////////////////////////////////////////////////////
+	public static void runRobotInstruction(){
+		Thread b = ((Thread) instructionQueue.poll());
+		if(b!=null){
+			b.start();
+	        synchronized(b){
+	            try{
+	                System.out.println("Waiting for instruction to complete...");
+	                b.wait();
+	            }catch(InterruptedException e){
+	                e.printStackTrace();
+	            }
+	            if(instructionQueue.size()==0){
+	            	System.out.println("QUEUE NOW EMPTY");
+	            	explore();
+	            }
+	            	
+	        }
+		}else{
+			System.out.println("QUEUE is EMPTY");
+			explore();
+		}
+	}
 	
 	
 	//////////////////////////////////////////////////////////
@@ -474,115 +503,6 @@ public class MapUI {
 		showRobot();
 		Boolean stopExploration = false;
 		startExplorationTimer(stopExploration);
-		/*Algothrim algothrim = new Algothrim(null,null,17,2); 
-		
-		try{
-			while(stopExploration!=true){
-				try {
-					//Do a 1 sec delay for every explore call;
-					Thread.sleep(500);
-	            } catch (InterruptedException x) {
-	                System.out.println("hi");
-	            }
-				finally{
-					int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
-					int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
-					int frontMidSensor = 0;
-					int frontLeftSensor = 0;
-					int frontRightSensor = 0;
-					int rightSensor = 0;
-					int leftSensor = 0;
-					switch(Algothrim.currentDirection){
-						case North:
-							frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
-							
-							frontLeftSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							frontRightSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							rightSensor = panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							leftSensor = panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							break;
-						case South:
-							frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
-							 		panels[currentLocationFrontCol][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
-							
-							frontLeftSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							frontRightSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							rightSensor = panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							leftSensor = panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							break;
-						case East:
-							frontMidSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-					 				panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							frontLeftSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
-							
-							frontRightSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol+1][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
-							
-							rightSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.BLACK?1:0;
-							
-							leftSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.BLACK?1:0;
-							
-							break;
-						case West:
-							frontMidSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
-			 						panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
-							
-							frontLeftSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
-							
-							rightSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol-1][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
-							
-							rightSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.BLACK?1:0;
-							
-							leftSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.LIGHT_GRAY||
-									 panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.BLACK?1:0;
-							break;
-					}
-					
-				
-					algothrim.explore(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
-						
-						@Override
-						public void moveForward(int distance) {
-							moveRobotForward(distance);
-						}
-
-						@Override
-						public void changeDirection(Direction direction, int times) {
-							turnRobot(direction, times);
-							
-						}
-					});
-				}
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		finally{
-			//RETURN TO START POINT
-		}
-		*/
 	}
 	public static void showRobot(){
 		robotBody.setVisible(true);
@@ -595,7 +515,7 @@ public class MapUI {
 	public static void startExplorationTimer(boolean stopExploration){
 		int delay = 1000;
 	    int period = 1000;
-	    interval = 10;//10sec for exploration
+	    interval = 100;//10sec for exploration
 	    explorerTimer = new Timer();
 	    explorerTimer.scheduleAtFixedRate(new TimerTask() {
 	        public void run() {
@@ -623,254 +543,117 @@ public class MapUI {
 			    } 
 			});
 	    }else{
+	    	
 	    	--interval;
-	    	
-	    	if(interval==9){
-	    		turnRobot(Direction.LEFT,1);
-	    		try {
-					Thread.sleep(400);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	    		moveRobotForward(1);
-	    	}
-	    	if(interval==8){
-	    		moveRobotForward(2);
-	    		try {
-					Thread.sleep(400);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	    		turnRobot(Direction.RIGHT,1);
-	    	}
-	    	if(interval==7)
-	    		moveRobotForward(1);
-	    	if(interval==6)
-	    		moveRobotForward(1);
-	    	if(interval==5)
-	    		
-	    	if(interval==4)
-	    		moveRobotForward(1);
-	    	if(interval==3)
-	    		moveRobotForward(1);
-	    	if(interval==2)
-	    		turnRobot(Direction.LEFT,1);
-	    	if(interval==1)
-	    		moveRobotForward(1);
-	    	
-	    	
+	    	runRobotInstruction();
 		    exploreBtn.setText(interval+"sec left");
 	    }
 	   return interval;
 	}
 	
-	public static void moveRobotForward(int distance){
-		mapPanel.remove(robotHead);
-		mapPanel.remove(robotBody);
+	
+	
+	public static void explore(){
+//		instructionQueue.add(new MoveRobotForwardThread(1));
+//		instructionQueue.add(new MoveRobotForwardThread(1));
+//		instructionQueue.add(new TurnRobotThread(Direction.LEFT,1));
+//		instructionQueue.add(new MoveRobotForwardThread(1));
+//		instructionQueue.add(new MoveRobotForwardThread(1));
+//		instructionQueue.add(new MoveRobotForwardThread(1));
+//		instructionQueue.add(new MoveRobotForwardThread(1));
+		
+		Algothrim algothrim = new Algothrim(null,null,17,2); 
+		
+		int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
+		int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
+		int frontMidSensor = 0;
+		int frontLeftSensor = 0;
+		int frontRightSensor = 0;
+		int rightSensor = 0;
+		int leftSensor = 0;
 		switch(Algothrim.currentDirection){
 			case North:
-				robotHeadConstrain.gridx = robotHeadConstrain.gridx+distance;
-				robotHeadConstrain.gridy = robotHeadConstrain.gridy;
-				robotBodyConstrain.gridx = robotBodyConstrain.gridx+distance;
-				robotBodyConstrain.gridy = robotBodyConstrain.gridy;
+				frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
+				
+				frontLeftSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				frontRightSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				rightSensor = panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				leftSensor = panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
 				break;
 			case South:
-				robotHeadConstrain.gridx = robotHeadConstrain.gridx-distance;
-				robotHeadConstrain.gridy = robotHeadConstrain.gridy;
-				robotBodyConstrain.gridx = robotBodyConstrain.gridx-distance;
-				robotBodyConstrain.gridy = robotBodyConstrain.gridy;
+				frontMidSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
+				 		panels[currentLocationFrontCol][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
+				
+				frontLeftSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				frontRightSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				rightSensor = panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol-2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				leftSensor = panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol+2][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
 				break;
 			case East:
-				robotHeadConstrain.gridx = robotHeadConstrain.gridx;
-				robotHeadConstrain.gridy = robotHeadConstrain.gridy+distance;
-				robotBodyConstrain.gridx = robotBodyConstrain.gridx;
-				robotBodyConstrain.gridy = robotBodyConstrain.gridy+distance;
+				frontMidSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+		 				panels[currentLocationFrontCol+1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				frontLeftSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol+1][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
+				
+				frontRightSensor = panels[currentLocationFrontCol+1][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol+1][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
+				
+				rightSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.BLACK?1:0;
+				
+				leftSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.BLACK?1:0;
+				
 				break;
 			case West:
-				robotHeadConstrain.gridx = robotHeadConstrain.gridx;
-				robotHeadConstrain.gridy = robotHeadConstrain.gridy-distance;
-				robotBodyConstrain.gridx = robotBodyConstrain.gridx;
-				robotBodyConstrain.gridy = robotBodyConstrain.gridy+distance;
+				frontMidSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.LIGHT_GRAY||
+ 						panels[currentLocationFrontCol-1][19-currentLocationFrontRow].getBackground()==Color.BLACK?1:0;
+				
+				frontLeftSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow-1].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol-1][19-currentLocationFrontRow-1].getBackground()==Color.BLACK?1:0;
+				
+				rightSensor = panels[currentLocationFrontCol-1][19-currentLocationFrontRow+1].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol-1][19-currentLocationFrontRow+1].getBackground()==Color.BLACK?1:0;
+				
+				rightSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol][19-currentLocationFrontRow+2].getBackground()==Color.BLACK?1:0;
+				
+				leftSensor = panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.LIGHT_GRAY||
+						 panels[currentLocationFrontCol][19-currentLocationFrontRow-2].getBackground()==Color.BLACK?1:0;
 				break;
 		}
 		
-		labels[robotBodyConstrain.gridx+1][robotBodyConstrain.gridy].setText("1");
-		labels[robotBodyConstrain.gridx-1][robotBodyConstrain.gridy].setText("1");
-		labels[robotBodyConstrain.gridx][robotBodyConstrain.gridy+1].setText("1");
-		labels[robotBodyConstrain.gridx+1][robotBodyConstrain.gridy+1].setText("1");
-		labels[robotBodyConstrain.gridx-1][robotBodyConstrain.gridy+1].setText("1");
-		labels[robotBodyConstrain.gridx][robotBodyConstrain.gridy-1].setText("1");
-		labels[robotBodyConstrain.gridx+1][robotBodyConstrain.gridy-1].setText("1");
-		labels[robotBodyConstrain.gridx-1][robotBodyConstrain.gridy-1].setText("1");
-
-		Algothrim.exploredData=saveExploredData(labels);
-		
-		mapPanel.add(robotHead, robotHeadConstrain,1);
-		mapPanel.add(robotBody, robotBodyConstrain,2);
-		mapPanel.repaint();
-		mapPanel.revalidate();
-	}
-	public static void turnRobot(Direction direction,int times){
-		mapPanel.remove(robotHead);
-		switch(direction){
-			case LEFT:
-				switch(Algothrim.currentDirection){
-					case North:
-						if(times==1){
-							Algothrim.currentDirection=Direction.West;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
-						}else{
-							Algothrim.currentDirection=Direction.South;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx-2;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
-							
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +2;
-						}
-						break;
-					case South:
-						if(times==1){
-							Algothrim.currentDirection=Direction.East;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
-						}else{
-							Algothrim.currentDirection=Direction.North;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx-2;
-							
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
-						}
-						break;
-					case East:
-						if(times==1){
-							Algothrim.currentDirection=Direction.North;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
-						}else{
-							Algothrim.currentDirection=Direction.West;
-							
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy-2;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -2;
-						}
-						break;
-					case West:
-						if(times==1){
-							Algothrim.currentDirection=Direction.South;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
-						}else{
-							Algothrim.currentDirection=Direction.East;
-							
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy+2;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +2;
-						}
-						break;
-				}
-				break;
-			case RIGHT:
-				switch(Algothrim.currentDirection){
-					case North:
-						if(times==1){
-							Algothrim.currentDirection=Direction.East;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
-						}else{
-							Algothrim.currentDirection=Direction.South;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx-2;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
-							
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +2;
-						}
-						break;
-					case South:
-						if(times==1){
-							Algothrim.currentDirection=Direction.West;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
-						}else{
-							Algothrim.currentDirection=Direction.North;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx+2;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy;
-							
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
-						}
-						break;
-					case East:
-						if(times==1){
-							Algothrim.currentDirection=Direction.South;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx-1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy-1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
-						}else{
-							Algothrim.currentDirection=Direction.West;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy-2;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -2;
-						}
-						break;
-					case West:
-						if(times==1){
-							Algothrim.currentDirection=Direction.North;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx+1;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy+1;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
-							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
-						}else{
-							Algothrim.currentDirection=Direction.East;
-							
-							robotHeadConstrain.gridx = robotHeadConstrain.gridx;
-							robotHeadConstrain.gridy = robotHeadConstrain.gridy+2;
-							
-							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +2;
-						}
-						break;
-				}
-				break;
-		}
-		System.out.println("ROBOT FACING : "+Algothrim.currentDirection);
-		mapPanel.add(robotHead, robotHeadConstrain,1);
-		mapPanel.repaint();
-		mapPanel.revalidate();
-	}
 	
+		algothrim.explore(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
+			@Override
+			public void moveForward(int distance) {
+				instructionQueue.add(new MoveRobotForwardThread(distance));
+			}
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				instructionQueue.add(new TurnRobotThread(direction,times));
+			}
+		});
+		
+		
+		
+	}
 	public static void stopExploration(boolean stopExploration){
 		stopExploration = true;
 		explorerTimer.cancel();

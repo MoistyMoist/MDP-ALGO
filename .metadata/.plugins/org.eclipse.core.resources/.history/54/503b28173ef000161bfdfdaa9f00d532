@@ -1,0 +1,25 @@
+package com.sg.ntu.mdp.simulator;
+
+import com.sg.ntu.mdp.Direction;
+
+public class TurnRobotThread extends Thread{
+
+	private Direction direction;
+	private int times;
+	
+	public TurnRobotThread(Direction direction, int times){
+		this.direction = direction;
+		this.times = times;
+	}
+	 public void run(){
+	        synchronized(this){
+	        	
+	        	
+	        	
+	        	
+	        	
+	        	 notify();
+	        }
+	 }
+	
+}
