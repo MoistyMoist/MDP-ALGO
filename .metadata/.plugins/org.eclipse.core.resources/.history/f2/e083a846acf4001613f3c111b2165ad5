@@ -1,0 +1,124 @@
+package communication;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class Descriptor {
+	
+	private int exloredData[][];
+	private int obstacleData[][];
+	
+	private String fileName = "MDFStrings_week4.txt";
+	
+	//TODO:
+	public void writeDescriptorFromFile(String exploredData, String obstacleData){
+		try{
+		    PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+		    writer.println("MDF String 1:\n"+exploredData);
+		    writer.println("MDF String 1:\n"+obstacleData);
+		    writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	//TODO:
+	public String readDescriptorFromFile(){
+		String content="";
+		File file = new File(fileName);
+		FileReader reader = null;
+		 try {
+			 	
+			  reader = new FileReader(file);
+		      char[] chars = new char[(int) file.length()];
+		      reader.read(chars);
+		      content = new String(chars);
+		      reader.close();
+		    
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+		 return content;
+	}
+	
+	
+	
+	//TODO:
+	public String hexToBinary(String hex){
+		return "";
+	}
+	//TODO:[20][15]
+	public String getExploredDataToSimulator(int[][] data){
+		String stringData = "11";
+		String hex="";
+		char[] fourBits=new char[4];
+		stringData+="11";
+		for(int i=0; i<stringData.length(); i+=4)//parses bitMap and converts bits to hex and store in hexMap 4 bits at a time(inclusive of padding)
+	        {
+				stringData.getChars(i, i+4, fourBits, 0);
+				hex+=Integer.toHexString(Integer.parseInt(String.valueOf(fourBits),2));
+	        }
+		return hex;
+	}
+	//TODO:[20][15]
+	public String getObstacleDataToSimulator(int[][] data){
+		String stringData = "";
+		String hex="";
+		char[] fourBits=new char[4];
+		for(int i=0; i<stringData.length(); i+=4)//parses bitMap and converts bits to hex and store in hexMap 4 bits at a time(inclusive of padding)
+        {
+            if(i+4>=stringData.length())
+            {
+            	stringData.getChars(i, stringData.length(), fourBits, 0);
+            }
+            else
+            {
+            	stringData.getChars(i, (i+4), fourBits, 0);
+            }
+            hex+=Integer.toHexString(Integer.parseInt(String.valueOf(fourBits),2));
+        }
+		return hex;
+	}
+	
+	
+	public void saveDataFromSimulatorToFile(int[][] exploredData, int[][]obstacleData){
+		String exploredHex = saveExploredDataToFile(exploredData);
+		String obstacleHex = saveObstacleDataToFile(obstacleData);
+		
+		writeDescriptorFromFile(exploredHex, obstacleHex);
+	}
+	//TODO:
+	public String binaryToHex(String binary){
+		return binary;
+	}
+	public String saveExploredDataToFile(int[][] data){
+		String stringData = "11";
+		String temp="";
+		for(int i=0;i<data.length;i++){
+			for(int j =0;j<data[i].length;j++){
+				stringData+=data[i][j];
+				temp+=data[i][j];
+			}
+			System.out.println(temp);
+			temp="";
+		}
+		this.exloredData = data;
+		return binaryToHex(stringData+="11");
+	}
+	public String saveObstacleDataToFile(int[][] data){
+		String stringData = "00";
+		String temp="";
+		for(int i=0;i<data.length;i++){
+			for(int j =0;j<data[i].length;j++){
+				stringData+=data[i][j];
+				temp+=data[i][j];
+			}
+			System.out.println(temp);
+			temp="";
+		}
+		this.obstacleData = data;
+		return binaryToHex(stringData+="00");
+	}
+}
+

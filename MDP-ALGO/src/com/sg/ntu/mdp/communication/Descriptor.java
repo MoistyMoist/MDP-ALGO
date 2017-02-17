@@ -49,15 +49,37 @@ public class Descriptor {
 		return "";
 	}
 	//TODO:[20][15]
-	public int[][] getExploredDataToSimulator(){
-		return null;
+	public String getExploredDataToSimulator(){
+		String stringData = "11";
+		String hex="";
+		char[] fourBits=new char[4];
+		stringData+="11";
+		for(int i=0; i<stringData.length(); i+=4)//parses bitMap and converts bits to hex and store in hexMap 4 bits at a time(inclusive of padding)
+	        {
+				stringData.getChars(i, i+4, fourBits, 0);
+				hex+=Integer.toHexString(Integer.parseInt(String.valueOf(fourBits),2));
+	        }
+		return hex;
 	}
 	//TODO:[20][15]
-	public int[][] getObstacleDataToSimulator(){
-		return null;
+	public String getObstacleDataToSimulator(int[][] data){
+		String stringData = "";
+		String hex="";
+		char[] fourBits=new char[4];
+		for(int i=0; i<stringData.length(); i+=4)//parses bitMap and converts bits to hex and store in hexMap 4 bits at a time(inclusive of padding)
+        {
+            if(i+4>=stringData.length())
+            {
+            	stringData.getChars(i, stringData.length(), fourBits, 0);
+            }
+            else
+            {
+            	stringData.getChars(i, (i+4), fourBits, 0);
+            }
+            hex+=Integer.toHexString(Integer.parseInt(String.valueOf(fourBits),2));
+        }
+		return hex;
 	}
-	
-	
 	
 	
 	public void saveDataFromSimulatorToFile(int[][] exploredData, int[][]obstacleData){
@@ -99,3 +121,4 @@ public class Descriptor {
 		return binaryToHex(stringData+="00");
 	}
 }
+
