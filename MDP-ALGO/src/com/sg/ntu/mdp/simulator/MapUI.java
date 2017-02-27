@@ -481,10 +481,12 @@ public class MapUI {
 	        synchronized(b){
 	            try{
 	                System.out.println("Waiting for instruction to complete...");
+	                
 	                b.wait();
 	            }catch(InterruptedException e){
 	                e.printStackTrace();
 	            }
+	            checkForObstacle();
 	            if(instructionQueue.size()==0){
 	            	System.out.println("QUEUE NOW EMPTY");
 	            	explore();
@@ -494,6 +496,72 @@ public class MapUI {
 			System.out.println("QUEUE is EMPTY");
 			explore();
 		}
+	}
+	public static void checkForObstacle(){
+		int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
+		int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
+		int frontMidSensor = 0;
+		int frontLeftSensor = 0;
+		int frontRightSensor = 0;
+		int rightSensor = 0;
+		int leftSensor = 0;
+		
+		switch(Algothrim.currentDirection){
+		case North:
+			if(currentLocationFrontRow-1>-1){
+				frontMidSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontCol+2<=14){
+				rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontCol-2>=0){
+				leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			break;
+		case South:
+			if(currentLocationFrontRow+1<=19){
+				frontMidSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontCol-2>=0){
+				rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontCol+2<=14){
+				leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			break;
+		case East:
+			if(currentLocationFrontCol+1<=14){
+				frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontRightSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontLeftSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontRow+2<=19){
+				rightSensor = panels[19-currentLocationFrontRow-2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontRow-2<=19){
+				leftSensor = panels[19-currentLocationFrontRow+2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			break;
+		case West:
+			if(currentLocationFrontCol-1>=0){
+				frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontLeftSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontRightSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontRow-2<=19){
+				rightSensor = panels[19-currentLocationFrontRow+2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			if(currentLocationFrontRow+2<=19){
+				leftSensor = panels[19-currentLocationFrontRow-2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+			}
+			break;
+		}
+		
+		algothrim.addObstacle(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor);
 	}
 	
 	
@@ -555,13 +623,6 @@ public class MapUI {
 	
 	
 	public static void explore(){
-//		instructionQueue.add(new MoveRobotForwardThread(1));
-//		instructionQueue.add(new MoveRobotForwardThread(1));
-//		instructionQueue.add(new TurnRobotThread(Direction.LEFT,1));
-//		instructionQueue.add(new MoveRobotForwardThread(1));
-//		instructionQueue.add(new MoveRobotForwardThread(1));
-//		instructionQueue.add(new MoveRobotForwardThread(1));
-//		instructionQueue.add(new MoveRobotForwardThread(1));
 		
 		
 		
@@ -596,15 +657,15 @@ public class MapUI {
 				if(currentLocationFrontCol-2>=0){
 					rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
-				if(currentLocationFrontCol+2>=0){
+				if(currentLocationFrontCol+2<=14){
 					leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
 				break;
 			case East:
 				if(currentLocationFrontCol+1<=14){
 					frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontLeftSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontRightSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontLeftSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
 				if(currentLocationFrontRow+2<=19){
 					rightSensor = panels[19-currentLocationFrontRow-2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;

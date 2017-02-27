@@ -65,11 +65,7 @@ public class MoveRobotForwardThread extends Thread{
     		MapUI.mapPanel.add(MapUI.robotBody, MapUI.robotBodyConstrain,2);
     		MapUI.mapPanel.repaint();
     		MapUI.mapPanel.revalidate();
-        	
-        	
-        	
-        	
-            notify();
+        	notify();
         }
     }
 }

@@ -1,0 +1,543 @@
+package com.sg.ntu.mdp;
+
+public class Algothrim {
+	private float coverageLimit = 100f;
+	private float timeLimit = 500f;//TODO: change this later
+	
+	public static Direction currentDirection = Direction.East;
+	private float sensorTrashold = 1.00f;
+	
+	public static int[][]exploredData = new int[20][15];
+	public static int[][]obstacleData = new int[20][15];
+	public static int[][]blockedData = new int[20][15];
+	public static int currentLocationFrontRow;
+	public static int currentLocationFrontCol;
+	
+	public Algothrim(int[][] exploredData, int[][]obstacleData, int currentLocationFrontRow, int currentLocationFrontCol){
+		//set the goal and start area to explored
+		this.exploredData[19][0] = 1; this.exploredData[0][14] = 1;
+		this.exploredData[19][1] = 1; this.exploredData[0][13] = 1;
+		this.exploredData[19][2] = 1; this.exploredData[0][12] = 1;
+		this.exploredData[18][0] = 1; this.exploredData[1][14] = 1;
+		this.exploredData[18][1] = 1; this.exploredData[1][13] = 1;
+		this.exploredData[18][2] = 1; this.exploredData[1][12] = 1;
+		this.exploredData[17][0] = 1; this.exploredData[2][14] = 1;
+		this.exploredData[17][1] = 1; this.exploredData[2][13] = 1;
+		this.exploredData[17][2] = 1; this.exploredData[2][12] = 1;
+		
+		if(currentLocationFrontRow != -1 && currentLocationFrontCol!=-1){
+			//TODO:change the starting direction base on the row,col (17,2[east),etc
+			this.currentLocationFrontRow = currentLocationFrontRow;
+			this.currentLocationFrontCol = currentLocationFrontCol;
+		}
+	}
+	
+	
+	//***************************************//
+	//EXPLORATION METHODS FOR REAL SITUATION //
+	//***************************************//
+	public void explore(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
+		if(leftSensor<=sensorTrashold){
+			//obstacle on robot left
+			//update the obstacle data
+			switch(currentDirection){
+				case North: 
+					if(currentLocationFrontCol-2>=-1)
+						addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+					break;
+				case South: 
+					if(currentLocationFrontCol+2>=15)
+						addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+					break;
+				case East: 
+					if(currentLocationFrontRow-2>=-1)
+						addObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+				case West: 
+					if(currentLocationFrontRow+2>=20)
+						addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+			}
+		}
+		if(rightSensor<=sensorTrashold){
+			//obstacle on robot right
+			//update the obstacle data
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontCol+2>=15)
+						addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+					break;
+				case South:
+					if(currentLocationFrontCol-2>=-1)
+						addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+					break;
+				case East:
+					if(currentLocationFrontRow+2>=20)
+						addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+				case West:
+					if(currentLocationFrontRow-2>=-1)
+						addObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+			}
+		}
+		
+		if(isRobotWithinGoalArea()){
+			returnToStart();
+		}else{
+			//continue exploring
+			//main decision making depending on the direction and current location of the robot(goal direction is always north east)
+			if(currentDirection == Direction.North){
+				if(currentLocationFrontRow==0){
+					//if east path has not obstacle
+					if(obstacleData[0][currentLocationFrontCol+2]!=1&&
+							obstacleData[currentLocationFrontRow+1][currentLocationFrontCol+2]!=1&&
+							obstacleData[currentLocationFrontCol+2][currentLocationFrontCol+2]!=1){
+//						callback.changeDirection(Direction.East);
+						this.currentDirection = Direction.East;
+						callback.moveForward(1);
+						//TODO update the current location after moving forward
+					}
+					else{
+						int distance = 0;
+						//we move backwards (x distance) till we can move east
+						while(obstacleData[currentLocationFrontRow+1][currentLocationFrontCol+2]==1&&
+								obstacleData[currentLocationFrontCol+2][currentLocationFrontCol+2]==1&&
+								obstacleData[currentLocationFrontCol][currentLocationFrontCol+2]==1){
+							distance++;
+						}
+//						callback.changeDirection(Direction.South);
+						this.currentDirection = Direction.South;
+						callback.moveForward(distance);
+					}
+					
+				}
+				else if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+					callback.moveForward(1);
+				}
+			}
+			if(currentDirection == Direction.South){
+				//for some reason we are facing south means north direction is blocked we move to the east
+				if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+					//nothing infront move forward
+				}
+			}
+			if(currentDirection == Direction.East){
+				if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+					//nothing infront move forward
+				}
+			}
+			if(currentDirection == Direction.West){
+				if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
+					//nothing infront move forward
+				}
+			}
+		}	
+	}
+
+	
+	//***************************************//
+	//  EXPLORATION METHODS FOR SIMULATION	 //
+	//***************************************//
+	//@Notes: focus on facing east going row by row towards 0
+	//@Notes: we focus on this first since it is a requirement
+	public void exploreSimulation(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
+		if(isExporeCoverageReached()){
+			returnToStart();
+		}else{
+			if(leftSensor>=sensorTrashold){
+//				System.out.println("OBSTICAL AT LEFT SENSOR");
+				//obstacle on robot left
+				//update the obstacle data
+				switch(currentDirection){
+					case North: 
+						if(currentLocationFrontCol-2>=0)
+							addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+						break;
+					case South: 
+						if(currentLocationFrontCol+2<=14)
+							addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+						break;
+					case East: 
+						if(currentLocationFrontRow-2>=0)
+							addObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
+						break;
+					case West: 
+						if(currentLocationFrontRow+2<=19)
+							addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
+						break;
+				}
+			}
+			if(rightSensor>=sensorTrashold){
+//				System.out.println("OBSTICAL AT RIGHT SENSOR");
+				//obstacle on robot right
+				//update the obstacle data
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontCol+2<=14)
+							addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+						break;
+					case South:
+						if(currentLocationFrontCol-2>=0)
+							addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+						break;
+					case East:
+						if(currentLocationFrontRow+2<=19)
+							addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
+						break;
+					case West:
+						if(currentLocationFrontRow-2>=0)
+							addObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
+						break;
+				}
+			}
+			if(frontMidSensor>=sensorTrashold){
+//				System.out.println("OBSTICAL AT MID SENSOR");
+				//obstacle on robot mid front
+				//update the obstacle data
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontRow-1>=0)
+							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol);
+						break;
+					case South:
+						if(currentLocationFrontRow+1<=19)
+							addObstacle(currentLocationFrontRow+1,currentLocationFrontCol);
+						break;
+					case East:
+						if(currentLocationFrontCol+1<=14)
+							addObstacle(currentLocationFrontRow,currentLocationFrontCol+1);
+						break;
+					case West:
+						if(currentLocationFrontCol-1>=0)
+							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol);
+						break;
+				}
+			}
+			if(frontLeftSensor>=sensorTrashold){
+//				System.out.println("OBSTICAL AT FRONT LEFT SENSOR");
+				//obstacle on robot front left
+				//update the obstacle data
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontRow-1>=0)
+							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol-1);
+						break;
+					case South:
+						if(currentLocationFrontRow+1<=19)
+							addObstacle(currentLocationFrontRow+1,currentLocationFrontCol+1);
+						break;
+					case East:
+						if(currentLocationFrontCol+1<=14)
+							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol+1);
+						break;
+					case West:
+						if(currentLocationFrontCol-1>=0)
+							addObstacle(currentLocationFrontRow+1,currentLocationFrontCol-1);
+						break;
+				}
+			}
+			if(frontRightSensor>=sensorTrashold){
+//				System.out.println("OBSTICAL AT FRONT RIGHT SENSOR");
+				//obstacle on robot front right
+				//TODO:update the obstacle data
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontRow-1>=0)
+							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol+1);
+						break;
+					case South:
+						if(currentLocationFrontRow+1<=19)
+							addObstacle(currentLocationFrontRow+1,currentLocationFrontCol-1);
+						break;
+					case East:
+						if(currentLocationFrontCol+1<=14)
+							addObstacle(currentLocationFrontRow+1,currentLocationFrontCol+1);
+						break;
+					case West:
+						if(currentLocationFrontCol-1>=0)
+							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol-1);
+						break;
+				}
+			}
+			
+			
+			//todo:error here
+			//we move forward till there is a wall
+			boolean breakloop = false;
+			for(int i=19;i>1;i--){
+				for(int j=0;j<15;j++){
+//					System.out.println(i+","+j+" ");
+//					System.out.println(obstacleData[i][j]);
+					if(exploredData[i][j]==0&&obstacleData[i][j]==0){
+//						System.out.println(i+","+j);
+						//TODO: check if this grid is accessable (for now jus check if surrounding can fit a robot)
+//						if()
+						//base on 1x1 grid of head
+						switch(currentDirection){
+							case North:
+								makeDecisionFacingNorth(i,j,callback);
+								break;
+							case South:
+								makeDecisionFacingSouth(i,j,callback);
+								break;
+							case East:
+								makeDecisionFacingEast(i,j,callback);
+								break;
+							case West:
+								makeDecisionFacingWest(i,j,callback);
+								break;
+								
+						}
+						breakloop=true;
+						if(breakloop==true)
+							break;
+					}
+				}
+				if(breakloop==true)
+					break;
+			}
+		}
+	}
+	
+	private void makeDecisionFacingNorth(int row, int col,final RobotCallback callback){
+		
+	}
+	private void makeDecisionFacingSouth(int row, int col, final RobotCallback callback){
+		
+	}
+	private void makeDecisionFacingEast(int row, int col, final RobotCallback callback){
+		//TODO: expore algo facing east 
+		int counter = 0;
+		//TARGET GRID FRONT OF ROBOT
+		if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol<col)||(currentLocationFrontRow+1==row&&currentLocationFrontCol<col)){			
+			//check if front has obsticale
+			for(int i=currentLocationFrontCol+1;i<=col;i++){
+				if(obstacleData[currentLocationFrontRow+1][i]!=1){
+					counter++;
+				}
+				if(obstacleData[currentLocationFrontRow][i]!=1){
+					counter++;
+				}
+				if(obstacleData[currentLocationFrontRow-1][i]!=1){
+					counter++;
+				}
+				if(counter==3){
+					callback.moveForward(1);
+					counter=0;
+					break;
+				}else{
+					counter=0;
+					System.out.println("SOMETHING IS BLOCKING THE PATH");
+					boolean isLeftWall = false;
+					boolean isRightWall = false;
+					//turn back if left and right has obstacle
+					if(currentLocationFrontRow-2>=0){//robot left is not a wall
+						isLeftWall = false;
+					}
+					else{
+						isLeftWall = true;
+					}
+					if(currentLocationFrontRow+2<=19){//robot right is not a wall
+						isRightWall = false;
+					}else{
+						isRightWall = true;
+					}
+					
+					//condition to turn back 180 degrees
+					if(isRightWall==true&&(exploredData[currentLocationFrontRow-2][currentLocationFrontCol]==1||exploredData[currentLocationFrontRow-2][currentLocationFrontCol-1]==1||exploredData[currentLocationFrontRow-2][currentLocationFrontCol-2]==1)){
+						callback.changeDirection(Direction.LEFT, 2);//right is wall left is obstacle
+						//move forward how many grids?
+						if(exploredData[currentLocationFrontRow-2][currentLocationFrontCol-2]==1){
+							callback.moveForward(1);
+							callback.moveForward(1);
+							callback.moveForward(1);
+							callback.changeDirection(Direction.RIGHT, 1);
+							break;
+						}
+						if(exploredData[currentLocationFrontRow-2][currentLocationFrontCol-1]==1){
+							callback.moveForward(1);
+							callback.moveForward(1);
+							callback.changeDirection(Direction.RIGHT, 1);
+							break;
+						}else{
+							callback.moveForward(1);
+							callback.changeDirection(Direction.RIGHT, 1);
+							break;
+						}
+					}
+					if(isLeftWall==true&&(exploredData[currentLocationFrontRow+2][currentLocationFrontCol]==1||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-1]==1||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-2]==1)){
+						callback.changeDirection(Direction.LEFT, 2);//left is wall left is obstacle
+						//move forward how many grids?
+						if(exploredData[currentLocationFrontRow+2][currentLocationFrontCol-2]==1){
+							callback.moveForward(1);
+							callback.moveForward(1);
+							callback.moveForward(1);
+							callback.changeDirection(Direction.LEFT, 1);
+							break;
+						}
+						if(exploredData[currentLocationFrontRow+2][currentLocationFrontCol-1]==1){
+							callback.moveForward(1);
+							callback.moveForward(1);
+							callback.changeDirection(Direction.LEFT, 1);
+							break;
+						}else{
+							callback.moveForward(1);
+							callback.changeDirection(Direction.LEFT, 1);
+							break;
+						}
+					}
+					if((isLeftWall==false&&isRightWall==false)&&
+							((exploredData[currentLocationFrontRow-2][currentLocationFrontCol]==1||exploredData[currentLocationFrontRow-2][currentLocationFrontCol-1]==1||exploredData[currentLocationFrontRow-2][currentLocationFrontCol-2]==1)
+									&&(exploredData[currentLocationFrontRow+2][currentLocationFrontCol]==1||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-1]==1||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-2]==1))){
+						callback.changeDirection(Direction.LEFT, 2);//no walls beside but ist obstacle
+						break;
+					}
+					//condition to turn left only one choice
+					if(isRightWall==true&&(exploredData[currentLocationFrontRow-2][currentLocationFrontCol]==0&&exploredData[currentLocationFrontRow-2][currentLocationFrontCol-1]==0&&exploredData[currentLocationFrontRow-2][currentLocationFrontCol-2]==0)){
+						callback.changeDirection(Direction.LEFT, 1);//right is wall left has no obstacle
+						break;
+					}
+					//condition to turn right only one choice
+					if(isLeftWall==true&&(exploredData[currentLocationFrontRow+2][currentLocationFrontCol]==0&&exploredData[currentLocationFrontRow+2][currentLocationFrontCol-1]==0&&exploredData[currentLocationFrontRow+2][currentLocationFrontCol-2]==0)){
+						callback.changeDirection(Direction.RIGHT, 1);//left is wall right has no obstacle
+						break;
+					}
+					
+					//if can choose turning right and left or back(we choose left for now for no reason)
+					if((isLeftWall==false&&isRightWall==false)&&
+							((exploredData[currentLocationFrontRow-2][currentLocationFrontCol]==0&&exploredData[currentLocationFrontRow-2][currentLocationFrontCol-1]==0&&exploredData[currentLocationFrontRow-2][currentLocationFrontCol-2]==0)
+									&&(exploredData[currentLocationFrontRow+2][currentLocationFrontCol]==0&&exploredData[currentLocationFrontRow+2][currentLocationFrontCol-1]==0&&exploredData[currentLocationFrontRow+2][currentLocationFrontCol-2]==0))){
+						//TODO:change this accordingly
+						//if right is unexplored turn right
+						if(exploredData[currentLocationFrontRow+2][currentLocationFrontCol]==0||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-1]==0||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-2]==0){
+							callback.changeDirection(Direction.RIGHT, 1);
+							break;
+						}else{
+							callback.changeDirection(Direction.LEFT, 1);
+							break;
+						}
+					}
+				}
+			}
+			
+		}
+		//target grid backward of robot
+		
+		
+		//target grid left of robot
+		
+		//target grid right of robot
+		
+		//target grid top right of robot
+		
+		//target grid top left of robot
+		
+		//target grid bottom right of robot
+		
+		//target grid bottom left of robot
+		
+	}
+	private void makeDecisionFacingWest(int row, int col, final RobotCallback callback){
+		int counter = 0;
+		
+		//target grid front of robot
+		
+		//target grid backward of robot
+		if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol<col)||(currentLocationFrontRow+1==row&&currentLocationFrontCol<col)){	
+			System.out.println("here");
+			//smth wrong b4 tats y target at the back
+			boolean isLeftWall = false;
+			boolean isRightWall = false;
+			//turn back if left and right has obstacle
+			if(currentLocationFrontRow-2>=0){//robot right is not a wall
+				isRightWall = false;
+			}
+			else{
+				isRightWall = true;
+			}
+			if(currentLocationFrontRow+2<=19){//robot left is not a wall
+				isLeftWall = false;
+			}else{
+				isLeftWall = true;
+			}
+			
+			if(isLeftWall==true){
+				
+			}
+		}
+		//target grid left of robot
+		
+		//target grid right of robot
+		
+		//target grid top right of robot
+		
+		//target grid top left of robot
+		
+		//target grid bottom right of robot
+		
+		//target grid bottom left of robot
+	}
+	
+	private boolean isTargetCellReachable(int row, int col){
+		return false;
+	}
+	private boolean isExporeCoverageReached(){
+		//@Notes: not sure of obstacle that surrounds an area making it unaccessable. need to check how the task is tested
+		int exploredCount= 0;
+		for(int i=0;i<exploredData.length;i++){
+			for(int j=0;j<exploredData[i].length;j++){
+				if(exploredData[i][j]==1){
+					exploredCount ++;
+				}
+			}
+		}
+		if(exploredCount/300*100>=this.coverageLimit)
+			return true;
+		else
+			return false;
+	}
+	//TODO:
+	private boolean isRobotWithinGoalArea(){
+		//within doesent mean the robot is fully in the goal area only means the head is in the goal area
+		return false;
+	}
+	private void addObstacle(int row, int col){
+		this.obstacleData[row][col] = 1;
+		System.out.println("OBSTICAL DETECTED AT "+row+","+col);
+	}
+	private void addExploredArea(int midFrontRow, int midFrontCol, Direction robotDirection){
+		this.exploredData[midFrontRow][midFrontCol] = 1;
+		if(robotDirection == Direction.North){
+			this.exploredData[midFrontRow][midFrontCol+1]=1;
+			this.exploredData[midFrontRow][midFrontCol-1]=1;
+		}
+		if(robotDirection == Direction.South){
+			this.exploredData[midFrontRow][midFrontCol+1]=1;
+			this.exploredData[midFrontRow][midFrontCol-1]=1;
+		}
+		if(robotDirection == Direction.East){
+			this.exploredData[midFrontRow-1][midFrontCol]=1;
+			this.exploredData[midFrontRow+1][midFrontCol]=1;
+		}
+		if(robotDirection == Direction.West){
+			this.exploredData[midFrontRow-1][midFrontCol]=1;
+			this.exploredData[midFrontRow+1][midFrontCol]=1;
+		}
+	}
+	//TODO:
+	private void returnToStart(){
+		//TODO: algo to make the robot go back to start line; can do by stack maybe?
+	}
+	
+	
+	
+	//***********************************//
+	//		SHORTEST PATH METHODS		 //
+	//***********************************//
+	private void findPath(int[][] currentLocation){
+		//TODO: get the shortest path;
+	}
+	
+	
+}
