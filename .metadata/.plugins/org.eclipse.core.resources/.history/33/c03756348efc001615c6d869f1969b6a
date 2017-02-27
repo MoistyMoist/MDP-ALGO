@@ -1,0 +1,215 @@
+package com.sg.ntu.mdp.communication;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Descriptor {
+	
+	private int exloredData[][];
+	private int obstacleData[][];
+	
+	private String fileName = "MDFStrings_week4.txt";
+	
+	//TODO:
+	public void writeDescriptorFromFile(String exploredData, String obstacleData){
+		try{
+		    PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+		    
+		    writer.println("MDF String 1:");
+		    writer.println(Arrays.toString(splitToNChar(exploredData, 15)));
+		    writer.println("MDF String 2:");
+		    writer.println(Arrays.toString(splitToNChar(obstacleData, 15)));
+		    
+		    //writer.println("MDF String 1:\n"+exploredData);
+		    //writer.println("MDF String 2:\n"+obstacleData);
+		    writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	
+	 private static String[] splitToNChar(String text, int size) {
+	        List parts = new ArrayList<>();
+
+	        int length = text.length();
+	        for (int i = 0; i < length; i += size)
+	        {
+	            parts.add(text.substring(i, Math.min(length, i + size)));
+	        }
+	        return (String[]) parts.toArray(new String[0]);
+	    }
+	
+	
+	
+	
+	
+	//TODO:
+	public String readDescriptorFromFile(){
+		String content="";
+		File file = new File(fileName);
+		FileReader reader = null;
+		 try {
+			 	
+			  reader = new FileReader(file);
+		      char[] chars = new char[(int) file.length()];
+		      reader.read(chars);
+		      content = new String(chars);
+		      reader.close();
+		    
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+		 return content;
+	}
+	
+	
+	
+	//TODO:
+	public String hexToBinary(String hex){
+		return "";
+	}
+	//TODO:[20][15]
+	public int[][] getExploredDataToSimulator() throws IOException{
+		int[][] arena = new int[15][20];
+        
+        BufferedReader file=null;
+        char hex;
+        String hexstring;
+        String bitstring="";
+        
+        try 
+        {
+        	file = new BufferedReader(new FileReader(fileName));
+            hexstring = file.readLine();
+            for(int i=0; i<hexstring.length(); i++)
+            {
+            	hex=hexstring.charAt(i);
+                bitstring+=String.format("%4s", Integer.toBinaryString(Integer.parseInt(Character.toString(hex), 16))).replace(' ', '0');
+            }
+            for(int i=19; i>=0; i--)
+            {
+                for(int j=0; j<15;j++)
+                {
+                	arena[j][i]=1;
+                    
+                }
+            }
+            System.out.println();
+        } 
+        catch (FileNotFoundException exception) 
+        {
+            exception.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                if ( file != null)
+                	file.close( );
+            }
+            catch ( IOException exception)
+            {
+            }
+        }
+        
+        return arena;
+    }
+	//TODO:[20][15]
+	public int[][] getObstacleDataToSimulator() throws IOException{ 
+		int[][] arena = new int[15][20];
+        
+        BufferedReader file=null;
+        char hex;
+        String hexstring;
+        String bitstring="";
+    
+        try 
+        {
+            file = new BufferedReader(new FileReader(fileName));
+            hexstring = file.readLine();
+            for(int i=0; i<hexstring.length(); i++)
+            {
+            	hex=hexstring.charAt(i);
+            	bitstring+=String.format("%4s", Integer.toBinaryString(Integer.parseInt(Character.toString(hex), 16))).replace(' ', '0');
+            }
+            for(int i=19; i>=0; i--)
+            {
+                for(int j=0; j<15;j++)
+                {
+                         arena[j][i]=0;
+                }
+            }
+            
+        } 
+        catch (FileNotFoundException exception) 
+        {
+            exception.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                if ( file != null)
+                file.close( );
+            }
+            catch ( IOException exception)
+            {
+            }
+        }
+        
+        return arena;
+    }
+	
+	
+	
+	
+	public void saveDataFromSimulatorToFile(int[][] exploredData, int[][]obstacleData){
+		String exploredHex = saveExploredDataToFile(exploredData);
+		String obstacleHex = saveObstacleDataToFile(obstacleData);
+		
+		writeDescriptorFromFile(exploredHex, obstacleHex);
+	}
+	
+	public String binaryToHex(String binary){
+		String hex = Long.toHexString(Long.parseLong(binary, 2));
+	    return String.format("%" + (int)(Math.ceil(binary.length() / 4.0)) + "s", hex).replace(' ', '0');
+		
+	}
+	public String saveExploredDataToFile(int[][] data){
+		String stringData = "11";
+		String temp="";
+		for(int i=0;i<data.length;i++){
+			for(int j =0;j<data[i].length;j++){
+				stringData+=data[i][j];
+				temp+=data[i][j];
+			}
+			System.out.println(temp);
+			temp="";
+		}
+		this.exloredData = data;
+		return binaryToHex(stringData+="11");
+	}
+	public String saveObstacleDataToFile(int[][] data){
+		String stringData = "00";
+		String temp="";
+		for(int i=0;i<data.length;i++){
+			for(int j =0;j<data[i].length;j++){
+				stringData+=data[i][j];
+				temp+=data[i][j];
+			}
+			System.out.println(temp);
+			temp="";
+		}
+		this.obstacleData = data;
+		return binaryToHex(stringData+="00");
+	}
+}
