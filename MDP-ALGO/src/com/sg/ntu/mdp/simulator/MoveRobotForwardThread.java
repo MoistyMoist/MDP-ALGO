@@ -10,6 +10,7 @@ public class MoveRobotForwardThread extends Thread{
 		this.distance = distance;
 	}
 	
+	@SuppressWarnings("incomplete-switch")
 	@Override
     public void run(){
         synchronized(this){
@@ -49,6 +50,9 @@ public class MoveRobotForwardThread extends Thread{
     				Algothrim.currentLocationFrontCol=Algothrim.currentLocationFrontCol-1;
     				break;
     		}
+    		System.out.println("CUrrent row = "+Algothrim.currentLocationFrontRow);
+    		System.out.println("CUrrent COl = "+Algothrim.currentLocationFrontCol);
+    	
     		
     		MapUI.labels[MapUI.robotBodyConstrain.gridx+1][MapUI.robotBodyConstrain.gridy].setText("1");
     		MapUI.labels[MapUI.robotBodyConstrain.gridx-1][MapUI.robotBodyConstrain.gridy].setText("1");

@@ -1,7 +1,9 @@
 package com.sg.ntu.mdp;
 
+import com.sg.ntu.mdp.simulator.MapUI;
+
 public class Algothrim {
-	private float coverageLimit = 100f;
+	private float coverageLimit = 50f;
 	private float timeLimit = 500f;//TODO: change this later
 	
 	public static Direction currentDirection = Direction.East;
@@ -32,109 +34,7 @@ public class Algothrim {
 		}
 	}
 	
-	
-	//***************************************//
-	//EXPLORATION METHODS FOR REAL SITUATION //
-	//***************************************//
-	public void explore(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
-		if(leftSensor<=sensorTrashold){
-			//obstacle on robot left
-			//update the obstacle data
-			switch(currentDirection){
-				case North: 
-					if(currentLocationFrontCol-2>=-1)
-						addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
-					break;
-				case South: 
-					if(currentLocationFrontCol+2>=15)
-						addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
-					break;
-				case East: 
-					if(currentLocationFrontRow-2>=-1)
-						addObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
-					break;
-				case West: 
-					if(currentLocationFrontRow+2>=20)
-						addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
-					break;
-			}
-		}
-		if(rightSensor<=sensorTrashold){
-			//obstacle on robot right
-			//update the obstacle data
-			switch(currentDirection){
-				case North:
-					if(currentLocationFrontCol+2>=15)
-						addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
-					break;
-				case South:
-					if(currentLocationFrontCol-2>=-1)
-						addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
-					break;
-				case East:
-					if(currentLocationFrontRow+2>=20)
-						addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
-					break;
-				case West:
-					if(currentLocationFrontRow-2>=-1)
-						addObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
-					break;
-			}
-		}
-		
-		if(isRobotWithinGoalArea()){
-			returnToStart();
-		}else{
-			//continue exploring
-			//main decision making depending on the direction and current location of the robot(goal direction is always north east)
-			if(currentDirection == Direction.North){
-				if(currentLocationFrontRow==0){
-					//if east path has not obstacle
-					if(obstacleData[0][currentLocationFrontCol+2]!=1&&
-							obstacleData[currentLocationFrontRow+1][currentLocationFrontCol+2]!=1&&
-							obstacleData[currentLocationFrontCol+2][currentLocationFrontCol+2]!=1){
-//						callback.changeDirection(Direction.East);
-						this.currentDirection = Direction.East;
-						callback.moveForward(1);
-						//TODO update the current location after moving forward
-					}
-					else{
-						int distance = 0;
-						//we move backwards (x distance) till we can move east
-						while(obstacleData[currentLocationFrontRow+1][currentLocationFrontCol+2]==1&&
-								obstacleData[currentLocationFrontCol+2][currentLocationFrontCol+2]==1&&
-								obstacleData[currentLocationFrontCol][currentLocationFrontCol+2]==1){
-							distance++;
-						}
-//						callback.changeDirection(Direction.South);
-						this.currentDirection = Direction.South;
-						callback.moveForward(distance);
-					}
-					
-				}
-				else if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
-					callback.moveForward(1);
-				}
-			}
-			if(currentDirection == Direction.South){
-				//for some reason we are facing south means north direction is blocked we move to the east
-				if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
-					//nothing infront move forward
-				}
-			}
-			if(currentDirection == Direction.East){
-				if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
-					//nothing infront move forward
-				}
-			}
-			if(currentDirection == Direction.West){
-				if(frontMidSensor>sensorTrashold && frontRightSensor>sensorTrashold && frontLeftSensor>sensorTrashold){
-					//nothing infront move forward
-				}
-			}
-		}	
-	}
-	
+
 	
 	//***************************************//
 	//  EXPLORATION METHODS FOR SIMULATION	 //
@@ -143,7 +43,8 @@ public class Algothrim {
 	//@Notes: we focus on this first since it is a requirement
 	public void exploreSimulation(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
 		if(isExporeCoverageReached()){
-			returnToStart();
+			System.out.println("COVERAGE REACHED");
+			returnToStart(callback);
 		}else{
 			if(leftSensor>=sensorTrashold){
 //				System.out.println("OBSTICAL AT LEFT SENSOR");
@@ -152,7 +53,9 @@ public class Algothrim {
 				switch(currentDirection){
 					case North: 
 						if(currentLocationFrontCol-2>=0)
-							addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+//							if(currentLocationFrontRow>=0){
+								addObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+//							}
 						break;
 					case South: 
 						if(currentLocationFrontCol+2<=14)
@@ -167,15 +70,37 @@ public class Algothrim {
 							addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
 						break;
 				}
+			}else{
+				switch(currentDirection){
+					case North: 
+						if(currentLocationFrontCol-2>=0)
+//							if(currentLocationFrontRow>=0){
+								addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol-2);
+//							}
+						break;
+					case South: 
+						if(currentLocationFrontCol+2<=14)
+							addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol+2);
+						break;
+					case East: 
+						if(currentLocationFrontRow-2>=0)
+							addExploredAreaBySensor(currentLocationFrontRow-2,currentLocationFrontCol);
+						break;
+					case West: 
+						if(currentLocationFrontRow+2<=19)
+							addExploredAreaBySensor(currentLocationFrontRow+2,currentLocationFrontCol);
+						break;
+				}
 			}
 			if(rightSensor>=sensorTrashold){
-//				System.out.println("OBSTICAL AT RIGHT SENSOR");
 				//obstacle on robot right
 				//update the obstacle data
 				switch(currentDirection){
 					case North:
 						if(currentLocationFrontCol+2<=14)
-							addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+//							if(currentLocationFrontRow>=0){
+								addObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+//							}
 						break;
 					case South:
 						if(currentLocationFrontCol-2>=0)
@@ -190,9 +115,29 @@ public class Algothrim {
 							addObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
 						break;
 				}
+			}else{
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontCol+2<=14)
+//							if(currentLocationFrontRow>=0){
+								addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol+2);
+//							}
+						break;
+					case South:
+						if(currentLocationFrontCol-2>=0)
+							addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol-2);
+						break;
+					case East:
+						if(currentLocationFrontRow+2<=19)
+							addExploredAreaBySensor(currentLocationFrontRow+2,currentLocationFrontCol);
+						break;
+					case West:
+						if(currentLocationFrontRow-2>=0)
+							addExploredAreaBySensor(currentLocationFrontRow-2,currentLocationFrontCol);
+						break;
+				}
 			}
 			if(frontMidSensor>=sensorTrashold){
-//				System.out.println("OBSTICAL AT MID SENSOR");
 				//obstacle on robot mid front
 				//update the obstacle data
 				switch(currentDirection){
@@ -210,12 +155,30 @@ public class Algothrim {
 						break;
 					case West:
 						if(currentLocationFrontCol-1>=0)
-							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol);
+							addObstacle(currentLocationFrontRow,currentLocationFrontCol-1);
+						break;
+				}
+			}else{
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontRow-1>=0)
+							addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol);
+						break;
+					case South:
+						if(currentLocationFrontRow+1<=19)
+							addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol);
+						break;
+					case East:
+						if(currentLocationFrontCol+1<=14)
+							addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol+1);
+						break;
+					case West:
+						if(currentLocationFrontCol-1>=0)
+							addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol-1);
 						break;
 				}
 			}
 			if(frontLeftSensor>=sensorTrashold){
-//				System.out.println("OBSTICAL AT FRONT LEFT SENSOR");
 				//obstacle on robot front left
 				//update the obstacle data
 				switch(currentDirection){
@@ -232,8 +195,27 @@ public class Algothrim {
 							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol+1);
 						break;
 					case West:
-						if(currentLocationFrontCol-1>=0)
+						if(currentLocationFrontCol+1<=14)
 							addObstacle(currentLocationFrontRow+1,currentLocationFrontCol-1);
+						break;
+				}
+			}else{
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontRow-1>=0)
+							addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol-1);
+						break;
+					case South:
+						if(currentLocationFrontRow+1<=19)
+							addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol+1);
+						break;
+					case East:
+						if(currentLocationFrontCol+1<=14)
+							addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol+1);
+						break;
+					case West:
+						if(currentLocationFrontCol-1>=0)
+							addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol-1);
 						break;
 				}
 			}
@@ -259,16 +241,32 @@ public class Algothrim {
 							addObstacle(currentLocationFrontRow-1,currentLocationFrontCol-1);
 						break;
 				}
+			}else{
+				switch(currentDirection){
+					case North:
+						if(currentLocationFrontRow-1>=0)
+							addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol+1);
+						break;
+					case South:
+						if(currentLocationFrontRow+1<=19)
+							addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol-1);
+						break;
+					case East:
+						if(currentLocationFrontCol+1<=14)
+							addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol+1);
+						break;
+					case West:
+						if(currentLocationFrontCol-1>=0)
+							addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol-1);
+						break;
+				}
 			}
-			
 			
 			//todo:error here
 			//we move forward till there is a wall
 			boolean breakloop = false;
-			for(int i=19;i>1;i--){
-				for(int j=0;j<15;j++){
-//					System.out.println(i+","+j+" ");
-//					System.out.println(obstacleData[i][j]);
+			for(int i=19;i>=0;i--){
+				for(int j=0;j<=14;j++){
 					if(exploredData[i][j]==0&&obstacleData[i][j]==0){
 //						System.out.println(i+","+j);
 						//TODO: check if this grid is accessable (for now jus check if surrounding can fit a robot)
@@ -276,15 +274,19 @@ public class Algothrim {
 						//base on 1x1 grid of head
 						switch(currentDirection){
 							case North:
+								System.out.println("TARGETN"+i+","+j);
 								makeDecisionFacingNorth(i,j,callback);
 								break;
 							case South:
+								System.out.println("TARGETS"+i+","+j);
 								makeDecisionFacingSouth(i,j,callback);
 								break;
 							case East:
+								System.out.println("TARGETE"+i+","+j);
 								makeDecisionFacingEast(i,j,callback);
 								break;
 							case West:
+								System.out.println("TARGETW"+i+","+j);
 								makeDecisionFacingWest(i,j,callback);
 								break;
 								
@@ -327,6 +329,9 @@ public class Algothrim {
 		boolean isBackObstacle = false;
 		int []BackObstaclePositionCount = {0,0,0};//index 0 = left of head
 		//check for walls
+		if(currentLocationFrontRow<0){
+			currentLocationFrontRow=0;
+		}
 		if(currentLocationFrontCol+2>=15){
 			isRightWall = true;
 		}
@@ -334,6 +339,7 @@ public class Algothrim {
 			isLeftWall = true;
 		}
 		if(currentLocationFrontRow-1<0){
+			System.out.println("FRONT IS WALL");
 			isFrontWall = true;
 		}
 		if(currentLocationFrontRow+3>19){
@@ -508,16 +514,47 @@ public class Algothrim {
 		
 		
 		
-		//TARGET GRID FRONT OF ROBOT
+		//FACING NORTH TARGET FRONT
+		if((currentLocationFrontRow>row&&currentLocationFrontCol==col)||(currentLocationFrontRow>row&&currentLocationFrontCol-1==col)||(currentLocationFrontRow>row&&currentLocationFrontCol+1==col)){
+			System.out.println("INSTRUCTION FACING NORTH TARGET FRONT");
+			if(isFrontObstacle==false){
+				callback.moveForward(1);
+			}else{
+				if(isRightObstacle==true||isRightWall==true){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isLeftWall==true||isLeftObstacle==true){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING NORTH TARGET FRONT");
+				}
+			}
+		}
 		
-		//target grid backward of robot
-		
-		
-		//target grid left of robot
+		//FACING NORTH TARGET LEFT
+		else if((currentLocationFrontRow==row&&currentLocationFrontCol>col)||(currentLocationFrontRow+2==row&&currentLocationFrontCol>col)||(currentLocationFrontRow+1==row&&currentLocationFrontCol>col)){
+			System.out.println("INSTRUCTION FACING NORTH TARGET LEFT");
+			if(isLeftWall==false&& isLeftObstacle==false){
+				callback.changeDirection(Direction.LEFT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING NORTH TARGET LEFT");
+				}
+				
+			}
+		}
 				
 		//FACING NORTH TARGET RIGHT
-		if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow==row+1&&currentLocationFrontCol<col)||(currentLocationFrontRow+2==row&&currentLocationFrontCol<col)){
-			System.out.println("target right");
+		else if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow==row+1&&currentLocationFrontCol<col)||(currentLocationFrontRow+2==row&&currentLocationFrontCol<col)){
+			System.out.println("INSTRUCTION FACING NORTH TARGET RIGHT");
 			if(isRightWall==false && isRightObstacle ==false){
 				callback.changeDirection(Direction.RIGHT, 1);
 				callback.moveForward(1);
@@ -546,12 +583,65 @@ public class Algothrim {
 				if(isFrontWall==false&& isFrontObstacle){
 					callback.moveForward(1);
 				}else{
-					System.out.println("ERROR: FACING NORTH TARGET BOTTOM");
+					
+				}
+			}
+		}
+		
+		//FACING NORTH TARGET FRONT LEFT
+		else if((currentLocationFrontRow>row&&currentLocationFrontCol>col)){
+			System.out.println("INSTRUCTION FACING NORTH TARGET FRONT LEFT");
+			if(isFrontObstacle==false){
+				callback.moveForward(1);
+			}else{
+				if(isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isRightWall==false&&isRightObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING NORTH TARGET FRONT LEFT");
 				}
 			}
 			
+		}
+		//FACING NORTH TARGET FRONT RIGHT
+		else if((currentLocationFrontRow>row&&currentLocationFrontCol<col)){
+			System.out.println("INSTRUCTION FACING NORTH TARGET FRONT RIGHT");
+			if(isFrontWall==false&&isFrontObstacle==false){
+				callback.moveForward(1);
+			}else{
+				if(isRightWall==false&&isRightObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING NORTH TARGET FRONT RIGHT");
+				}
+			}
+		}
+
+		//FACING NORTH TARGET BOTTOM LEFT
+		else if((currentLocationFrontRow<row&&currentLocationFrontCol>col)){
+			System.out.println("INSTRUCTION FACING NORTH TARGET BOTTOM LEFT");
+			if(isLeftWall==false&&isLeftObstacle==false){
+				callback.changeDirection(Direction.LEFT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else if(isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING NORTH TARGET BOTTOM LEFT");
+				}
+			}
 			
 		}
+		
 		//FACING NORTH TARGET BOTTOM RIGHT
 		else if(currentLocationFrontRow<row&&currentLocationFrontCol<col){
 			System.out.println("INSTRUCTION FACING NORTH TARGET BOTTOM RIGHT");
@@ -560,32 +650,11 @@ public class Algothrim {
 				callback.moveForward(1);
 			}
 			else{
-				if(isLeftWall==true && isRightObstacle==true){
-					if(rightObstaclePositionCount[2]==1){
-						callback.moveForward(1);
-					}else if(rightObstaclePositionCount[1]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else{
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}
-				}
-				else if(isLeftWall==false && isRightObstacle==true){
-					if(rightObstaclePositionCount[2]==1){
-						System.out.println("ERROR: here1");
-						callback.moveForward(1);
-					}else if(rightObstaclePositionCount[1]==1){
-						System.out.println("ERROR: here2");
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else{
-						System.out.println("ERROR: here");
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}
+				if(isFrontObstacle==false&&isFrontWall==false){
+					callback.moveForward(1);
+				}else if(isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					callback.moveForward(1);
 				}
 				else{
 					System.out.println("ERROR: FACING NORTH TARGET BOTTOM RIGHT");
@@ -594,13 +663,8 @@ public class Algothrim {
 				
 			}
 		}
-		//target grid top right of robot
-				
-		//target grid top left of robot
-				
+	
 		
-				
-		//target grid bottom left of robot
 	}
 	private void makeDecisionFacingSouth(int row, int col, final RobotCallback callback){
 		int counter = 0;
@@ -812,38 +876,140 @@ public class Algothrim {
 			if(isFrontObstacle==false){
 				callback.moveForward(1);
 			}else{
-				System.out.println("ERROR: FACING SOUTH TARGET FRONT");
+				if(isRightWall==true||isRightObstacle==true){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isLeftWall==true||isLeftObstacle==true){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING SOUTH TARGET FRONT");
+				}
+				
 			}
 		}
 		//FACING SOUTH TARGET IS LEFT
-		if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-2==row&&currentLocationFrontCol<col)){
+		else if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-2==row&&currentLocationFrontCol<col)){
 			System.out.println("INSTRUCTION FACING SOUTH TARGET LEFT");
 			if(isLeftObstacle==false){
 				callback.changeDirection(Direction.LEFT, 1);
 				callback.moveForward(1);
 			}else{
-				
-			}System.out.println("ERROR: FACING SOUTH TARGET LEFT");
-		}
-		//FACING SOUTH TARGET TOP RIGHT
-		if(currentLocationFrontRow<row&&currentLocationFrontCol>col){
-			System.out.println("INSTRUCTION FACING SOUTH TARGET TOP RIGHT");
-			if(isFrontObstacle==false){
-				callback.moveForward(1);
-			}else{
-				System.out.println("ERROR: FACING SOUTH TARGET TOP RIGHT");
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}
+				else if(isBackWall=false&&isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING SOUTH TARGET LEFT");
+				}
 			}
 		}
+		
 		//FACING SOUTH TARGET RIGHT
-		if((currentLocationFrontRow==row&&currentLocationFrontCol>col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol>col)||(currentLocationFrontRow-2==row&&currentLocationFrontCol>col)){
+		else if((currentLocationFrontRow==row&&currentLocationFrontCol>col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol>col)||(currentLocationFrontRow-2==row&&currentLocationFrontCol>col)){
 			System.out.println("INSTRUCTION FACING SOUTH TARGET RIGHT");
 			if(isRightObstacle==false){
 				callback.changeDirection(Direction.RIGHT, 1);
 			}else{
-				System.out.println("ERROR: FACING SOUTH TARGET RIGHT");
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING SOUTH TARGET RIGHT");
+				}
+				
+			}
+		}
+		//FACING SOUTH TARGET BOTTOM
+		else if((currentLocationFrontRow>row&&currentLocationFrontCol==col)||(currentLocationFrontRow>row&&currentLocationFrontCol+1==col)||(currentLocationFrontRow>row&&currentLocationFrontCol-1==col)){
+			System.out.println("INSTRUCTION FACING SOUTH TARGET BOTTOM");
+			if(isBackObstacle==false){
+				callback.changeDirection(Direction.RIGHT, 2);
+				callback.moveForward(1);
+			}else{
+				System.out.println("ERROR: FACING SOUTH TARGET BOTTOM");
 			}
 		}
 		
+		
+		
+		//FACING SOUTH TARGET TOP RIGHT
+		else if(currentLocationFrontRow<row&&currentLocationFrontCol>col){
+			System.out.println("INSTRUCTION FACING SOUTH TARGET TOP RIGHT");
+			if(isFrontObstacle==false){
+				callback.moveForward(1);
+			}else{
+				if(isRightWall==false&&isRightObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}else if(isLeftWall==false&&isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING SOUTH TARGET TOP RIGHT");
+				}
+				
+			}
+		}
+		//FACING SOUTH TARGET TOP LEFT
+		else if(currentLocationFrontRow<row&&currentLocationFrontCol<col){
+			System.out.println("INSTRUCTION FACING SOUTH TARGET TOP LEFT");
+			if(isFrontWall==false&&isFrontObstacle==false){
+				callback.moveForward(1);
+			}else{
+				if(isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isRightWall==false&&isRightObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING SOUTH TARGET TOP LEFT");
+				}
+			}
+		}
+		
+		//FACING SOUTH TARGET BOTTOM LEFT
+		else if(currentLocationFrontRow>row&&currentLocationFrontCol<col){
+			System.out.println("INSTRUCTION FACING SOUTH TARGET BOTTOM LEFT");
+			if(isLeftWall==false&&isLeftObstacle==false){
+				callback.changeDirection(Direction.LEFT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}
+				else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING SOUTH TARGET BOTTOM LEFT");
+				}
+			}
+		}
+		
+		//FACING SOUTH TARGET BOTTOM RIGHT
+		else if(currentLocationFrontRow>row&&currentLocationFrontCol>col){
+			System.out.println("INSTRUCTION FACING SOUTH TARGET BOTTOM RIGHT");
+			if(isRightObstacle==false){
+				callback.changeDirection(Direction.RIGHT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING SOUTH TARGET BOTTOM RIGHT");
+				}
+			}
+		}
 		
 	}
 	private void makeDecisionFacingEast(int row, int col, final RobotCallback callback){
@@ -983,7 +1149,7 @@ public class Algothrim {
 					exploredCounter++;
 				}
 			}else{
-				FrontObstaclePositionCount[0]=1;
+				FrontObstaclePositionCount[2]=1;
 			}
 			if(obstacleData[currentLocationFrontRow+1][currentLocationFrontCol+1]!=1){
 				counter++;
@@ -992,7 +1158,7 @@ public class Algothrim {
 					exploredCounter++;
 				}
 			}else{
-				FrontObstaclePositionCount[2] = 1;
+				FrontObstaclePositionCount[0] = 1;
 			}
 			if(counter==3){
 				isFrontObstacle = false;
@@ -1057,103 +1223,50 @@ public class Algothrim {
 			if(isFrontWall==false && isFrontObstacle==false){
 				callback.moveForward(1);
 			}else{
-				if((isRightWall==true&&isLeftObstacle==true)){
-					callback.changeDirection(Direction.LEFT, 2);
+				if(isLeftWall==false&&isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isRightWall==false&&isRightObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
 					if(leftObstaclePositionCount[2]==1){
 						callback.moveForward(1);
 						callback.moveForward(1);
 						callback.moveForward(1);
-						callback.changeDirection(Direction.RIGHT, 1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}
-					else if(leftObstaclePositionCount[1]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.changeDirection(Direction.RIGHT, 1);
-						callback.moveForward(1);
-						callback.moveForward(1);
+					}else if(leftObstaclePositionCount[1]==1){
 						callback.moveForward(1);
 						callback.moveForward(1);
 					}else{
 						callback.moveForward(1);
-						callback.changeDirection(Direction.RIGHT, 1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
 					}
-				}
-				else if(isLeftWall==true && isRightObstacle==true){
-					if(rightObstaclePositionCount[2]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.changeDirection(Direction.RIGHT, 1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}
-					else if(rightObstaclePositionCount[1]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.changeDirection(Direction.RIGHT, 1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else{
-						callback.moveForward(1);
-						callback.changeDirection(Direction.RIGHT, 1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}
-				}
-				else if(isLeftObstacle==true && isRightObstacle==true){//can be changed later
-					if(exploredData[currentLocationFrontRow+2][currentLocationFrontCol]==0||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-1]==0||exploredData[currentLocationFrontRow+2][currentLocationFrontCol-2]==0){
-						callback.changeDirection(Direction.RIGHT, 1);
-						callback.moveForward(1);
-					}else{
-						callback.changeDirection(Direction.LEFT, 1);
-						callback.moveForward(1);
-					}
-				}
-				else if(isLeftObstacle==true && isRightObstacle==false){
 					callback.changeDirection(Direction.RIGHT, 1);
-					callback.moveForward(1);
-				}
-				else if(isLeftObstacle==false && isRightObstacle==true){
-					callback.changeDirection(Direction.LEFT, 1);
-					callback.moveForward(1);
-				}else if(isRightWall==true && isLeftObstacle==false){
-					callback.changeDirection(Direction.LEFT, 1);
-					if(FrontObstaclePositionCount[2]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else if(FrontObstaclePositionCount[1]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else{
-						callback.moveForward(1);
-					}
 				}
 				else{
 					System.out.println("ERROR: FACING EAST TARGET INFRONT");
 				}
 			}
 		}
-		//target grid backward of robot
 		
 		
 		//FACING EAST TARGET LEFT
 		else if((currentLocationFrontRow>row&& currentLocationFrontCol==col)||(currentLocationFrontRow>row&& currentLocationFrontCol-1==col)||(currentLocationFrontRow>row&& currentLocationFrontCol-2==col)){
 			System.out.println("INSTRUCTION FACING EAST TARGET LEFT");
+			if(isLeftObstacle==false){
+				callback.changeDirection(Direction.LEFT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING EAST TARGET LEFT");
+				}
+			}
 		}
 		
 		//FACING EAST TARGET RIGHT
@@ -1163,52 +1276,48 @@ public class Algothrim {
 				callback.changeDirection(Direction.RIGHT, 1);
 				callback.moveForward(1);
 			}else{
-				if(isRightObstacle==true && isFrontObstacle==false){
+				if(isFrontWall==false&&isFrontObstacle==false){
 					callback.moveForward(1);
-				}
-				else if(isRightObstacle==true && isLeftObstacle==true){
+				}else if(isBackWall==false&&isBackObstacle==false){
 					callback.changeDirection(Direction.RIGHT, 2);
-					if(leftObstaclePositionCount[2]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else if(leftObstaclePositionCount[1]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else{
-						callback.moveForward(1);
-					}
-					callback.changeDirection(Direction.RIGHT, 1);
-					
-				}else if(isFrontObstacle==true && isRightObstacle==true){
+					callback.moveForward(1);
+				}else if(isLeftWall==false&&isLeftObstacle==false){
 					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
 				}
 				else {
 					System.out.println("ERROR: FACING EAST TARGET RIGHT");
 				}
 			}
 		}
-		//target grid top right of robot
+		//FACING EAST TARGET BOTTOM
+		else if((currentLocationFrontRow==row&&currentLocationFrontCol>col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol>col)||(currentLocationFrontRow+1==row&&currentLocationFrontCol>col)){
+			System.out.println("INSTRUCTION FACING EAST TARGET BOTTOM");
+			if(isBackWall==false&&isBackObstacle==false){
+				callback.changeDirection(Direction.LEFT, 2);
+				callback.moveForward(1);
+			}else{
+				System.out.println("ERROR: FACING EAST TARGET BOTTOM");
+			}
+		}
+		
+		
+		
+		//FACING EAST TARGET TOP RIGHT
 		else if(currentLocationFrontRow<row&&currentLocationFrontCol<col){
 			System.out.println("INSTRUCTION FACING EAST TARGET TOP RIGHT");
 			if(isFrontWall==false && isFrontObstacle==false){
 				callback.moveForward(1);
 			}else{
-				if(isRightObstacle==true && isLeftObstacle==true){
-					callback.changeDirection(Direction.RIGHT, 2);
-					if(leftObstaclePositionCount[2]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else if(leftObstaclePositionCount[1]==1){
-						callback.moveForward(1);
-						callback.moveForward(1);
-					}else{
-						callback.moveForward(1);
-					}
-				}else if(isRightObstacle==true && isLeftObstacle==false){
+				if(isRightObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}else if(isLeftWall==false&&isLeftObstacle==false){
 					callback.changeDirection(Direction.LEFT, 1);
-//					callback.moveForward(1);
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
 				}
 				else{
 					System.out.println("ERROR: FACING EAST TARGET TOP RIGHT");
@@ -1216,20 +1325,64 @@ public class Algothrim {
 			}
 		}
 		
-		//target grid top left of robot
+		//FACING EAST TARGET TOP LEFT
+		else if(currentLocationFrontRow>row&&currentLocationFrontCol<col){
+			System.out.println("INSTRUCTION FACING EAST TARGET TOP LEFT");
+			if(isFrontWall==false&&isFrontObstacle==false){
+				callback.moveForward(1);
+			}else{
+				if(isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isBackWall==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					
+					System.out.println("ERROR: FACING EAST TARGET TOP LEFT");
+				}
+			}
+			
+		}
 		
-		//target grid bottom right of robot
+		//FACING EAST TARGET BOTTOM RIGHT
 		else if(currentLocationFrontRow<row&&currentLocationFrontCol>col){
 			System.out.println("INSTRUCTION FACING EAST TARGET BOTTOM RIGHT");
 			if(isRightObstacle==false){
 				callback.changeDirection(Direction.RIGHT, 1);
-				callback.moveForward(1);
+			
 			}else{
-				System.out.println("ERROR: FACING EAST TARGET BOTTOM RIGHT");
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING EAST TARGET BOTTOM RIGHT");
+				}
+				
 			}
 		}
 		
-		//target grid bottom left of robot
+		//FACING EAST TARGET BOTTOM LEFT
+		else if(currentLocationFrontRow>row&&currentLocationFrontCol>col){
+			System.out.println("INSTRUCTION FACING EAST TARGET BOTTOM LEFT");
+			if(isLeftWall==false&& isLeftObstacle==false){
+				callback.changeDirection(Direction.LEFT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else if(isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING EAST TARGET BOTTOM LEFT");
+				}
+			}
+		}else{
+			System.out.println(currentLocationFrontRow);
+			System.out.println(currentLocationFrontCol);
+			System.out.println("STUCK FACING EAST");
+		}
 		
 	}
 	private void makeDecisionFacingWest(int row, int col, final RobotCallback callback){
@@ -1267,7 +1420,7 @@ public class Algothrim {
 		if(currentLocationFrontCol-1<0){
 			isFrontWall = true;
 		}
-		if(currentLocationFrontCol+3<14){
+		if(currentLocationFrontCol+3>14){
 			isBackWall = true;
 		}
 		if(isRightWall==false){
@@ -1441,50 +1594,177 @@ public class Algothrim {
 		
 		
 		
-		//target grid front of robot
-		
-		//target grid backward of robot
-		if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol<col)||(currentLocationFrontRow+1==row&&currentLocationFrontCol<col)){	
-			System.out.println("here");
-			//smth wrong b4 tats y target at the back
-			 isLeftWall = false;
-			 isRightWall = false;
-			//turn back if left and right has obstacle
-			if(currentLocationFrontRow-2>=0){//robot right is not a wall
-				isRightWall = false;
-			}
-			else{
-				isRightWall = true;
-			}
-			if(currentLocationFrontRow+2<=19){//robot left is not a wall
-				isLeftWall = false;
+		//FACING WEST TARGET FRONT
+		if((currentLocationFrontRow==row&&currentLocationFrontCol>col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol>col)||(currentLocationFrontRow+1==row&&currentLocationFrontCol>col)){
+			System.out.println("INSTRUCTION FACING WEST TARGET FRONT");
+			if(isFrontWall==false&& isFrontObstacle==false){
+				callback.moveForward(1);
 			}else{
-				isLeftWall = true;
+				if(isRightObstacle==false&&isRightWall==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+					
+				}else if(isLeftObstacle==false&&isLeftWall==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					if(leftObstaclePositionCount[2]==1){
+						callback.moveForward(1);
+						callback.moveForward(1);
+						callback.moveForward(1);
+					}else if(leftObstaclePositionCount[1]==1){
+						callback.moveForward(1);
+						callback.moveForward(1);
+					}else{
+						callback.moveForward(1);
+					}
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING WEST TARGET FRONTT");
+				}
 			}
-			
-			if(isLeftWall==true){
+		}
+		
+		//FACING WEST TARGET BACK
+		else if((currentLocationFrontRow==row&&currentLocationFrontCol<col)||(currentLocationFrontRow-1==row&&currentLocationFrontCol<col)||(currentLocationFrontRow+1==row&&currentLocationFrontCol<col)){	
+			System.out.println("INSTRUCTION FACING WEST TARGET BACK");
+			if(isBackWall==false&&isBackObstacle==false){
+				callback.changeDirection(Direction.LEFT, 2);
+				callback.moveForward(1);
+			}else{
+				System.out.println(isBackWall);
+				System.out.println("ERROR: FACING WEST TARGET BACK");
+			}
+		}
+		//FACING WEST TARGET LEFT
+		else if((currentLocationFrontRow<row&&currentLocationFrontCol==col)||(currentLocationFrontRow<row&&currentLocationFrontCol+1==col)||(currentLocationFrontRow<row&&currentLocationFrontCol+2==col)){
+			System.out.println("INSTRUCTION FACING WEST TARGET LEFT");
+			if(isLeftWall==false&&isLeftObstacle==false){
+				callback.changeDirection(Direction.LEFT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else if((isFrontWall==true||isFrontObstacle==true)&&isLeftObstacle==true&&(isBackWall==false&&isBackObstacle==false)){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING WEST TARGET LEFT");
+				}
 				
 			}
 		}
-		//target grid left of robot
 		
-		//target grid right of robot
+		//FACING WEST TARGET RIGHT
+		else if((currentLocationFrontRow>row&&currentLocationFrontCol==col)||(currentLocationFrontRow>row&&currentLocationFrontCol+1==col)||(currentLocationFrontRow>row&&currentLocationFrontCol+2==col)){
+			System.out.println("INSTRUCTION FACING WEST TARGET RIGHT");
+			if(isRightWall==false&&isRightObstacle==false){
+				callback.changeDirection(Direction.RIGHT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING WEST TARGET RIGHT");
+				}
+				
+			}
+		}
 		
 		//target grid top right of robot
-		
+		else if(currentLocationFrontRow>row&&currentLocationFrontCol>col){
+			System.out.println("INSTRUCTION FACING WEST TARGET TOP RIGHT");
+			if(isFrontWall==false&&isFrontObstacle==false){
+				callback.moveForward(1);;
+			}else{
+				if(isRightObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}else if(isLeftObstacle==false&&isLeftWall==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("left wall "+isLeftWall);
+					System.out.println("left OBS "+isLeftObstacle);
+					System.out.println("ERROR: FACING WEST TARGET TOP RIGHT");
+				}
+			}
+		}
 		//target grid top left of robot
+		else if(currentLocationFrontRow<row&&currentLocationFrontCol>col){
+			System.out.println("INSTRUCTION FACING WEST TARGET TOP LEFT");
+			if(isFrontWall==false&&isFrontObstacle==false){
+				callback.moveForward(1);
+			}else{
+				if(isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}
+				else{
+					System.out.println("ERROR: FACING WEST TARGET TOP LEFT");
+				}
+				
+			}
+			
+		}
 		
 		//target grid bottom right of robot
-		
+		else if(currentLocationFrontRow>row&&currentLocationFrontCol<col){
+			System.out.println("INSTRUCTION FACING WEST TARGET BOTTOM RIGHT");
+			if(isRightWall==false&&isRightObstacle==false){
+				callback.changeDirection(Direction.RIGHT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isFrontWall==false&&isFrontObstacle==false){
+					callback.moveForward(1);
+				}
+				else if(isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING WEST TARGET BOTTOM RIGHT");
+				}
+			}
+			
+		}
 		//target grid bottom left of robot
+		else if(currentLocationFrontRow<row&&currentLocationFrontCol<col){
+			System.out.println("INSTRUCTION FACING WEST TARGET BOTTOM LEFT");
+			if(isLeftObstacle==false){
+				callback.changeDirection(Direction.LEFT, 1);
+				callback.moveForward(1);
+			}else{
+				if(isBackObstacle==false){
+					callback.changeDirection(Direction.LEFT, 2);
+					callback.moveForward(1);
+				}else{
+					System.out.println("ERROR: FACING WEST TARGET BOTTOM LEFT");
+				}
+			}
+		}else{
+			System.out.println("currentLocationFrontRow"+currentLocationFrontRow);
+			System.out.println("currentLocationFrontCol"+currentLocationFrontCol);
+			System.out.println("STUCK");
+		}
 	}
 	
 	//TODO:
-	
-
 	private boolean isTargetCellReachable(int row, int col){
 		return false;
 	}
+	
 	private boolean isExporeCoverageReached(){
 		int exploredCount= 0;
 		for(int i=0;i<exploredData.length;i++){
@@ -1494,21 +1774,16 @@ public class Algothrim {
 				}
 			}
 		}
-		if(exploredCount/300*100>=this.coverageLimit)
+		float coverage=exploredCount/300f*100f;
+		System.out.println("EXPLORED GRIDS ="+coverage);
+		if(coverage>=this.coverageLimit)
 			return true;
 		else
 			return false;
 	}
-	//TODO: used for true exploration not for simulation
-	private boolean isRobotWithinGoalArea(){
-		//within doesent mean the robot is fully in the goal area only means the head is in the goal area
-		return false;
-	}
+	
 	public void addObstacle(int frontMidSensor, int frontLeftSensor, int frontRightSensor, int rightSensor, int leftSensor){
 		if(leftSensor>=sensorTrashold){
-//			System.out.println("OBSTICAL AT LEFT SENSOR");
-			//obstacle on robot left
-			//update the obstacle data
 			switch(currentDirection){
 				case North: 
 					if(currentLocationFrontCol-2>=0)
@@ -1527,11 +1802,29 @@ public class Algothrim {
 						addObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
 					break;
 			}
+		}else{
+			switch(currentDirection){
+			case North: 
+					if(currentLocationFrontCol-2>=0)
+						if(currentLocationFrontRow>=0){
+							addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol-2);
+						}
+					break;
+				case South: 
+					if(currentLocationFrontCol+2<=14)
+						addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol+2);
+					break;
+				case East: 
+					if(currentLocationFrontRow-2>=0)
+						addExploredAreaBySensor(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+				case West: 
+					if(currentLocationFrontRow+2<=19)
+						addExploredAreaBySensor(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+			}
 		}
 		if(rightSensor>=sensorTrashold){
-//			System.out.println("OBSTICAL AT RIGHT SENSOR");
-			//obstacle on robot right
-			//update the obstacle data
 			switch(currentDirection){
 				case North:
 					if(currentLocationFrontCol+2<=14)
@@ -1551,10 +1844,29 @@ public class Algothrim {
 					break;
 			}
 		}
+		else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontCol+2<=14)
+						if(currentLocationFrontRow>=0){
+							addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol+2);
+						}
+					break;
+				case South:
+					if(currentLocationFrontCol-2>=0)
+						addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol-2);
+					break;
+				case East:
+					if(currentLocationFrontRow+2<=19)
+						addExploredAreaBySensor(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+				case West:
+					if(currentLocationFrontRow-2>=0)
+						addExploredAreaBySensor(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+			}
+		}
 		if(frontMidSensor>=sensorTrashold){
-//			System.out.println("OBSTICAL AT MID SENSOR");
-			//obstacle on robot mid front
-			//update the obstacle data
 			switch(currentDirection){
 				case North:
 					if(currentLocationFrontRow-1>=0)
@@ -1570,14 +1882,30 @@ public class Algothrim {
 					break;
 				case West:
 					if(currentLocationFrontCol-1>=0)
-						addObstacle(currentLocationFrontRow-1,currentLocationFrontCol);
+						addObstacle(currentLocationFrontRow,currentLocationFrontCol-1);
+					break;
+			}
+		}else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						addExploredAreaBySensor(currentLocationFrontRow,currentLocationFrontCol-1);
 					break;
 			}
 		}
 		if(frontLeftSensor>=sensorTrashold){
-//			System.out.println("OBSTICAL AT FRONT LEFT SENSOR");
-			//obstacle on robot front left
-			//update the obstacle data
 			switch(currentDirection){
 				case North:
 					if(currentLocationFrontRow-1>=0)
@@ -1596,11 +1924,28 @@ public class Algothrim {
 						addObstacle(currentLocationFrontRow+1,currentLocationFrontCol-1);
 					break;
 			}
+		}else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol-1);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol+1);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol-1);
+					break;
+			}
 		}
+		
 		if(frontRightSensor>=sensorTrashold){
-//			System.out.println("OBSTICAL AT FRONT RIGHT SENSOR");
-			//obstacle on robot front right
-			//TODO:update the obstacle data
 			switch(currentDirection){
 				case North:
 					if(currentLocationFrontRow-1>=0)
@@ -1617,44 +1962,68 @@ public class Algothrim {
 				case West:
 					if(currentLocationFrontCol-1>=0)
 						addObstacle(currentLocationFrontRow-1,currentLocationFrontCol-1);
+					break;
+			}
+		}else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol+1);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol-1);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						addExploredAreaBySensor(currentLocationFrontRow+1,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						addExploredAreaBySensor(currentLocationFrontRow-1,currentLocationFrontCol-1);
 					break;
 			}
 		}
 	}
 	private void addObstacle(int row, int col){
 		this.obstacleData[row][col] = 1;
-		System.out.println("OBSTICAL DETECTED AT "+row+","+col);
+		int newData[][] = new int[20][15];//17,3 17,11
+		for(int i=0;i<20;i++){
+			for(int j=0;j<15;j++){
+				newData[i][j]=this.obstacleData[i][Math.abs(14-j)];
+			}
+		}
+		MapUI.updateMap(newData, 1);
+//		System.out.println("OBSTICAL DETECTED AT "+row+","+col);
 	}
-	private void addExploredArea(int midFrontRow, int midFrontCol, Direction robotDirection){
-		this.exploredData[midFrontRow][midFrontCol] = 1;
-		if(robotDirection == Direction.North){
-			this.exploredData[midFrontRow][midFrontCol+1]=1;
-			this.exploredData[midFrontRow][midFrontCol-1]=1;
+	private void addExploredAreaBySensor(int row, int col){
+		this.exploredData[row][col] = 1;
+		int newData[][] = new int[20][15];//17,3 17,11
+		for(int i=0;i<20;i++){
+			for(int j=0;j<15;j++){
+				newData[i][j]=this.exploredData[i][Math.abs(14-j)];
+			}
 		}
-		if(robotDirection == Direction.South){
-			this.exploredData[midFrontRow][midFrontCol+1]=1;
-			this.exploredData[midFrontRow][midFrontCol-1]=1;
-		}
-		if(robotDirection == Direction.East){
-			this.exploredData[midFrontRow-1][midFrontCol]=1;
-			this.exploredData[midFrontRow+1][midFrontCol]=1;
-		}
-		if(robotDirection == Direction.West){
-			this.exploredData[midFrontRow-1][midFrontCol]=1;
-			this.exploredData[midFrontRow+1][midFrontCol]=1;
-		}
-	}
-	//TODO:
-	private void returnToStart(){
-		//TODO: algo to make the robot go back to start line; can do by stack maybe?
-		//by adding the movement in a stack that pop back in reverse?
-		//or by shortest path?
-	}
-	private void updateRobotPosition(int robotHeadRow, int robotHeadCol){
-		this.currentLocationFrontRow = robotHeadRow;
-		this.currentLocationFrontCol = robotHeadCol;
+		MapUI.updateMap(newData, 0);		
 	}
 	
+	public void returnToStart(RobotCallback callback){
+		switch(currentDirection){
+			case North:
+				makeDecisionFacingNorth(19,0,callback);
+				break;
+			case South:
+				makeDecisionFacingSouth(19,0,callback);
+				break;
+			case East:
+				makeDecisionFacingEast(19,0,callback);
+				break;
+			case West:
+				makeDecisionFacingWest(19,0,callback);
+				break;
+		}
+		
+	}
 	
 	//***********************************//
 	//		SHORTEST PATH METHODS		 //

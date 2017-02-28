@@ -41,6 +41,8 @@ public class MapUI {
 
 	private JFrame frame;
 	static Algothrim algothrim = new Algothrim(null,null,18,2); 
+	static int stepsPerSec=2;
+	static int timeToExplore = 10000;
 	private static JButton exploreBtn;
 	public static JLayeredPane mapPanel;
 	public static JLabel[][] labels = new JLabel[20][15];
@@ -68,7 +70,7 @@ public class MapUI {
 	}
 	public MapUI() {
 		initialize();
-		loadMapFromDescriptor();
+//		loadMapFromDescriptor();
 	}
 	private void initialize() {
 		frame = new JFrame();
@@ -224,8 +226,8 @@ public class MapUI {
 				gbc_field.gridx = i+1;
 				gbc_field.gridy = j+1;
 				mapPanel.add(panel_1, gbc_field,0);
-//				JLabel field = new JLabel("  "+i+","+j+"  ");
-				JLabel field = new JLabel("0");
+				JLabel field = new JLabel("  "+i+","+j+"  ");
+//				JLabel field = new JLabel("0");
 				field.addMouseListener(new MouseAdapter()  
 				{  
 				    public void mouseClicked(MouseEvent e)  
@@ -484,6 +486,7 @@ public class MapUI {
 			for(int j=0;j<=19;j++){
 				if(data[j][i]==1){
 					panels[col][row].setBackground(Color.LIGHT_GRAY);
+					labels[col][row].setText("1");
 				}
 				col--;
 			}
@@ -500,27 +503,49 @@ public class MapUI {
 	//////////////////////////////////////////////////////////
 	///					MOVEMENT THREAD 			 	   ///
 	//////////////////////////////////////////////////////////
-	public static void runRobotInstruction(){
+	public static void runRobotInstruction(boolean toExplore){
 		Thread b = ((Thread) instructionQueue.poll());
 		if(b!=null){
 			b.start();
 	        synchronized(b){
 	            try{
-	                System.out.println("Waiting for instruction to complete...");
-	                
 	                b.wait();
 	            }catch(InterruptedException e){
 	                e.printStackTrace();
 	            }
 	            checkForObstacle();
 	            if(instructionQueue.size()==0){
-	            	System.out.println("QUEUE NOW EMPTY");
-	            	explore();
+	            	if(toExplore==true)
+	            		explore();
+	            	else
+	            	{
+	            		algothrim.returnToStart(new RobotCallback(){
+	            			public void moveForward(int distance) {
+	            				instructionQueue.add(new MoveRobotForwardThread(distance));
+	            			}
+	            			@Override
+	            			public void changeDirection(Direction direction, int times) {
+	            				instructionQueue.add(new TurnRobotThread(direction,times));
+	            			}
+	            		});
+	            	}
 	            }	
 	        }
 		}else{
-			System.out.println("QUEUE is EMPTY");
-			explore();
+			if(toExplore==true)
+        		explore();
+        	else
+        	{
+        		algothrim.returnToStart(new RobotCallback(){
+        			public void moveForward(int distance) {
+        				instructionQueue.add(new MoveRobotForwardThread(distance));
+        			}
+        			@Override
+        			public void changeDirection(Direction direction, int times) {
+        				instructionQueue.add(new TurnRobotThread(direction,times));
+        			}
+        		});
+        	}
 		}
 	}
 	public static void checkForObstacle(){
@@ -535,20 +560,24 @@ public class MapUI {
 		switch(Algothrim.currentDirection){
 		case North:
 			if(currentLocationFrontRow-1>-1){
-				frontMidSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontLeftSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
 			if(currentLocationFrontCol+2<=14){
-				rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
+				if(currentLocationFrontRow>0){
+					rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
+				}
 			}
 			if(currentLocationFrontCol-2>=0){
-				leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
+				if(currentLocationFrontRow>0){
+					leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
+				}
 			}
 			break;
 		case South:
 			if(currentLocationFrontRow+1<=19){
-				frontMidSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 				frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
 				frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
@@ -562,34 +591,33 @@ public class MapUI {
 		case East:
 			if(currentLocationFrontCol+1<=14){
 				frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontRightSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontLeftSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontLeftSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontRightSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
 			if(currentLocationFrontRow+2<=19){
-				rightSensor = panels[19-currentLocationFrontRow-2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				rightSensor = panels[19-(currentLocationFrontRow+2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
-			if(currentLocationFrontRow-2<=19){
-				leftSensor = panels[19-currentLocationFrontRow+2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+			if(currentLocationFrontRow-2>0){
+				leftSensor = panels[19-(currentLocationFrontRow-2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
 			break;
 		case West:
 			if(currentLocationFrontCol-1>=0){
 				frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontLeftSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontRightSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+				frontLeftSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
-			if(currentLocationFrontRow-2<=19){
-				rightSensor = panels[19-currentLocationFrontRow+2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+			if(currentLocationFrontRow-2>0){
+				rightSensor = panels[19-(currentLocationFrontRow-2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
 			if(currentLocationFrontRow+2<=19){
-				leftSensor = panels[19-currentLocationFrontRow-2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				leftSensor = panels[19-(currentLocationFrontRow+2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 			}
 			break;
-		}
+	}
 		
 		algothrim.addObstacle(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor);
 	}
-	
 	
 	//////////////////////////////////////////////////////////
 	///					EXPLORATION TASK				   ///
@@ -605,53 +633,59 @@ public class MapUI {
 		mapPanel.repaint();
 	}
 	
+	private static int exploreTimer;
 	private static int interval;
 	private static Timer explorerTimer;
+	private static Timer clockTimer;
 	public static void startExplorationTimer(boolean stopExploration){
-		int delay = 1000;
-	    int period = 1000;
-	    interval = 100;//10sec for exploration
+		//for the speed of instructions
+		int exploreDelay = 1000/stepsPerSec;
+	    int explorePeriod = 1000/stepsPerSec;
+	    System.out.println("exploreDelay "+exploreDelay);
+	    interval = 10000000;//10sec for exploration
 	    explorerTimer = new Timer();
 	    explorerTimer.scheduleAtFixedRate(new TimerTask() {
 	        public void run() {
-	        	clockTick(stopExploration);
+	        	runRobot();
 	        }
-	    }, delay, period);
+	    }, exploreDelay, explorePeriod);
+	    
+	    //for the clock
+	    int clockDelay = 1000;
+	    int clockPeriod = 1000;
+	    exploreTimer = timeToExplore;
+	    clockTimer = new Timer();
+	    clockTimer.scheduleAtFixedRate(new TimerTask() {
+	        public void run() {
+	        	--exploreTimer;
+	        	if(exploreTimer<=0){
+	        		clockTimer.cancel();
+	        		explorerTimer.cancel();
+	        		stopExploration(true);
+		    		System.out.println("stopping instruction");
+	        	}else{
+	        		System.out.println("CLOCK");
+	        		 exploreBtn.setText(exploreTimer+"sec left");
+	        	}
+	        }
+	    }, clockDelay, clockPeriod);
 	    
 	    exploreBtn.addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent e)  
 		    {  
-				stopExploration(stopExploration);
+				stopExploration(true);
 		    } 
 		});
 	}
-	private static final int clockTick(boolean stopExploration) {
-	    if (interval == 1){
-	    	explorerTimer.cancel();
-	    	exploreBtn.setText("Start Exploration");
-	    	exploreBtn.addMouseListener(new MouseAdapter()
-			{
-				public void mouseClicked(MouseEvent e)  
-			    {  
-					startExploreSimulatorTask();
-			    } 
-			});
-	    }else{
-	    	
-	    	--interval;
-	    	runRobotInstruction();
-		    exploreBtn.setText(interval+"sec left");
-	    }
-	   return interval;
+	private static final int runRobot() {
+	    	runRobotInstruction(true);
+	    	return interval;
 	}
 	
 	
 	
 	public static void explore(){
-		
-		
-		
 		int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
 		int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
 		int frontMidSensor = 0;
@@ -662,21 +696,27 @@ public class MapUI {
 		
 		switch(Algothrim.currentDirection){
 			case North:
-				if(currentLocationFrontRow-1>-1){
-					frontMidSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+				if(currentLocationFrontRow-1>=0){
+					System.out.println("CUCK");
+					frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontLeftSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+					
 				}
 				if(currentLocationFrontCol+2<=14){
-					rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
+					if(currentLocationFrontRow>0){
+						rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
+					}
 				}
 				if(currentLocationFrontCol-2>=0){
-					leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
+					if(currentLocationFrontRow>0){
+						leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
+					}
 				}
 				break;
 			case South:
 				if(currentLocationFrontRow+1<=19){
-					frontMidSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 					frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
 					frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
@@ -690,27 +730,27 @@ public class MapUI {
 			case East:
 				if(currentLocationFrontCol+1<=14){
 					frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontLeftSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontLeftSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontRightSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
 				if(currentLocationFrontRow+2<=19){
-					rightSensor = panels[19-currentLocationFrontRow-2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+					rightSensor = panels[19-(currentLocationFrontRow+2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
-				if(currentLocationFrontRow-2<=19){
-					leftSensor = panels[19-currentLocationFrontRow+2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				if(currentLocationFrontRow-2>=0){
+					leftSensor = panels[19-(currentLocationFrontRow-2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
 				break;
 			case West:
 				if(currentLocationFrontCol-1>=0){
 					frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontLeftSensor = panels[19-currentLocationFrontRow-1][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontRightSensor = panels[19-currentLocationFrontRow+1][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontLeftSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
-				if(currentLocationFrontRow-2<=19){
-					rightSensor = panels[19-currentLocationFrontRow+2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+				if(currentLocationFrontRow-2>0){
+					rightSensor = panels[19-(currentLocationFrontRow-2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
 				if(currentLocationFrontRow+2<=19){
-					leftSensor = panels[19-currentLocationFrontRow-2][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+					leftSensor = panels[19-(currentLocationFrontRow+2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
 				break;
 		}
@@ -731,8 +771,23 @@ public class MapUI {
 		
 	}
 	public static void stopExploration(boolean stopExploration){
+		System.out.println("moving back to start instruction");
+		instructionQueue.clear();
+		
+		int delay = 1000/stepsPerSec;
+	    int period = 1000/stepsPerSec;
+	    Timer returnTimer = new Timer();
+	    returnTimer.scheduleAtFixedRate(new TimerTask() {
+	        public void run() {
+	        	runRobotInstruction(false);
+	        }
+	    }, delay, period);
+	    
+		
+		
 		stopExploration = true;
 		explorerTimer.cancel();
+		instructionQueue.clear();
 		exploreBtn.setText("Start Exploration");
     	exploreBtn.addMouseListener(new MouseAdapter()
 		{
@@ -748,5 +803,4 @@ public class MapUI {
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////
-
 }
