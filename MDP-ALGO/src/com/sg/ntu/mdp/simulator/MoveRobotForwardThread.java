@@ -50,8 +50,8 @@ public class MoveRobotForwardThread extends Thread{
     				Algothrim.currentLocationFrontCol=Algothrim.currentLocationFrontCol-1;
     				break;
     		}
-    		System.out.println("CUrrent row = "+Algothrim.currentLocationFrontRow);
-    		System.out.println("CUrrent COl = "+Algothrim.currentLocationFrontCol);
+//    		System.out.println("CUrrent row = "+Algothrim.currentLocationFrontRow);
+//    		System.out.println("CUrrent COl = "+Algothrim.currentLocationFrontCol);
     	
     		
     		MapUI.labels[MapUI.robotBodyConstrain.gridx+1][MapUI.robotBodyConstrain.gridy].setText("1");

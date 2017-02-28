@@ -3,7 +3,7 @@ package com.sg.ntu.mdp;
 import com.sg.ntu.mdp.simulator.MapUI;
 
 public class Algothrim {
-	private float coverageLimit = 50f;
+	private float coverageLimit = 10f;
 	private float timeLimit = 500f;//TODO: change this later
 	
 	public static Direction currentDirection = Direction.East;
@@ -39,11 +39,8 @@ public class Algothrim {
 	//***************************************//
 	//  EXPLORATION METHODS FOR SIMULATION	 //
 	//***************************************//
-	//@Notes: focus on facing east going row by row towards 0
-	//@Notes: we focus on this first since it is a requirement
 	public void exploreSimulation(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
 		if(isExporeCoverageReached()){
-			System.out.println("COVERAGE REACHED");
 			returnToStart(callback);
 		}else{
 			if(leftSensor>=sensorTrashold){
@@ -876,11 +873,11 @@ public class Algothrim {
 			if(isFrontObstacle==false){
 				callback.moveForward(1);
 			}else{
-				if(isRightWall==true||isRightObstacle==true){
-					callback.changeDirection(Direction.LEFT, 1);
-					callback.moveForward(1);
-				}else if(isLeftWall==true||isLeftObstacle==true){
+				if(isRightWall==false&&isRightObstacle==false){
 					callback.changeDirection(Direction.RIGHT, 1);
+					callback.moveForward(1);
+				}else if(isLeftWall==false&&isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
 					callback.moveForward(1);
 				}
 				else{
@@ -1760,7 +1757,7 @@ public class Algothrim {
 		}
 	}
 	
-	//TODO:
+	//TODO:check if the grib is reachable
 	private boolean isTargetCellReachable(int row, int col){
 		return false;
 	}
@@ -2008,7 +2005,21 @@ public class Algothrim {
 	}
 	
 	public void returnToStart(RobotCallback callback){
-		switch(currentDirection){
+		if(currentLocationFrontRow==19&&currentLocationFrontCol==1){
+			System.out.println("returning 1 "+MapUI.instructionQueue.size());
+			MapUI.instructionQueue.clear();
+//			callback.changeDirection(Direction.LEFT, 1);
+			callback.readyForFastestPath();
+		}else if(currentLocationFrontRow==18&&currentLocationFrontCol==0){
+			System.out.println("returning 2 "+MapUI.instructionQueue.size());
+			MapUI.instructionQueue.clear();
+//			callback.changeDirection(Direction.LEFT, 2);
+			callback.readyForFastestPath();
+		}
+		else{
+			System.out.println("RETURNING ROW="+currentLocationFrontRow);
+			System.out.println("RETURNING COL="+currentLocationFrontCol);
+			switch(currentDirection){
 			case North:
 				makeDecisionFacingNorth(19,0,callback);
 				break;
@@ -2021,15 +2032,31 @@ public class Algothrim {
 			case West:
 				makeDecisionFacingWest(19,0,callback);
 				break;
+			}
 		}
-		
 	}
 	
 	//***********************************//
 	//		SHORTEST PATH METHODS		 //
 	//***********************************//
-	private void findPath(int[][] currentLocation){
+	public void findPath(RobotCallback callback){
+		if(currentDirection==Direction.North)
+			callback.changeDirection(Direction.RIGHT, 1);
+		else if(currentDirection==Direction.South){
+			callback.changeDirection(Direction.LEFT, 1);
+		}
+		else if(currentDirection==Direction.West){
+			callback.changeDirection(Direction.LEFT, 2);
+		}
+		
+		
 		//TODO: get the shortest path;
+		
+		
+		
+		//end of algo
+		
+		callback.readyForFastestPath();
 	}
 	
 	

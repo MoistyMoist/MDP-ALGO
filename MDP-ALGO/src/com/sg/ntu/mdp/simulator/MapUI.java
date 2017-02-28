@@ -41,9 +41,10 @@ public class MapUI {
 
 	private JFrame frame;
 	static Algothrim algothrim = new Algothrim(null,null,18,2); 
-	static int stepsPerSec=2;
-	static int timeToExplore = 10000;
+	static int stepsPerSec=3;
+	static int timeToExplore = 240;
 	private static JButton exploreBtn;
+	private static JButton startFastestBtn;
 	public static JLayeredPane mapPanel;
 	public static JLabel[][] labels = new JLabel[20][15];
 	public static JPanel[][] panels = new JPanel[20][15];
@@ -91,9 +92,16 @@ public class MapUI {
 		
 		splitPane_1.setRightComponent(splitPane_2);
 		
-		JButton btnStartSp = new JButton("Start SP");
-		splitPane_2.setLeftComponent(btnStartSp);
-		
+		startFastestBtn = new JButton("Start SP");
+		startFastestBtn.setEnabled(false);
+		splitPane_2.setLeftComponent(startFastestBtn);
+		startFastestBtn.addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent e)  
+		    {  
+				startFastestPath();
+		    } 
+		});
 		JButton btnSaveMd = new JButton("Save MD");
 		splitPane_2.setRightComponent(btnSaveMd);
 		btnSaveMd.addMouseListener(new MouseAdapter()
@@ -513,7 +521,8 @@ public class MapUI {
 	            }catch(InterruptedException e){
 	                e.printStackTrace();
 	            }
-	            checkForObstacle();
+	            if(toExplore==true)
+	            	checkForObstacle();
 	            if(instructionQueue.size()==0){
 	            	if(toExplore==true)
 	            		explore();
@@ -526,6 +535,23 @@ public class MapUI {
 	            			@Override
 	            			public void changeDirection(Direction direction, int times) {
 	            				instructionQueue.add(new TurnRobotThread(direction,times));
+	            			}
+	            			@Override
+	            			public void readyForFastestPath(){
+	            				//explorerTimer.cancel();
+	            				clockTimer.cancel();
+	            				returnTimer.cancel();
+	            				instructionQueue.clear();
+	            				computeFastestPath();
+	            				startFastestBtn.setEnabled(true);
+	            				exploreBtn.setText("Start Exploration");
+	            		    	exploreBtn.addMouseListener(new MouseAdapter()
+	            				{
+	            					public void mouseClicked(MouseEvent e)  
+	            				    {  
+	            						startExploreSimulatorTask();
+	            				    } 
+	            				});
 	            			}
 	            		});
 	            	}
@@ -543,6 +569,23 @@ public class MapUI {
         			@Override
         			public void changeDirection(Direction direction, int times) {
         				instructionQueue.add(new TurnRobotThread(direction,times));
+        			}
+        			@Override
+        			public void readyForFastestPath(){
+        				//explorerTimer.cancel();
+        				clockTimer.cancel();
+        				returnTimer.cancel();
+        				instructionQueue.clear();
+        				computeFastestPath();
+        				startFastestBtn.setEnabled(true);
+        				exploreBtn.setText("Start Exploration");
+        		    	exploreBtn.addMouseListener(new MouseAdapter()
+        				{
+        					public void mouseClicked(MouseEvent e)  
+        				    {  
+        						startExploreSimulatorTask();
+        				    } 
+        				});
         			}
         		});
         	}
@@ -637,6 +680,7 @@ public class MapUI {
 	private static int interval;
 	private static Timer explorerTimer;
 	private static Timer clockTimer;
+	private static Timer returnTimer;
 	public static void startExplorationTimer(boolean stopExploration){
 		//for the speed of instructions
 		int exploreDelay = 1000/stepsPerSec;
@@ -662,9 +706,7 @@ public class MapUI {
 	        		clockTimer.cancel();
 	        		explorerTimer.cancel();
 	        		stopExploration(true);
-		    		System.out.println("stopping instruction");
 	        	}else{
-	        		System.out.println("CLOCK");
 	        		 exploreBtn.setText(exploreTimer+"sec left");
 	        	}
 	        }
@@ -682,7 +724,6 @@ public class MapUI {
 	    	runRobotInstruction(true);
 	    	return interval;
 	}
-	
 	
 	
 	public static void explore(){
@@ -765,26 +806,38 @@ public class MapUI {
 			public void changeDirection(Direction direction, int times) {
 				instructionQueue.add(new TurnRobotThread(direction,times));
 			}
+			@Override
+			public void readyForFastestPath(){
+				explorerTimer.cancel();
+				clockTimer.cancel();
+				if(returnTimer!=null)
+					returnTimer.cancel();
+				instructionQueue.clear();
+				computeFastestPath();
+				startFastestBtn.setEnabled(true);
+				exploreBtn.setText("Start Exploration");
+		    	exploreBtn.addMouseListener(new MouseAdapter()
+				{
+					public void mouseClicked(MouseEvent e)  
+				    {  
+						startExploreSimulatorTask();
+				    } 
+				});
+			}
 		});
-		
-		
-		
 	}
 	public static void stopExploration(boolean stopExploration){
-		System.out.println("moving back to start instruction");
 		instructionQueue.clear();
 		
 		int delay = 1000/stepsPerSec;
 	    int period = 1000/stepsPerSec;
-	    Timer returnTimer = new Timer();
+	    returnTimer = new Timer();
 	    returnTimer.scheduleAtFixedRate(new TimerTask() {
 	        public void run() {
 	        	runRobotInstruction(false);
 	        }
 	    }, delay, period);
 	    
-		
-		
 		stopExploration = true;
 		explorerTimer.cancel();
 		instructionQueue.clear();
@@ -796,11 +849,56 @@ public class MapUI {
 				startExploreSimulatorTask();
 		    } 
 		});
-    	
-    	//TODO: move robot to start area
-    	
 	}
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////
+	
+	
 	//////////////////////////////////////////////////////////
+	///					FASTEST PATH TASK				   ///
+	//////////////////////////////////////////////////////////
+	private static int fastestTimer = 0;
+	private static Timer fastestClock;
+	public static void computeFastestPath(){
+		algothrim.findPath(new RobotCallback(){
+			@Override
+			public void moveForward(int distance) {
+				instructionQueue.add(new MoveRobotForwardThread(distance));
+			}
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				instructionQueue.add(new TurnRobotThread(direction,times));
+			}
+			@Override
+			public void readyForFastestPath(){		
+				startFastestBtn.setEnabled(true);	
+			}
+		});
+	}
+	public void startFastestPath(){
+		fastestClock = new Timer();
+		fastestClock.scheduleAtFixedRate(new TimerTask() {
+	        public void run() {
+	        	runFastestRobot();
+	        }
+	    }, 1000/stepsPerSec, 1000/stepsPerSec);
+	}
+	public static void runFastestRobot(){
+		System.out.println("RUNNING FASTEST PATH");
+		Thread b = ((Thread) instructionQueue.poll());
+		if(b!=null){
+			b.start();
+	        synchronized(b){
+	            try{
+	                b.wait();
+	            }catch(InterruptedException e){
+	                e.printStackTrace();
+	            }
+	        }
+		}else{
+			System.out.println("RUNNING FASTEST PATH NO INSTRUCTION");
+		}
+	}
+	
+	
 }
