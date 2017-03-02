@@ -21,7 +21,7 @@ public class Algothrim {
 	public static int[][]obstacleData = new int[20][15];
 	public static int[][]unreachableData = new int[20][15];
 	
-	public static int[][] last5Grids = new int[3][1];//change to queue; 
+	public static int[][] last5Grids = new int[3][1];//change to queue; for this target i have explored this gird 3 times than set target as unreachable
 	
 	public static int currentLocationFrontRow;
 	public static int currentLocationFrontCol;

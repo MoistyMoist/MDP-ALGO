@@ -160,7 +160,27 @@ public class AlgoContoller {
 		jsonInstructionsWraper="";
 		jsonInstructionsWraper+="Agrid{"+p1+p2+"}";
 		System.out.println("jsonInstructionsWraper");
+		callback.sendRobotInstruction(jsonInstructionsWraper);
 		
+		jsonInstructionsWraper="";
+		
+		String robotBody="";
+		switch(algothrim.currentDirection){
+			case North:
+				robotBody = (algothrim.currentLocationFrontRow-1)+","+algothrim.currentLocationFrontCol;
+				break;
+			case South:
+				robotBody = (algothrim.currentLocationFrontRow+1)+","+algothrim.currentLocationFrontCol;
+				break;
+			case East:
+				robotBody = (algothrim.currentLocationFrontRow)+","+(algothrim.currentLocationFrontCol-1);
+				break;
+			case West:
+				robotBody = (algothrim.currentLocationFrontRow)+","+(algothrim.currentLocationFrontCol+1);
+				break;
+		}
+		
+		jsonInstructionsWraper ="robotPosition:"+robotBody+","+algothrim.currentLocationFrontRow+","+algothrim.currentLocationFrontCol;
 		callback.sendRobotInstruction(jsonInstructionsWraper);
 	}
 	public static String wrapDirectionChangeJson(Direction direction, int times){
