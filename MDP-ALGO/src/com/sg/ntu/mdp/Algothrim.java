@@ -21,6 +21,8 @@ public class Algothrim {
 	public static int[][]obstacleData = new int[20][15];
 	public static int[][]unreachableData = new int[20][15];
 	
+	public static int[][] last5Grids = new int[3][1];//change to queue; 
+	
 	public static int currentLocationFrontRow;
 	public static int currentLocationFrontCol;
 	
@@ -278,7 +280,7 @@ public class Algothrim {
 				//find the nearest gird to explore
 				
 				
-				/*
+				
 				for(int i=19;i>=0;i--){
 					for(int j=0;j<=14;j++){
 						if(exploredData[i][j]==0&&obstacleData[i][j]==0){
@@ -316,7 +318,7 @@ public class Algothrim {
 					}
 					if(breakloop==true)
 						break;
-				}*/
+				}
 			}else{
 				switch(currentDirection){
 				case North:
@@ -557,14 +559,29 @@ public class Algothrim {
 			if(isFrontObstacle==false){
 				callback.moveForward(1);
 			}else{
-				if(isRightObstacle==true||isRightWall==true){
+				if(isLeftWall==false&&isLeftObstacle==false){
 					callback.changeDirection(Direction.LEFT, 1);
 					callback.moveForward(1);
-				}else if(isLeftWall==true||isLeftObstacle==true){
+				}else if(isRightObstacle==false&&isRightWall==false){
 					callback.changeDirection(Direction.RIGHT, 1);
 					callback.moveForward(1);
-				}else{
+				}else if(isBackWall==false&&isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					if(rightObstaclePositionCount[2]==1){
+						callback.moveForward(1);
+						callback.moveForward(1);
+						callback.moveForward(1);
+					}else if(rightObstaclePositionCount[1]==1){
+						callback.moveForward(1);
+						callback.moveForward(1);
+					}else{
+						callback.moveForward(1);
+					}
+					callback.changeDirection(Direction.RIGHT, 1);
+				}
+				else{
 					System.out.println("ERROR: FACING NORTH TARGET FRONT");
+					
 				}
 			}
 		}
@@ -653,7 +670,11 @@ public class Algothrim {
 				if(isRightWall==false&&isRightObstacle==false){
 					callback.changeDirection(Direction.RIGHT, 1);
 					callback.moveForward(1);
-				}else{
+				}else if(isLeftWall==false&&isLeftObstacle==false){
+					callback.changeDirection(Direction.LEFT, 1);
+					callback.moveForward(1);
+				}
+				else{
 					System.out.println("ERROR: FACING NORTH TARGET FRONT RIGHT");
 				}
 			}
@@ -988,6 +1009,20 @@ public class Algothrim {
 				}else if(isLeftWall==false&&isLeftObstacle==false){
 					callback.changeDirection(Direction.LEFT, 1);
 					callback.moveForward(1);
+				}else if(isBackWall==false&& isBackObstacle==false){
+					callback.changeDirection(Direction.RIGHT, 2);
+					if(rightObstaclePositionCount[2]==1){
+						callback.moveForward(1);
+						callback.moveForward(1);
+						callback.moveForward(1);
+						
+					}else if(rightObstaclePositionCount[1]==1){
+						callback.moveForward(1);
+						callback.moveForward(1);
+					}else{
+						callback.moveForward(1);
+					}
+					callback.changeDirection(Direction.LEFT, 1);
 				}
 				else{
 					System.out.println("ERROR: FACING SOUTH TARGET TOP RIGHT");

@@ -803,9 +803,9 @@ public class MapUI {
 				break;
 			case South:
 				if(currentLocationFrontRow+1<=19){
-					frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-					frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontMidSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontLeftSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
+					frontRightSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
 				}
 				if(currentLocationFrontCol-2>=0){
 					rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;

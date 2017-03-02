@@ -153,13 +153,12 @@ public class AlgoContoller {
 		MapUI.saveMapToDescriptor();
 		Descriptor descriptor = new Descriptor();
 		String p1 = descriptor.readDescriptorFromFile(0);
-//		String p2 = descriptor.readDescriptorFromFile(1);
+		String p2 = descriptor.readDescriptorFromFile(1);
 		
 //		callback.sendRobotInstruction(jsonInstructionsWraper);
 
 		jsonInstructionsWraper="";
-		jsonInstructionsWraper+="Agrid{"+p1+"}";
-		
+		jsonInstructionsWraper+="Agrid{"+p1+p2+"}";
 		System.out.println("jsonInstructionsWraper");
 		
 		callback.sendRobotInstruction(jsonInstructionsWraper);
