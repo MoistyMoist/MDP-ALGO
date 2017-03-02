@@ -1,0 +1,49 @@
+package com.sg.ntu.mdp;
+
+import java.awt.EventQueue;
+
+import com.sg.ntu.mdp.communication.CommMgr;
+import com.sg.ntu.mdp.simulator.MapUI;
+
+public class main {
+
+	public static void main(String[] args) {
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MapUI window = new MapUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		CommMgr commmgr = new CommMgr();
+		while(commmgr.isConnected()==false){
+			commmgr.setConnection(999999999);
+//			commmgr.sendMsg("STARTEXPLORATION", "", false);
+		}
+		
+		while(true){
+			String message = commmgr.recvMsg()
+			if(message!=null){
+				System.out.println("received");
+				parseMessageFromRobot(message);
+			}
+		}
+	}
+	
+	public void parseMessageFromRobot(String json){
+		
+	}
+	
+	
+	public void runExplorerSim(){
+		
+	}
+	public void runSpSim(){
+		
+	}
+}

@@ -2,21 +2,26 @@ package com.sg.ntu.mdp.communication;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public class CommMgr {
 	
-	private static CommMgr _commMgr = null;
+	public static CommMgr _commMgr = null;
 	
 	// For communication with the Raspberry-Pi
-//	private static final String HOST = "192.168.13.13";
-	private static final String HOST = "localhost";
-	private static final int PORT = 8181;
+	private static final String HOST = "192.168.13.13";
+//	private static final String HOST = "localhost";
+	private static final int PORT = 5182;
 	
 	public static final String MSG_TYPE_ANDROID = "1,";
 	public static final String MSG_TYPE_ARDUINO = "3,";
@@ -33,7 +38,7 @@ public class CommMgr {
 	 */
 	public CommMgr()
 	{
-		
+
 	}
 	
 	/**
@@ -118,9 +123,11 @@ public class CommMgr {
 			
 			_osw.write(outputMsg);
 			_osw.flush();
+//			_osw.close();
 			
 			return true;
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.out.println("sendMsg() -> IOException");
 		} catch (Exception e) {
 			System.out.println("sendMsg() -> Exception");
@@ -129,26 +136,45 @@ public class CommMgr {
 		return false;
 	}
 
+	
 	public String recvMsg() {
 		try {
 			
-			String input = _br.readLine();
-			if(input != null && input.length() > 0) {
-				System.out.println(input);
-				return input;
-			}
+			
+		    InputStream is = _conn.getInputStream();
+		    byte[] buffer = new byte[1024];
+		    int read;
+		    boolean messageReceive=false;
+		    String output="";
+		    while((read = is.read(buffer)) != -1) {
+		        output += new String(buffer, 0, read);
+		        if(output.contains("}"))
+		        	break;
+		        System.out.println(output+"  buffering..");
+		        System.out.flush();
+		    };
+//		    _conn.close();
+		   
+		    return output;
+		   
+			
 			
 		} catch(IOException e) {
-			//System.out.println("recvMsg() -> IO exception");
+//			e.printStackTrace();
+//			System.out.println("recvMsg() -> IO exception");
 		} catch (Exception e) {
-			//System.out.println("recvMsg() -> Exception");
+//			e.printStackTrace();
+//			System.out.println("recvMsg() -> Exception");
 		}
 		
 		return null;
 	}
 	
 	public boolean isConnected() {
-		return _conn.isConnected();
+		if(_conn==null)
+			return false;
+		else 
+			return _conn.isConnected();
 	}
 
 }

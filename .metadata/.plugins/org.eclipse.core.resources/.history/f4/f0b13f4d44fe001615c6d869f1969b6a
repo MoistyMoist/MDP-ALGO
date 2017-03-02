@@ -1,0 +1,56 @@
+package com.sg.ntu.mdp;
+
+import java.awt.EventQueue;
+import java.util.Arrays;
+import java.util.List;
+
+import com.sg.ntu.mdp.communication.CommMgr;
+import com.sg.ntu.mdp.simulator.MapUI;
+
+public class main {
+
+	public static void main(String[] args) {
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MapUI window = new MapUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		CommMgr commmgr = new CommMgr();
+		while(commmgr.isConnected()==false){
+			commmgr.setConnection(999999999);
+		}
+		
+		while(true){
+			String message = commmgr.recvMsg();
+			if(message!=null){
+				System.out.println("received");
+				parseMessageFromRobot(message);
+			}
+		}
+	}
+	
+	private static void parseMessageFromRobot(String json){
+		String message=json.replace("{", "");
+		message=json.replace("}", "");
+		List<String> sensorList = Arrays.asList(message.split(","));
+		
+		for(int i=0;i<sensorList.size();i++){
+			System.out.println(sensorList.get(i));
+		}
+	}
+	
+	
+	public void runExplorerSim(){
+		
+	}
+	public void runSpSim(){
+		
+	}
+}

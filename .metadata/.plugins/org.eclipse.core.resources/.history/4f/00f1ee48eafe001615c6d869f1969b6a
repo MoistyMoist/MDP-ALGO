@@ -1,0 +1,15 @@
+package model;
+
+public class AlgoEdge {
+
+	private String id;
+	private AlgoNode sourceNode;
+	private AlgoNode destinaionNode;
+	private int weight = 1;
+	
+	private AlgoEdge(String id, AlgoNode source, AlgoNode destination){
+		this.id=id;
+		this.sourceNode=source;
+		this.destinaionNode = destination;
+	}
+}

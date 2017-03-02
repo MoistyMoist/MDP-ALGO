@@ -1,0 +1,10 @@
+package model;
+
+public class AlgoTree {
+	private static AlgoNode root;
+
+    public AlgoTree(AlgoNode node)
+    {
+        root = node;
+    }
+}

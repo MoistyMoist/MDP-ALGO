@@ -1,0 +1,51 @@
+package model;
+
+import java.util.List;
+
+import com.sg.ntu.mdp.Direction;
+
+public class AlgoGraph {
+	
+	private final List<AlgoNode> vertexes;
+    private final List<AlgoEdge> edges;
+	
+    
+    public AlgoGraph(List<Vertex> vertexes, List<Edge> edges) {
+        this.vertexes = vertexes;
+        this.edges = edges;
+}
+    
+    public AlgoGraph(AlgoNode node)
+    {
+        root = node;
+    }
+    
+    public void add(AlgoNode parent, AlgoNode child, Direction direction)
+    {
+        if (direction==Direction.LEFT)
+        {
+           parent.setLeftNode(child);
+           child.setParentNode(parent);
+        }
+        else if(direction == Direction.RIGHT)
+        {
+        	parent.setRightNode(child);
+        	child.setParentNode(parent);
+        }
+        else if(direction == Direction.FRONT)
+        {
+        	parent.setFrontNode(child);
+        	child.setParentNode(parent);
+        }
+        else
+        {
+        	parent.setBackNode(child);
+        	child.setParentNode(parent);
+        }
+    }
+    
+    public AlgoNode getRoot(){
+    	return root;
+    }
+
+}

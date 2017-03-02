@@ -1,0 +1,25 @@
+package model;
+
+import com.sg.ntu.mdp.Direction;
+
+public class AlgoTree {
+	private static AlgoNode root;
+
+    public AlgoTree(AlgoNode node)
+    {
+        root = node;
+    }
+    
+    public void add(AlgoNode parent, AlgoNode child, Direction direction)
+    {
+        if (direction==Direction.LEFT)
+        {
+           parent.setLeftNode(child);
+        }
+        else if(direction == Direction.RIGHT)
+        {
+            parent.setRight(child);
+        }
+    }
+
+}

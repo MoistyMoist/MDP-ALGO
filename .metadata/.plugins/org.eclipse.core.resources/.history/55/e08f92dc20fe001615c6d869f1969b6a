@@ -1,0 +1,9 @@
+package com.sg.ntu.mdp.communication;
+
+//communication between the robot and algo outputting json
+public class AlgoContoller {
+	
+	public static void explore(){
+		
+	}
+}

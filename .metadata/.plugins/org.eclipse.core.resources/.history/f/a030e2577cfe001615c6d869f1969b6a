@@ -1,0 +1,31 @@
+package model;
+
+public class Node {
+	
+	private int nodeColIndex;
+	private int nodeRowIndex;
+	
+	private Node leftNode;
+	private Node rightNode;
+	private Node frontNode;
+	
+	public Node(int row, int col){
+		this.leftNode = null;
+		this.rightNode = null;
+		this.frontNode = null;
+		this.nodeRowIndex = row;
+		this.nodeColIndex = col;
+	}
+	
+	
+	public boolean hasLeftPath(){
+		return leftNode==null?false:true;
+	}
+	public boolean hasRightPath(){
+		return rightNode==null?false:true;
+	}
+	public boolean hasForwardPath(){
+		return frontNode==null?false:true;
+	}
+	
+}

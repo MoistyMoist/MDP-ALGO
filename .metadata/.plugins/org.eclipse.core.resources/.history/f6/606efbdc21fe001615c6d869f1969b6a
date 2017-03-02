@@ -1,0 +1,67 @@
+package com.sg.ntu.mdp.communication;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
+import com.sg.ntu.mdp.Algothrim;
+import com.sg.ntu.mdp.Direction;
+import com.sg.ntu.mdp.RobotCallback;
+import com.sg.ntu.mdp.simulator.MoveRobotForwardThread;
+import com.sg.ntu.mdp.simulator.TurnRobotThread;
+
+//communication between the robot and algo outputting json
+public class AlgoContoller {
+	
+	Algothrim algothrim = new Algothrim(null,null,18,2); 
+	
+	public void explore(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
+		ArrayList<String> jsonInstructions = new ArrayList<String>();
+		
+		int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
+		int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
+		int frontMidSensor = 0;
+		int frontLeftSensor = 0;
+		int frontRightSensor = 0;
+		int rightSensor = 0;
+		int leftSensor = 0;
+		
+		
+		
+		algothrim.exploreSimulation(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
+			@Override
+			public void moveForward(int distance) {
+				jsonInstructions.add(wrapMoveForwardChangeJson(distance));
+			}
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				jsonInstructions.add(wrapDirectionChangeJson(direction,times));
+			}
+			@Override
+			public void readyForFastestPath(){
+				sendRobotInstructions(jsonInstructions);
+			}
+		});
+		
+		
+	}
+	
+	public void sendRobotInstructions(ArrayList<String> jsonInstructions){
+		String jsonInstructionsWraper="[";
+		
+		
+	}
+	
+	public String wrapDirectionChangeJson(Direction direction, int times){
+		String jsonString="{";
+		
+		
+		return jsonString+="}";
+	}
+	public String wrapMoveForwardChangeJson(int times){
+		String jsonString="{";
+		
+		
+		return jsonString+="}";
+	}
+}

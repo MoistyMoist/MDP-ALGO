@@ -1,0 +1,113 @@
+package com.sg.ntu.mdp.communication;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
+import com.sg.ntu.mdp.Algothrim;
+import com.sg.ntu.mdp.Direction;
+import com.sg.ntu.mdp.RobotCallback;
+import com.sg.ntu.mdp.simulator.MoveRobotForwardThread;
+import com.sg.ntu.mdp.simulator.TurnRobotThread;
+
+//communication between the robot and algo outputting json
+public class AlgoContoller {
+	
+	Algothrim algothrim = new Algothrim(null,null,18,2); 
+	RobotCallback callback;
+	
+	public void returnToStart(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor, RobotCallback callback){
+		ArrayList<String> jsonInstructions = new ArrayList<String>();
+		this.callback=callback;
+		algothrim.returnToStart(new RobotCallback(){
+			@Override
+			public void moveForward(int distance) {
+				jsonInstructions.add(wrapMoveForwardChangeJson(distance));
+			}
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				jsonInstructions.add(wrapDirectionChangeJson(direction,times));
+			}
+			@Override
+			public void readyForFastestPath(){
+			}
+			@Override
+			public void sendRobotInstruction(){
+				sendRobotInstructions(jsonInstructions);
+			}
+		});
+		
+	}
+	
+	public void computeFastestPath(RobotCallback callback){
+		ArrayList<String> jsonInstructions = new ArrayList<String>();
+		this.callback=callback;
+		
+		algothrim.findPath(new RobotCallback(){
+			@Override
+			public void moveForward(int distance) {
+				jsonInstructions.add(wrapMoveForwardChangeJson(distance));
+			}
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				jsonInstructions.add(wrapDirectionChangeJson(direction,times));
+			}
+			@Override
+			public void readyForFastestPath(){
+				sendRobotInstructions(jsonInstructions);
+			}	
+			@Override
+			public void sendRobotInstruction(){
+			}
+		});
+	}
+	
+	public void explore(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor, RobotCallback callback){
+		ArrayList<String> jsonInstructions = new ArrayList<String>();
+		this.callback=callback;
+		
+		algothrim.exploreSimulation(inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor, inputRightSensor, inputLeftSensor, new RobotCallback(){
+			@Override
+			public void moveForward(int distance) {
+				jsonInstructions.add(wrapMoveForwardChangeJson(distance));
+			}
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				jsonInstructions.add(wrapDirectionChangeJson(direction,times));
+			}
+			@Override
+			public void readyForFastestPath(){
+			}
+			@Override
+			public void sendRobotInstruction(){
+				sendRobotInstructions(jsonInstructions);
+			}
+		});
+		
+		
+	}
+	
+	public void sendRobotInstructions(ArrayList<String> jsonInstructions){
+		String jsonInstructionsWraper="[";
+		for(int i=0;i<jsonInstructions.size();i++){
+			jsonInstructionsWraper+=jsonInstructions.get(i);
+			if((i+1)!=jsonInstructions.size()){
+				jsonInstructionsWraper+=",";
+			}
+		}
+		
+		jsonInstructionsWraper+="]";
+	}
+	
+	public String wrapDirectionChangeJson(Direction direction, int times){
+		String jsonString="{";
+		jsonString +="InstructionType=DirectionChange,"+direction.toString()+","+times+";";
+		
+		return jsonString+="}";
+	}
+	public String wrapMoveForwardChangeJson(int times){
+		String jsonString="{";
+		jsonString +="InstructionType=MoveForward,"+times+";";
+		return jsonString+="}";
+	}
+}

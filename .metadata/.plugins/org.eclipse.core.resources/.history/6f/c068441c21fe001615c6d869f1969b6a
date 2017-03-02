@@ -1,0 +1,25 @@
+package com.sg.ntu.mdp.communication;
+
+import com.sg.ntu.mdp.Direction;
+
+//communication between the robot and algo outputting json
+public class AlgoContoller {
+	
+	public static void explore(int leftSensor, int rightSensor, int frontMidSensor, int frontLeftSensor, int frontRightSensor){
+		
+	}
+	
+	
+	public String wrapDirectionChangeJson(Direction direction, int times){
+		String jsonString="{";
+		
+		
+		return jsonString+="}";
+	}
+	public String wrapMoveForwardChangeJson(int times){
+		String jsonString="{";
+		
+		
+		return jsonString+="}";
+	}
+}

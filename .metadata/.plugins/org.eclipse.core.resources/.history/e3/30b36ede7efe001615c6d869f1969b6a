@@ -1,0 +1,23 @@
+package model;
+
+public class AlgoTree {
+	private static AlgoNode root;
+
+    public AlgoTree(AlgoNode node)
+    {
+        root = node;
+    }
+    
+    public void add(Node parent, Node child, String orientation)
+    {
+        if (orientation.equals("left"))
+        {
+           parent.setLeft(child);
+        }
+        else
+        {
+            parent.setRight(child);
+        }
+    }
+
+}

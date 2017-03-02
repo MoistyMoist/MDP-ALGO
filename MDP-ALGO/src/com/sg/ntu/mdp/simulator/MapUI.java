@@ -39,10 +39,11 @@ import javax.swing.JLayeredPane;
 
 public class MapUI {
 
-	private JFrame frame;
+	public JFrame frame;
+	public JFrame getJFrame(){return this.frame;}
 	static Algothrim algothrim = new Algothrim(null,null,18,2); 
-	static int stepsPerSec=3;
-	static int timeToExplore = 240;
+	static int stepsPerSec=4;
+	static int timeToExplore = 100;
 	private static JButton exploreBtn;
 	private static JButton startFastestBtn;
 	public static JLayeredPane mapPanel;
@@ -71,7 +72,9 @@ public class MapUI {
 	}
 	public MapUI() {
 		initialize();
+		showRobot();
 //		loadMapFromDescriptor();
+//		algothrim.generateAlgoTree();
 	}
 	private void initialize() {
 		frame = new JFrame();
@@ -384,10 +387,7 @@ public class MapUI {
 		
 	}
 	//////////////////////////////////////////////////////////
-	
-	private void resetMap(){
-		
-	}
+
 	
 	//////////////////////////////////////////////////////////
 	///					DESCRIPTOR TASK					   ///
@@ -420,7 +420,7 @@ public class MapUI {
 		
 	}
 	
-	public void saveMapToDescriptor(){
+	public static void saveMapToDescriptor(){
 		int [][] exploredData = saveExploredData(labels);
 		int [][] obstacledData = saveObstacleData(labels);
 		
@@ -502,7 +502,45 @@ public class MapUI {
 			row++;
 		}
 	}
-	
+	public static void readyRobotAtStartPosition(){
+		MapUI.mapPanel.remove(MapUI.robotHead);
+    	MapUI.mapPanel.remove(MapUI.robotBody);
+    	
+    	switch(Algothrim.currentDirection){
+			case North:
+				Algothrim.currentDirection=Direction.East;
+				
+				MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-1;
+				MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+1;
+				
+				Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+				Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+				break;
+			case South:
+				Algothrim.currentDirection=Direction.East;
+				
+				MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+1;
+				MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+1;
+				
+				Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+				Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+				break;
+			case East:
+				
+				break;
+			case West:
+				Algothrim.currentDirection=Direction.East;
+				
+				MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+2;
+				
+				Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +2;
+				break;
+    	}
+    	MapUI.mapPanel.add(MapUI.robotHead, MapUI.robotHeadConstrain,1);
+		MapUI.mapPanel.add(MapUI.robotBody, MapUI.robotBodyConstrain,2);
+		MapUI.mapPanel.repaint();
+		MapUI.mapPanel.revalidate();
+	}
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////
@@ -521,7 +559,7 @@ public class MapUI {
 	            }catch(InterruptedException e){
 	                e.printStackTrace();
 	            }
-	            if(toExplore==true)
+//	            if(toExplore==true)
 	            	checkForObstacle();
 	            if(instructionQueue.size()==0){
 	            	if(toExplore==true)
@@ -545,6 +583,7 @@ public class MapUI {
 	            				computeFastestPath();
 	            				startFastestBtn.setEnabled(true);
 	            				exploreBtn.setText("Start Exploration");
+	            				
 	            		    	exploreBtn.addMouseListener(new MouseAdapter()
 	            				{
 	            					public void mouseClicked(MouseEvent e)  
@@ -553,11 +592,15 @@ public class MapUI {
 	            				    } 
 	            				});
 	            			}
+	            			@Override
+	            			public void sendRobotInstruction(String jsonInstruction){
+	            			}
 	            		});
 	            	}
 	            }	
 	        }
 		}else{
+			checkForObstacle();
 			if(toExplore==true)
         		explore();
         	else
@@ -586,6 +629,9 @@ public class MapUI {
         						startExploreSimulatorTask();
         				    } 
         				});
+        			}
+        			@Override
+        			public void sendRobotInstruction(String jsonInstruction){
         			}
         		});
         	}
@@ -824,6 +870,9 @@ public class MapUI {
 				    } 
 				});
 			}
+			@Override
+			public void sendRobotInstruction(String jsonInstruction){
+			}
 		});
 	}
 	public static void stopExploration(boolean stopExploration){
@@ -860,6 +909,7 @@ public class MapUI {
 	private static int fastestTimer = 0;
 	private static Timer fastestClock;
 	public static void computeFastestPath(){
+		instructionQueue.clear();
 		algothrim.findPath(new RobotCallback(){
 			@Override
 			public void moveForward(int distance) {
@@ -872,6 +922,9 @@ public class MapUI {
 			@Override
 			public void readyForFastestPath(){		
 				startFastestBtn.setEnabled(true);	
+			}
+			@Override
+			public void sendRobotInstruction(String jsonInstruction){
 			}
 		});
 	}

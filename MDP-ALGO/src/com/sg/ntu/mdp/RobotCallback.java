@@ -5,4 +5,5 @@ public interface RobotCallback {
 	public void changeDirection(Direction direction, int times);
 	public void moveForward(int distance);
 	public void readyForFastestPath();
+	public void sendRobotInstruction(String jsonInstructions);
 }

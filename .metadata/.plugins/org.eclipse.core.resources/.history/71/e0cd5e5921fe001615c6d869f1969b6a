@@ -1,0 +1,44 @@
+package com.sg.ntu.mdp.communication;
+
+import java.util.ArrayList;
+
+import com.sg.ntu.mdp.Algothrim;
+import com.sg.ntu.mdp.Direction;
+
+//communication between the robot and algo outputting json
+public class AlgoContoller {
+	
+	Algothrim algothrim = new Algothrim(null,null,18,2); 
+	
+	public static void explore(int leftSensor, int rightSensor, int frontMidSensor, int frontLeftSensor, int frontRightSensor){
+		int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
+		int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
+		int frontMidSensor = 0;
+		int frontLeftSensor = 0;
+		int frontRightSensor = 0;
+		int rightSensor = 0;
+		int leftSensor = 0;
+		
+		
+		
+	}
+	
+	public void sendRobotInstructions(ArrayList<String> jsonInstructions){
+		String jsonInstructionsWraper="[";
+		
+		
+	}
+	
+	public String wrapDirectionChangeJson(Direction direction, int times){
+		String jsonString="{";
+		
+		
+		return jsonString+="}";
+	}
+	public String wrapMoveForwardChangeJson(int times){
+		String jsonString="{";
+		
+		
+		return jsonString+="}";
+	}
+}

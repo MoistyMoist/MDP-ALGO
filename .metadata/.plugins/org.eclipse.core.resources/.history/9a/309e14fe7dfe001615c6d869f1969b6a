@@ -1,0 +1,97 @@
+package model;
+
+import com.sg.ntu.mdp.Direction;
+
+public class Node {
+	
+	private int nodeColIndex;
+	private int nodeRowIndex;
+	
+	private Direction facingDirection;
+	private Node parentNode;
+	private Node leftNode;
+	private Node rightNode;
+	private Node frontNode;
+	
+	public Node(int row, int col){
+		this.leftNode = null;
+		this.rightNode = null;
+		this.frontNode = null;
+		this.nodeRowIndex = row;
+		this.nodeColIndex = col;
+	}
+	
+	
+	public boolean hasLeftPath(){
+		return leftNode==null?false:true;
+	}
+	public boolean hasRightPath(){
+		return rightNode==null?false:true;
+	}
+	public boolean hasForwardPath(){
+		return frontNode==null?false:true;
+	}
+
+
+	public int getNodeColIndex() {
+		return nodeColIndex;
+	}
+
+
+	public void setNodeColIndex(int nodeColIndex) {
+		this.nodeColIndex = nodeColIndex;
+	}
+
+
+	public int getNodeRowIndex() {
+		return nodeRowIndex;
+	}
+
+
+	public void setNodeRowIndex(int nodeRowIndex) {
+		this.nodeRowIndex = nodeRowIndex;
+	}
+
+
+	public Direction getFacingDirection() {
+		return facingDirection;
+	}
+
+
+	public void setFacingDirection(Direction facingDirection) {
+		this.facingDirection = facingDirection;
+	}
+
+
+	public Node getLeftNode() {
+		return leftNode;
+	}
+
+
+	public void setLeftNode(Node leftNode) {
+		this.leftNode = leftNode;
+	}
+
+
+	public Node getRightNode() {
+		return rightNode;
+	}
+
+
+	public void setRightNode(Node rightNode) {
+		this.rightNode = rightNode;
+	}
+
+
+	public Node getFrontNode() {
+		return frontNode;
+	}
+
+
+	public void setFrontNode(Node frontNode) {
+		this.frontNode = frontNode;
+	}
+	
+	
+	
+}
