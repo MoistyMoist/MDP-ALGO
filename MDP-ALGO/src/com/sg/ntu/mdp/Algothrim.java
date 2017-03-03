@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import com.sg.ntu.mdp.simulator.MapUI;
 
 import model.AlgoNode;
+import model.Direction;
+import model.RobotCallback;
 import model.AlgoEdge;
 import model.AlgoGraph;
 
@@ -19,10 +21,7 @@ public class Algothrim {
 	
 	public static int[][]exploredData = new int[20][15];
 	public static int[][]obstacleData = new int[20][15];
-	public static int[][]unreachableData = new int[20][15];
-	
-	public static int[][] last5Grids = new int[3][1];//change to queue; for this target i have explored this gird 3 times than set target as unreachable
-	
+		
 	public static int currentLocationFrontRow;
 	public static int currentLocationFrontCol;
 	
@@ -45,11 +44,673 @@ public class Algothrim {
 		}
 	}
 	
+	//***************************************//
+	//  EXPLORATION METHODS FOR GOD			 //
+	//***************************************//
+	AlgoNode[][] explorationNodes = new AlgoNode[19][13];
+	int[][]obstacles = new int[20][15];
+	AlgoNode currentTarget;
+	AlgoNode currentNode = new AlgoNode(18,1);
+	boolean hasGoalReached=false;
+	
+	public void godsExploration(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
+		updateObstacle(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor);
+		
+		DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(buildGraphForExploration());
+        dijkstra.execute(currentNode);
+        
+        currentNode = updateCurrentNode();
+        
+        
+        if(currentNode.getNodeRowIndex()==1&&currentNode.getNodeColIndex()==13)
+        	hasGoalReached=true;
+        if(hasGoalReached==false)
+        	currentTarget = explorationNodes[17][12];
+        
+        LinkedList<AlgoNode> path = dijkstra.getPath(currentTarget);
+        
+		if(path==null){
+//			System.out.println("in LOOP");
+			exploredData[currentNode.getNodeRowIndex()][currentNode.getNodeColIndex()]=1;
+			//TOdo:test this
+			boolean escloop=false;
+			for(int i=explorationNodes.length-1;i>0;i--){
+				for(int j=0;j<explorationNodes[i].length;j++){
+					if(explorationNodes[i][j]!=null){
+						if(exploredData[explorationNodes[i][j].getNodeRowIndex()][explorationNodes[i][j].getNodeColIndex()]==0){
+							currentTarget = explorationNodes[i][j];
+							dijkstra.execute(currentNode);
+							path = dijkstra.getPath(currentTarget);
+//							System.out.println("target="+currentTarget);
+//							System.out.println("FACING"+currentDirection.toString());
+							escloop=true;
+							break;
+						}	
+					}
+				}
+				if(escloop)
+					break;
+			}
+		}
+		
+		//finally decide the command to give to the robot/UI only the index(1) command	
+		if(path==null){
+			System.out.println("returning god");
+			returnGodHome(callback);
+		}else{
+			AlgoNode nextNodeToTravel =  path.get(1);
+//			System.out.println("NODE TO TRAVEL"+nextNodeToTravel);
+//			System.out.println("CURRENT POSITION"+currentNode);
+			int tempRow = -1;
+	        int tempCol = -1;
+			switch(currentDirection){
+				case North:
+					tempRow = currentLocationFrontRow+1;
+					tempCol = currentLocationFrontCol;
+					if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+						callback.changeDirection(Direction.LEFT, 2);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+						callback.changeDirection(Direction.RIGHT, 1);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+						callback.changeDirection(Direction.LEFT, 1);
+//						callback.moveForward(1);
+					}
+					break;
+				case South:
+					tempRow = currentLocationFrontRow-1;
+					tempCol = currentLocationFrontCol;
+					if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+						callback.changeDirection(Direction.LEFT, 2);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+						callback.changeDirection(Direction.LEFT, 1);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+						callback.changeDirection(Direction.RIGHT, 1);
+//						callback.moveForward(1);
+					}
+					break;
+				case East:
+					tempRow = currentLocationFrontRow;
+					tempCol = currentLocationFrontCol-1;
+					if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+						callback.changeDirection(Direction.LEFT, 1);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+						callback.changeDirection(Direction.RIGHT, 1);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+						callback.changeDirection(Direction.LEFT, 2);
+//						callback.moveForward(1);
+					}
+					break;
+				case West:
+					tempRow = currentLocationFrontRow;
+					tempCol = currentLocationFrontCol+1;
+					if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+						callback.changeDirection(Direction.RIGHT, 1);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+						callback.changeDirection(Direction.LEFT, 1);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+						callback.changeDirection(Direction.LEFT, 2);
+//						callback.moveForward(1);
+					}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+						callback.moveForward(1);
+						
+					}
+					break;
+			}
+		}
+		
+	}
+	public AlgoNode updateCurrentNode(){
+		AlgoNode node = null;
+		switch(currentDirection){
+		case North:
+				node = new AlgoNode(currentLocationFrontRow+1,currentLocationFrontCol);
+			break;
+		case South:
+			node = new AlgoNode(currentLocationFrontRow-1,currentLocationFrontCol);
+			break;
+		case East:
+			node = new AlgoNode(currentLocationFrontRow,currentLocationFrontCol-1);
+			break;
+		case West:
+			node = new AlgoNode(currentLocationFrontRow,currentLocationFrontCol+1);
+			break;
+		}
+		return node;
+		
+	}
+	public AlgoGraph buildGraphForExploration(){
+		ArrayList<AlgoEdge> edges = new ArrayList<>();
+		ArrayList<AlgoNode> nodes = new ArrayList<>();
+		explorationNodes = trimGraphForExploration(generateNodePool());
+	
+		
+		for(int i=0;i<explorationNodes.length;i++){
+			for(int j=0;j<explorationNodes[i].length;j++){
+				if(explorationNodes[i][j]!=null){
+//					System.out.println(nodePool[i][j]);
+					nodes.add(explorationNodes[i][j]);
+				}
+			}
+		}
+		//blind the edges
+		for(int i=0;i<explorationNodes.length;i++){
+			for(int j=0;j<explorationNodes[i].length;j++){
 
+				//set front node
+				if((j+1)<explorationNodes[i].length){
+					if(explorationNodes[i][j+1]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i][j+1].getNodeRowIndex()+","+explorationNodes[i][j+1].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i][j+1],1));
+					}
+				}
+					
+				//set left node
+				if((i-1)>=0){
+					if(explorationNodes[i-1][j]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i-1][j].getNodeRowIndex()+","+explorationNodes[i-1][j].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i-1][j],2));
+					}
+				}
+					
+				//set right node
+				if((i+1)<explorationNodes.length){
+					if(explorationNodes[i+1][j]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i+1][j].getNodeRowIndex()+","+explorationNodes[i+1][j].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i+1][j],2));
+					}
+				}
+				
+				//set back node
+				if((j-1)>=0){
+					if(explorationNodes[i][j-1]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i][j-1].getNodeRowIndex()+","+explorationNodes[i][j-1].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i][j-1],3));
+					}
+				}
+			}
+		}
+		
+		
+		return new AlgoGraph(nodes, edges);
+	}
+	public AlgoNode[][] trimGraphForExploration(AlgoNode[][] nodePool){
+		for(int i=0;i<nodePool.length;i++){
+			for(int j=0;j<nodePool[i].length;j++){
+				int actualrow = 18-i;
+				int actualcol = j+1;
+				
+				//check center is obstacle
+				if(obstacles[actualrow][actualcol]==1){
+					nodePool[i][j]=null;
+				}
+				//check forward is obstacle
+				if(obstacles[actualrow][actualcol+1]==1){
+					nodePool[i][j]=null;
+				}
+				//check forwardright is obsacle
+				if(obstacles[actualrow-1][actualcol+1]==1){
+					nodePool[i][j]=null;
+				}
+				//check forwardleft is obstacle
+				if(obstacles[actualrow+1][actualcol+1]==1){
+					nodePool[i][j]=null;
+				}
+				//check back isobstacle
+				if(obstacles[actualrow][actualcol-1]==1){
+					nodePool[i][j]=null;
+				}
+				//check backright is obstacle
+				if(obstacles[actualrow-1][actualcol-1]==1){
+					nodePool[i][j]=null;
+				}
+				//check backleft is obstacle
+				if(obstacles[actualrow+1][actualcol-1]==1){
+					nodePool[i][j]=null;
+				}
+				//check right is obstacle
+				if(obstacles[actualrow-1][actualcol]==1){
+					nodePool[i][j]=null;
+				}
+				//check left is obstacle
+				if(obstacles[actualrow-1][actualcol]==1){
+					nodePool[i][j]=null;
+				}
+				
+			}
+		}
+		return nodePool;
+	}
+	public void updateObstacle(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor){
+		if(leftSensor>=sensorTrashold){
+			switch(currentDirection){
+				case North: 
+					if(currentLocationFrontCol-2>=0)
+						updateObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+					break;
+				case South: 
+					if(currentLocationFrontCol+2<=14)
+						updateObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+					break;
+				case East: 
+					if(currentLocationFrontRow-2>=0)
+						updateObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+				case West: 
+					if(currentLocationFrontRow+2<=19)
+						updateObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+			}
+		}else{
+			switch(currentDirection){
+			case North: 
+					if(currentLocationFrontCol-2>=0)
+						updateExploredArea(currentLocationFrontRow,currentLocationFrontCol-2);
+					break;
+				case South: 
+					if(currentLocationFrontCol+2<=14)
+						updateExploredArea(currentLocationFrontRow,currentLocationFrontCol+2);
+					break;
+				case East: 
+					if(currentLocationFrontRow-2>=0)
+						updateExploredArea(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+				case West: 
+					if(currentLocationFrontRow+2<=19)
+						updateExploredArea(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+			}
+		}
+		if(rightSensor>=sensorTrashold){
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontCol+2<=14)
+						updateObstacle(currentLocationFrontRow,currentLocationFrontCol+2);
+					break;
+				case South:
+					if(currentLocationFrontCol-2>=0)
+						updateObstacle(currentLocationFrontRow,currentLocationFrontCol-2);
+					break;
+				case East:
+					if(currentLocationFrontRow+2<=19)
+						updateObstacle(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+				case West:
+					if(currentLocationFrontRow-2>=0)
+						updateObstacle(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+			}
+		}
+		else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontCol+2<=14)
+						updateExploredArea(currentLocationFrontRow,currentLocationFrontCol+2);
+					break;
+				case South:
+					if(currentLocationFrontCol-2>=0)
+						updateExploredArea(currentLocationFrontRow,currentLocationFrontCol-2);
+					break;
+				case East:
+					if(currentLocationFrontRow+2<=19)
+						updateExploredArea(currentLocationFrontRow+2,currentLocationFrontCol);
+					break;
+				case West:
+					if(currentLocationFrontRow-2>=0)
+						updateExploredArea(currentLocationFrontRow-2,currentLocationFrontCol);
+					break;
+			}
+		}
+		if(frontMidSensor>=sensorTrashold){
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						updateObstacle(currentLocationFrontRow-1,currentLocationFrontCol);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						updateObstacle(currentLocationFrontRow+1,currentLocationFrontCol);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						updateObstacle(currentLocationFrontRow,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						updateObstacle(currentLocationFrontRow,currentLocationFrontCol-1);
+					break;
+			}
+		}else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						updateExploredArea(currentLocationFrontRow-1,currentLocationFrontCol);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						updateExploredArea(currentLocationFrontRow+1,currentLocationFrontCol);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						updateExploredArea(currentLocationFrontRow,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						updateExploredArea(currentLocationFrontRow,currentLocationFrontCol-1);
+					break;
+			}
+		}
+		if(frontLeftSensor>=sensorTrashold){
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						updateObstacle(currentLocationFrontRow-1,currentLocationFrontCol-1);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						updateObstacle(currentLocationFrontRow+1,currentLocationFrontCol+1);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						updateObstacle(currentLocationFrontRow-1,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						updateObstacle(currentLocationFrontRow+1,currentLocationFrontCol-1);
+					break;
+			}
+		}else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						updateExploredArea(currentLocationFrontRow-1,currentLocationFrontCol-1);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						updateExploredArea(currentLocationFrontRow+1,currentLocationFrontCol+1);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						updateExploredArea(currentLocationFrontRow-1,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						updateExploredArea(currentLocationFrontRow+1,currentLocationFrontCol-1);
+					break;
+			}
+		}
+		
+		if(frontRightSensor>=sensorTrashold){
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						updateObstacle(currentLocationFrontRow-1,currentLocationFrontCol+1);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						updateObstacle(currentLocationFrontRow+1,currentLocationFrontCol-1);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						updateObstacle(currentLocationFrontRow+1,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						updateObstacle(currentLocationFrontRow-1,currentLocationFrontCol-1);
+					break;
+			}
+		}else{
+			switch(currentDirection){
+				case North:
+					if(currentLocationFrontRow-1>=0)
+						updateExploredArea(currentLocationFrontRow-1,currentLocationFrontCol+1);
+					break;
+				case South:
+					if(currentLocationFrontRow+1<=19)
+						updateExploredArea(currentLocationFrontRow+1,currentLocationFrontCol-1);
+					break;
+				case East:
+					if(currentLocationFrontCol+1<=14)
+						updateExploredArea(currentLocationFrontRow+1,currentLocationFrontCol+1);
+					break;
+				case West:
+					if(currentLocationFrontCol-1>=0)
+						updateExploredArea(currentLocationFrontRow-1,currentLocationFrontCol-1);
+					break;
+			}
+		}
+	}
+	public void updateObstacle(int row, int col){
+		this.obstacles[row][col] = 1;
+		int newData[][] = new int[20][15];//17,3 17,11
+		for(int i=0;i<20;i++){
+			for(int j=0;j<15;j++){
+				newData[i][j]=this.obstacles[i][Math.abs(14-j)];
+			}
+		}
+		MapUI.updateMap(newData, 1);
+	}
+	public void updateExploredArea(int row, int col){
+		this.exploredData[row][col] = 1;
+		int newData[][] = new int[20][15];//17,3 17,11
+		for(int i=0;i<20;i++){
+			for(int j=0;j<15;j++){
+				newData[i][j]=this.exploredData[i][Math.abs(14-j)];
+			}
+		}
+		MapUI.updateMap(newData, 0);	
+	}
+	//***********************************************//
+	// 			GODS RETURN FROM EXPLORATION		 //
+	//***********************************************//
+	boolean hasReturnedHome=false;
+	public void returnGodHome(RobotCallback callback){
+		
+		DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(buildGraphForReturningHome());
+        dijkstra.execute(currentNode);
+        
+        currentNode = updateCurrentNode();
+        
+        
+        if(currentNode.getNodeRowIndex()==18&&currentNode.getNodeColIndex()==1)
+        	hasReturnedHome=true;
+        if(hasReturnedHome==false){
+        	System.out.println("finding way home");
+        	currentTarget = explorationNodes[0][0];
+        	LinkedList<AlgoNode> path = dijkstra.getPath(currentTarget);
+    		
+    		//finally decide the command to give to the robot/UI only the index(1) command	
+    		
+    		AlgoNode nextNodeToTravel =  path.get(1);
+    		System.out.println("RETURNING NODE TO TRAVEL"+nextNodeToTravel);
+    		System.out.println("RETURNING CURRENT POSITION"+currentNode);
+    		int tempRow = -1;
+            int tempCol = -1;
+    		switch(currentDirection){
+    			case North:
+    				tempRow = currentLocationFrontRow+1;
+    				tempCol = currentLocationFrontCol;
+    				if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+    					callback.changeDirection(Direction.LEFT, 2);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+    					callback.changeDirection(Direction.RIGHT, 1);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+    					callback.changeDirection(Direction.LEFT, 1);
+    					callback.moveForward(1);
+    				}
+    				break;
+    			case South:
+    				tempRow = currentLocationFrontRow-1;
+    				tempCol = currentLocationFrontCol;
+    				if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+    					callback.changeDirection(Direction.LEFT, 2);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+    					callback.changeDirection(Direction.LEFT, 1);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+    					callback.changeDirection(Direction.RIGHT, 1);
+    					callback.moveForward(1);
+    				}
+    				break;
+    			case East:
+    				tempRow = currentLocationFrontRow;
+    				tempCol = currentLocationFrontCol-1;
+    				if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+    					callback.changeDirection(Direction.LEFT, 1);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+    					callback.changeDirection(Direction.RIGHT, 1);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+    					callback.changeDirection(Direction.LEFT, 2);
+    					callback.moveForward(1);
+    				}
+    				break;
+    			case West:
+    				tempRow = currentLocationFrontRow;
+    				tempCol = currentLocationFrontCol+1;
+    				if(nextNodeToTravel.getNodeRowIndex()<tempRow){
+    					callback.changeDirection(Direction.RIGHT, 1);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeRowIndex()>tempRow){
+    					callback.changeDirection(Direction.LEFT, 1);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()>tempCol){
+    					callback.changeDirection(Direction.LEFT, 2);
+    					callback.moveForward(1);
+    				}else if(nextNodeToTravel.getNodeColIndex()<tempCol){
+    					callback.moveForward(1);
+    					
+    				}
+    				break;
+    		}
+        }else{
+        	System.out.println("AT HOME LIAO");
+        	callback.readyForFastestPath();
+//			callback.sendRobotInstruction(null);
+        }
+	}
+	public AlgoGraph buildGraphForReturningHome(){
+		ArrayList<AlgoEdge> edges = new ArrayList<>();
+		ArrayList<AlgoNode> nodes = new ArrayList<>();
+		explorationNodes = trimGraphForReturningHome(generateNodePool());
+		
+		for(int i=0;i<explorationNodes.length;i++){
+			for(int j=0;j<explorationNodes[i].length;j++){
+				if(explorationNodes[i][j]!=null){
+//					System.out.println(nodePool[i][j]);
+					nodes.add(explorationNodes[i][j]);
+				}
+			}
+		}
+		//blind the edges
+		for(int i=0;i<explorationNodes.length;i++){
+			for(int j=0;j<explorationNodes[i].length;j++){
+
+				//set front node
+				if((j+1)<explorationNodes[i].length){
+					if(explorationNodes[i][j+1]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i][j+1].getNodeRowIndex()+","+explorationNodes[i][j+1].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i][j+1],1));
+					}
+				}
+					
+				//set left node
+				if((i-1)>=0){
+					if(explorationNodes[i-1][j]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i-1][j].getNodeRowIndex()+","+explorationNodes[i-1][j].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i-1][j],2));
+					}
+				}
+					
+				//set right node
+				if((i+1)<explorationNodes.length){
+					if(explorationNodes[i+1][j]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i+1][j].getNodeRowIndex()+","+explorationNodes[i+1][j].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i+1][j],2));
+					}
+				}
+				
+				//set back node
+				if((j-1)>=0){
+					if(explorationNodes[i][j-1]!=null&&explorationNodes[i][j]!=null){
+						edges.add(new AlgoEdge(explorationNodes[i][j].getNodeRowIndex()+","+explorationNodes[i][j].getNodeColIndex()+"TO"+explorationNodes[i][j-1].getNodeRowIndex()+","+explorationNodes[i][j-1].getNodeColIndex(),explorationNodes[i][j],explorationNodes[i][j-1],3));
+					}
+				}
+			}
+		}
+		
+		
+		return new AlgoGraph(nodes, edges);
+	}
+	public AlgoNode[][] trimGraphForReturningHome(AlgoNode[][] nodePool){
+		for(int i=0;i<nodePool.length;i++){
+			for(int j=0;j<nodePool[i].length;j++){
+				int actualrow = 18-i;
+				int actualcol = j+1;
+				
+				//check center is obstacle
+				if(obstacles[actualrow][actualcol]==1||exploredData[actualrow][actualcol]==0){
+					nodePool[i][j]=null;
+				}
+				//check forward is obstacle
+				if(obstacles[actualrow][actualcol+1]==1||exploredData[actualrow][actualcol+1]==0){
+					nodePool[i][j]=null;
+				}
+				//check forwardright is obsacle
+				if(obstacles[actualrow-1][actualcol+1]==1||exploredData[actualrow-1][actualcol+1]==0){
+					nodePool[i][j]=null;
+				}
+				//check forwardleft is obstacle
+				if(obstacles[actualrow+1][actualcol+1]==1||exploredData[actualrow+1][actualcol+1]==0){
+					nodePool[i][j]=null;
+				}
+				//check back isobstacle
+				if(obstacles[actualrow][actualcol-1]==1||exploredData[actualrow][actualcol-1]==0){
+					nodePool[i][j]=null;
+				}
+				//check backright is obstacle
+				if(obstacles[actualrow-1][actualcol-1]==1||exploredData[actualrow-1][actualcol-1]==0){
+					nodePool[i][j]=null;
+				}
+				//check backleft is obstacle
+				if(obstacles[actualrow+1][actualcol-1]==1||exploredData[actualrow+1][actualcol-1]==0){
+					nodePool[i][j]=null;
+				}
+				//check right is obstacle
+				if(obstacles[actualrow-1][actualcol]==1||exploredData[actualrow-1][actualcol]==0){
+					nodePool[i][j]=null;
+				}
+				//check left is obstacle
+				if(obstacles[actualrow-1][actualcol]==1||exploredData[actualrow-1][actualcol]==0){
+					nodePool[i][j]=null;
+				}
+				
+			}
+		}
+		return nodePool;
+	}
 	
 	//***************************************//
 	//  EXPLORATION METHODS FOR SIMULATION	 //
 	//***************************************//
+	
+/*
 	public void exploreSimulation(float frontMidSensor, float frontLeftSensor, float frontRightSensor, float rightSensor, float leftSensor, final RobotCallback callback){
 		if(isExporeCoverageReached()){
 			returnToStart(callback);
@@ -277,16 +938,11 @@ public class Algothrim {
 			if(isGoalReached==true){
 				boolean breakloop = false;
 				
-				//find the nearest gird to explore
-				
 				
 				
 				for(int i=19;i>=0;i--){
 					for(int j=0;j<=14;j++){
 						if(exploredData[i][j]==0&&obstacleData[i][j]==0){
-//							System.out.println(i+","+j);
-							isTargetCellReachable(i,j);
-							if(unreachableData[i][j]==0){
 								breakloop=true;
 								switch(currentDirection){
 								case North:
@@ -307,10 +963,8 @@ public class Algothrim {
 									break;
 								}
 								callback.sendRobotInstruction(null);
-							}else{
-								breakloop=false;
-							}
-							System.out.println(breakloop);
+							
+//							System.out.println(breakloop);
 					
 							if(breakloop==true)
 								break;
@@ -1847,17 +2501,6 @@ public class Algothrim {
 		}
 	}
 	
-	//TODO:check if the grib is reachable
-	private void isTargetCellReachable(int row, int col){
-//		exploredData[19][14]=1;
-//		exploredData[19][13]=1;
-//		exploredData[18][14]=1;
-//		exploredData[18][13]=1;
-	}
-	
-	private void getNearestGrid(int currentRow, int currentCol){
-		
-	}
 	private boolean isExporeCoverageReached(){
 		int exploredCount= 0;
 		for(int i=0;i<exploredData.length;i++){
@@ -2150,26 +2793,26 @@ public class Algothrim {
 			callback.sendRobotInstruction(null);
 		}
 	}
+	*/
 	
 	//***********************************//
 	//		SHORTEST PATH METHODS		 //
 	//***********************************//
-	//notes:shortest path will work only if there is a path to the goal!!
 	public void findPath(RobotCallback callback){
+		System.out.println("finiding fastest path");
 		AlgoGraph tree1 = generateAlgoTree();
 		
-		if(isGoalReachable()==true){
+		
 			AlgoGraph tree = generateAlgoTree();
 			DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(tree);
             dijkstra.execute(tree.getVertexes().get(1));
             LinkedList<AlgoNode> path = dijkstra.getPath(tree.getVertexes().get(tree.getVertexes().size()-1));
             
             //from 18,2
-           MapUI.readyRobotAtStartPosition();
-           //TODO:add in callback to real robot if else cond
+//           MapUI.readyRobotAtStartPosition();
+           //TODO:finish this
            
            
-            if(path!=null){
             	 int tempRow = 18;
                  int tempCol = 2;
                  Direction tempDirection = currentDirection;
@@ -2184,24 +2827,22 @@ public class Algothrim {
                 				tempDirection = Direction.North;
                 				tempRow=path.get(i).getNodeRowIndex();
                 				tempCol=path.get(i).getNodeColIndex();
-                				System.out.println("FAcing North moving forward");
                 			}else if(path.get(i).getNodeColIndex()>tempCol){
                 				callback.changeDirection(Direction.RIGHT, 1);
                 				callback.moveForward(1);
-                				System.out.println("FAcing North turning right");
                 				tempDirection = Direction.East;
                 				tempRow=path.get(i).getNodeRowIndex();
                 				tempCol=path.get(i).getNodeColIndex();
                 			}else if(path.get(i).getNodeColIndex()<tempCol){
                 				callback.changeDirection(Direction.LEFT, 1);
                 				callback.moveForward(1);
-                				System.out.println("FAcing North turning Left");
                 				tempDirection = Direction.West;
                 				tempRow=path.get(i).getNodeRowIndex();
                 				tempCol=path.get(i).getNodeColIndex();
                 			}
-                			else{
-                				System.out.println("NORTH ERROR"+path.get(i).getNodeRowIndex()+","+path.get(i).getNodeColIndex());
+                			else if(path.get(i).getNodeRowIndex()>tempRow){
+                				callback.changeDirection(Direction.LEFT, 2);
+                				callback.moveForward(1);
                 			}
                 			break;
                 		case South:
@@ -2217,8 +2858,17 @@ public class Algothrim {
                 				tempDirection = Direction.East;
                 				tempRow=path.get(i).getNodeRowIndex();
                 				tempCol=path.get(i).getNodeColIndex();
-                			}else{
-                				System.out.println("SOUTH ERROR"+path.get(i).getNodeRowIndex()+","+path.get(i).getNodeColIndex());
+                			}else if(path.get(i).getNodeRowIndex()>tempRow){
+                				callback.moveForward(1);
+                				tempDirection = Direction.South;
+                				tempRow=path.get(i).getNodeRowIndex();
+                				tempCol=path.get(i).getNodeColIndex();
+                			}else if(path.get(i).getNodeColIndex()<tempCol){
+                				callback.changeDirection(Direction.RIGHT, 1);
+                				callback.moveForward(1);
+                				tempDirection = Direction.West;
+                				tempRow=path.get(i).getNodeRowIndex();
+                				tempCol=path.get(i).getNodeColIndex();
                 			}
                 			break;
                 		case East:
@@ -2228,15 +2878,22 @@ public class Algothrim {
                 				tempDirection = Direction.North;
                 				tempRow=path.get(i).getNodeRowIndex();
                 				tempCol=path.get(i).getNodeColIndex();
-                				System.out.println("FAcing East turning left");
                 			}else if(path.get(i).getNodeColIndex()>tempCol){
                 				callback.moveForward(1);
                 				tempDirection = Direction.East;
                 				tempRow=path.get(i).getNodeRowIndex();
-                				System.out.println("FAcing East moving forward");
                 				tempCol=path.get(i).getNodeColIndex();
-                			}else{
-                				System.out.println("EAST ERROR"+path.get(i).getNodeRowIndex()+","+path.get(i).getNodeColIndex());
+                			}else if(path.get(i).getNodeRowIndex()>tempRow){
+                				callback.changeDirection(Direction.RIGHT, 1);
+                				callback.moveForward(1);
+                				tempDirection = Direction.South;
+                				tempRow=path.get(i).getNodeRowIndex();
+                				tempCol=path.get(i).getNodeColIndex();
+                			}else if(path.get(i).getNodeColIndex()<tempCol){
+                				callback.changeDirection(Direction.RIGHT, 2);
+                				callback.moveForward(1);
+                				tempDirection = Direction.West;
+                				tempRow=path.get(i).getNodeRowIndex();
                 			}
                 			break;
                 		case West:
@@ -2253,24 +2910,26 @@ public class Algothrim {
                 				tempDirection = Direction.East;
                 				tempRow=path.get(i).getNodeRowIndex();
                 				tempCol=path.get(i).getNodeColIndex();
-                			}else{
-                				System.out.println("WEST ERROR"+path.get(i).getNodeRowIndex()+","+path.get(i).getNodeColIndex());
+                			}else if(path.get(i).getNodeRowIndex()<tempRow){
+                				callback.changeDirection(Direction.LEFT, 1);
+                				callback.moveForward(1);
+                				tempDirection = Direction.South;
+                				tempRow=path.get(i).getNodeRowIndex();
+                				tempCol=path.get(i).getNodeColIndex();
+                			}else if(path.get(i).getNodeColIndex()>tempCol){
+                				callback.moveForward(1);
+                				tempDirection = Direction.West;
+                				tempRow=path.get(i).getNodeRowIndex();
+                				tempCol=path.get(i).getNodeColIndex();
                 			}
                 			break;
                 	}
                 }
             	callback.readyForFastestPath();
-            }else{
-            	//TODO:explore to goal
-            }
             
             
-			callback.readyForFastestPath();
-		}else{
-			//we do the explore to goal again... no choice
-		}
+		
 	}	
-	
 	public AlgoGraph generateAlgoTree(){
 		//create the nodes indivually so we can reference instead of recreating the leaf so the tree wont go into a loop
 		AlgoNode[][] nodePool = trimNodePool(generateNodePool());
@@ -2360,39 +3019,39 @@ public class Algothrim {
 				int actualcol = j+1;
 				
 				//check center is obstacle
-				if(obstacleData[actualrow][actualcol]==1||exploredData[actualrow][actualcol]==0){
+				if(obstacles[actualrow][actualcol]==1||exploredData[actualrow][actualcol]==0){
 					nodePool[i][j]=null;
 				}
 				//check forward is obstacle
-				if(obstacleData[actualrow][actualcol+1]==1||exploredData[actualrow][actualcol+1]==0){
+				if(obstacles[actualrow][actualcol+1]==1||exploredData[actualrow][actualcol+1]==0){
 					nodePool[i][j]=null;
 				}
 				//check forwardright is obsacle
-				if(obstacleData[actualrow-1][actualcol+1]==1||exploredData[actualrow-1][actualcol+1]==0){
+				if(obstacles[actualrow-1][actualcol+1]==1||exploredData[actualrow-1][actualcol+1]==0){
 					nodePool[i][j]=null;
 				}
 				//check forwardleft is obstacle
-				if(obstacleData[actualrow+1][actualcol+1]==1||exploredData[actualrow+1][actualcol+1]==0){
+				if(obstacles[actualrow+1][actualcol+1]==1||exploredData[actualrow+1][actualcol+1]==0){
 					nodePool[i][j]=null;
 				}
 				//check back isobstacle
-				if(obstacleData[actualrow][actualcol-1]==1||exploredData[actualrow][actualcol-1]==0){
+				if(obstacles[actualrow][actualcol-1]==1||exploredData[actualrow][actualcol-1]==0){
 					nodePool[i][j]=null;
 				}
 				//check backright is obstacle
-				if(obstacleData[actualrow-1][actualcol-1]==1||exploredData[actualrow-1][actualcol-1]==0){
+				if(obstacles[actualrow-1][actualcol-1]==1||exploredData[actualrow-1][actualcol-1]==0){
 					nodePool[i][j]=null;
 				}
 				//check backleft is obstacle
-				if(obstacleData[actualrow+1][actualcol-1]==1||exploredData[actualrow+1][actualcol-1]==0){
+				if(obstacles[actualrow+1][actualcol-1]==1||exploredData[actualrow+1][actualcol-1]==0){
 					nodePool[i][j]=null;
 				}
 				//check right is obstacle
-				if(obstacleData[actualrow-1][actualcol]==1||exploredData[actualrow-1][actualcol]==0){
+				if(obstacles[actualrow-1][actualcol]==1||exploredData[actualrow-1][actualcol]==0){
 					nodePool[i][j]=null;
 				}
 				//check left is obstacle
-				if(obstacleData[actualrow-1][actualcol]==1||exploredData[actualrow-1][actualcol]==0){
+				if(obstacles[actualrow-1][actualcol]==1||exploredData[actualrow-1][actualcol]==0){
 					nodePool[i][j]=null;
 				}
 				

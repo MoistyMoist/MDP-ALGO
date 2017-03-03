@@ -2,8 +2,6 @@ package model;
 
 import java.util.List;
 
-import com.sg.ntu.mdp.Direction;
-
 public class AlgoGraph {
 	
 	private final List<AlgoNode> vertexes;

@@ -6,9 +6,12 @@ import javax.swing.JSplitPane;
 import javax.swing.border.Border;
 
 import com.sg.ntu.mdp.Algothrim;
-import com.sg.ntu.mdp.Direction;
-import com.sg.ntu.mdp.RobotCallback;
 import com.sg.ntu.mdp.communication.Descriptor;
+import com.sg.ntu.mdp.instructions.MoveRobotForwardThread;
+import com.sg.ntu.mdp.instructions.TurnRobotThread;
+
+import model.Direction;
+import model.RobotCallback;
 
 import java.awt.BorderLayout;
 
@@ -43,7 +46,7 @@ public class MapUI {
 	public JFrame getJFrame(){return this.frame;}
 	static Algothrim algothrim = new Algothrim(null,null,18,2); 
 	static int stepsPerSec=4;
-	static int timeToExplore = 100;
+	static int timeToExplore = 70;
 	private static JButton exploreBtn;
 	private static JButton startFastestBtn;
 	public static JLayeredPane mapPanel;
@@ -560,13 +563,13 @@ public class MapUI {
 	                e.printStackTrace();
 	            }
 //	            if(toExplore==true)
-	            	checkForObstacle();
+//	            	checkForObstacle();
 	            if(instructionQueue.size()==0){
 	            	if(toExplore==true)
 	            		explore();
 	            	else
 	            	{
-	            		algothrim.returnToStart(new RobotCallback(){
+	            		algothrim.returnGodHome(new RobotCallback(){
 	            			public void moveForward(int distance) {
 	            				instructionQueue.add(new MoveRobotForwardThread(distance));
 	            			}
@@ -600,12 +603,12 @@ public class MapUI {
 	            }	
 	        }
 		}else{
-			checkForObstacle();
+//			checkForObstacle();
 			if(toExplore==true)
         		explore();
         	else
         	{
-        		algothrim.returnToStart(new RobotCallback(){
+        		algothrim.returnGodHome(new RobotCallback(){
         			public void moveForward(int distance) {
         				instructionQueue.add(new MoveRobotForwardThread(distance));
         			}
@@ -636,76 +639,6 @@ public class MapUI {
         		});
         	}
 		}
-	}
-	public static void checkForObstacle(){
-		int currentLocationFrontRow = Algothrim.currentLocationFrontRow;//up to 0 - 19
-		int currentLocationFrontCol = Algothrim.currentLocationFrontCol;//up to 0 - 14
-		int frontMidSensor = 0;
-		int frontLeftSensor = 0;
-		int frontRightSensor = 0;
-		int rightSensor = 0;
-		int leftSensor = 0;
-		
-		switch(Algothrim.currentDirection){
-		case North:
-			if(currentLocationFrontRow-1>-1){
-				frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontLeftSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			if(currentLocationFrontCol+2<=14){
-				if(currentLocationFrontRow>0){
-					rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
-				}
-			}
-			if(currentLocationFrontCol-2>=0){
-				if(currentLocationFrontRow>0){
-					leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
-				}
-			}
-			break;
-		case South:
-			if(currentLocationFrontRow+1<=19){
-				frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontLeftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontRightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			if(currentLocationFrontCol-2>=0){
-				rightSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-2].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			if(currentLocationFrontCol+2<=14){
-				leftSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+2].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			break;
-		case East:
-			if(currentLocationFrontCol+1<=14){
-				frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontLeftSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontRightSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			if(currentLocationFrontRow+2<=19){
-				rightSensor = panels[19-(currentLocationFrontRow+2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			if(currentLocationFrontRow-2>0){
-				leftSensor = panels[19-(currentLocationFrontRow-2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			break;
-		case West:
-			if(currentLocationFrontCol-1>=0){
-				frontMidSensor = panels[19-currentLocationFrontRow][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-				frontLeftSensor = panels[19-(currentLocationFrontRow+1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			if(currentLocationFrontRow-2>0){
-				rightSensor = panels[19-(currentLocationFrontRow-2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			if(currentLocationFrontRow+2<=19){
-				leftSensor = panels[19-(currentLocationFrontRow+2)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
-			}
-			break;
-	}
-		
-		algothrim.addObstacle(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor);
 	}
 	
 	//////////////////////////////////////////////////////////
@@ -843,7 +776,7 @@ public class MapUI {
 		}
 		
 	
-		algothrim.exploreSimulation(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
+		algothrim.godsExploration(frontMidSensor, frontLeftSensor, frontRightSensor, rightSensor, leftSensor, new RobotCallback(){
 			@Override
 			public void moveForward(int distance) {
 				instructionQueue.add(new MoveRobotForwardThread(distance));

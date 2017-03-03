@@ -9,11 +9,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.sg.ntu.mdp.Algothrim;
-import com.sg.ntu.mdp.Direction;
-import com.sg.ntu.mdp.RobotCallback;
+import com.sg.ntu.mdp.instructions.MoveRobotForwardThread;
+import com.sg.ntu.mdp.instructions.TurnRobotThread;
 import com.sg.ntu.mdp.simulator.MapUI;
-import com.sg.ntu.mdp.simulator.MoveRobotForwardThread;
-import com.sg.ntu.mdp.simulator.TurnRobotThread;
+
+import model.Direction;
+import model.RobotCallback;
 
 //communication between the robot and algo outputting json
 public class AlgoContoller {
@@ -32,7 +33,7 @@ public class AlgoContoller {
 	
 	public static void returnToStart(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
 		ArrayList<String> jsonInstruction = new ArrayList<String>();
-		algothrim.returnToStart(new RobotCallback(){
+		algothrim.returnGodHome(new RobotCallback(){
 			@Override
 			public void moveForward(int distance) {
 				updateRobotUI(null,distance,true);
@@ -80,7 +81,7 @@ public class AlgoContoller {
 	public static void explore(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
 		ArrayList<String> jsonInstruction = new ArrayList<String>();
 		
-		algothrim.exploreSimulation(inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor, inputRightSensor, inputLeftSensor, new RobotCallback(){
+		algothrim.godsExploration(inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor, inputRightSensor, inputLeftSensor, new RobotCallback(){
 			@Override
 			public void moveForward(int distance) {
 				System.out.println("moving for");
@@ -94,6 +95,8 @@ public class AlgoContoller {
 			}
 			@Override
 			public void readyForFastestPath(){
+				//TOdo:position the robot
+				computeFastestPath();
 			}
 			@Override
 			public void sendRobotInstruction(String jsonInstructions){

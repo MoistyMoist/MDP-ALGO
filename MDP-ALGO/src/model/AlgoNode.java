@@ -1,7 +1,5 @@
 package model;
 
-import com.sg.ntu.mdp.Direction;
-
 public class AlgoNode {
 	
 	private int nodeColIndex;
