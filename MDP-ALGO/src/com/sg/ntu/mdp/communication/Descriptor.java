@@ -131,10 +131,10 @@ public class Descriptor {
 	
 	public void saveDataFromSimulatorToFile(int[][] exploredData, int[][]obstacleData){
 		String exploredHex = saveExploredDataToFile(exploredData);
-		System.out.println("EXPLORED HEX VALUE : "+exploredHex);
+//		System.out.println("EXPLORED HEX VALUE : "+exploredHex);
 		
 		String obstacleHex = saveObstacleDataToFile(obstacleData,exploredData);
-		System.out.println("OBSTACL HEX VALUE : "+obstacleHex);
+//		System.out.println("OBSTACL HEX VALUE : "+obstacleHex);
 		
 
 		writeDescriptorFromFile(exploredHex, obstacleHex);
@@ -144,7 +144,7 @@ public class Descriptor {
 		String binaryZeroHead="";
 		
 		while((binaryZeroHead.length()+binary.length())%4!=0){
-			System.out.println((binaryZeroHead.length()+binary.length())%4);
+//			System.out.println((binaryZeroHead.length()+binary.length())%4);
 			binaryZeroHead+="0";
 		}
 		
@@ -166,7 +166,7 @@ public class Descriptor {
 				stringData+=data[i][j];
 				temp+=data[i][j];
 			}
-			System.out.println(temp);
+//			System.out.println(temp);
 			temp="";
 		}
 		this.exloredData = data;
@@ -190,7 +190,7 @@ public class Descriptor {
 				stringObstacleData+=data[i][j];
 				temp+=data[i][j];
 			}
-			System.out.println(temp);
+//			System.out.println(temp);
 			temp="";
 		}
 		this.obstacleData = data;
@@ -198,8 +198,8 @@ public class Descriptor {
 		
 		String taskData="";
 		int exploredCOunt=0;
-		System.out.println(stringExploredData);
-		System.out.println(stringObstacleData);
+//		System.out.println(stringExploredData);
+//		System.out.println(stringObstacleData);
 		
 		for(int i=0;i<stringExploredData.length();i++){
 			if((stringExploredData.charAt(i)+"").equals("1")){

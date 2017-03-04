@@ -5,55 +5,42 @@ public class AlgoNode {
 	private int nodeColIndex;
 	private int nodeRowIndex;
 	private String id;
+	private boolean isVisited=false;
 	
-	private AlgoNode parentNode;
-	private AlgoNode leftNode;
-	private AlgoNode rightNode;
-	private AlgoNode frontNode;
-	private AlgoNode backNode;
+	
 	
 	public AlgoNode(int row, int col){
-		this.leftNode = null;
-		this.rightNode = null;
-		this.frontNode = null;
+		
 		this.nodeRowIndex = row;
 		this.nodeColIndex = col;
-		this.backNode = null;
-		this.parentNode = null;
 		this.id = row+","+col;
 	}
 	
-	public boolean hasParentNode(){
-		return parentNode==null?false:true;
-	}
-	public boolean hasBackPath(){
-		return backNode==null?false:true;
-	}
-	public boolean hasLeftPath(){
-		return leftNode==null?false:true;
-	}
-	public boolean hasRightPath(){
-		return rightNode==null?false:true;
-	}
-	public boolean hasForwardPath(){
-		return frontNode==null?false:true;
-	}
 	
-	public AlgoNode getBackNode() {
-		return backNode;
+
+	public String getId() {
+		return id;
 	}
 
-	public void setBackNode(AlgoNode backNode) {
-		this.backNode = backNode;
+
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public AlgoNode getParentNode() {
-		return parentNode;
+
+
+	public boolean isVisited() {
+		return isVisited;
 	}
 
-	public void setParentNode(AlgoNode parentNode) {
-		this.parentNode = parentNode;
+
+
+	public void setVisited(boolean isVisited) {
+		this.isVisited = isVisited;
 	}
+
+
 
 	public int getNodeColIndex() {
 		return nodeColIndex;
@@ -75,34 +62,6 @@ public class AlgoNode {
 	}
 
 	
-	public AlgoNode getLeftNode() {
-		return leftNode;
-	}
-
-
-	public void setLeftNode(AlgoNode leftNode) {
-		this.leftNode = leftNode;
-	}
-
-
-	public AlgoNode getRightNode() {
-		return rightNode;
-	}
-
-
-	public void setRightNode(AlgoNode rightNode) {
-		this.rightNode = rightNode;
-	}
-
-
-	public AlgoNode getFrontNode() {
-		return frontNode;
-	}
-
-
-	public void setFrontNode(AlgoNode frontNode) {
-		this.frontNode = frontNode;
-	}
 	 @Override
      public boolean equals(Object obj) {
              if (this == obj)

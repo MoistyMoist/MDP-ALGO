@@ -5,12 +5,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import com.sg.ntu.mdp.Algothrim;
-import com.sg.ntu.mdp.instructions.MoveRobotForwardThread;
-import com.sg.ntu.mdp.instructions.TurnRobotThread;
 import com.sg.ntu.mdp.simulator.MapUI;
 
 import model.Direction;
@@ -23,37 +21,11 @@ public class AlgoContoller {
 	static RobotCallback callback;
 	static boolean isExplorin=true;
 	static boolean isReturning=false;
-	static Timer explorationTimer;
-	static int intervial =180;
-	
+
+	@SuppressWarnings("rawtypes")
+	static Queue instructionQueue = new ArrayBlockingQueue(1000);
 	
 	public AlgoContoller (){
-		
-	}
-	
-	public static void returnToStart(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
-		ArrayList<String> jsonInstruction = new ArrayList<String>();
-		algothrim.returnGodHome(new RobotCallback(){
-			@Override
-			public void moveForward(int distance) {
-				updateRobotUI(null,distance,true);
-				jsonInstruction.add(wrapMoveForwardChangeJson(distance));
-			}
-			@Override
-			public void changeDirection(Direction direction, int times) {
-				updateRobotUI(direction,times,false);
-				jsonInstruction.add(wrapDirectionChangeJson(direction,times));
-			}
-			@Override
-			public void readyForFastestPath(){
-				isReturning=false;
-			}
-			@Override
-			public void sendRobotInstruction(String jsonInstructions){
-				sendRobotInstructions(jsonInstruction);
-			}
-		});
-		
 	}
 	
 	public static void computeFastestPath(){
@@ -62,15 +34,20 @@ public class AlgoContoller {
 		algothrim.findPath(new RobotCallback(){
 			@Override
 			public void moveForward(int distance) {
-				jsonInstruction.add(wrapMoveForwardChangeJson(distance));
+				for(int i = 0;i<distance;i++)
+					instructionQueue.add(wrapMoveForwardChangeJson(distance));
+//				jsonInstruction.add(wrapMoveForwardChangeJson(distance));
 			}
 			@Override
 			public void changeDirection(Direction direction, int times) {
-				jsonInstruction.add(wrapDirectionChangeJson(direction,times));
+				for(int i = 0;i<times;i++)
+					instructionQueue.add(wrapDirectionChangeJson(direction,times));
+//				jsonInstruction.add(wrapDirectionChangeJson(direction,times));
 			}
 			@Override
 			public void readyForFastestPath(){
-				sendRobotInstructions(jsonInstruction);
+				isExplorin=false;
+//				sendRobotInstructions(jsonInstruction);
 			}	
 			@Override
 			public void sendRobotInstruction(String jsonInstructions){
@@ -85,117 +62,153 @@ public class AlgoContoller {
 			@Override
 			public void moveForward(int distance) {
 				System.out.println("moving for");
+				for(int i = 0;i<distance;i++)
+					instructionQueue.add(wrapMoveForwardChangeJson(distance));
+//				jsonInstruction.add(wrapMoveForwardChangeJson(distance));
 				updateRobotUI(null,distance,true);
-				jsonInstruction.add(wrapMoveForwardChangeJson(distance));
+				
 			}
 			@Override
 			public void changeDirection(Direction direction, int times) {
+				for(int i = 0;i<times;i++)
+					instructionQueue.add(wrapDirectionChangeJson(direction,times));
+//				jsonInstruction.add(wrapDirectionChangeJson(direction,times));
 				updateRobotUI(direction,times,false);
-				jsonInstruction.add(wrapDirectionChangeJson(direction,times));
+				
 			}
 			@Override
 			public void readyForFastestPath(){
-				//TOdo:position the robot
+				instructionQueue.clear();
+				switch(Algothrim.currentDirection){
+					case West:
+						instructionQueue.add("r");
+						instructionQueue.add("r");
+						break;
+					case South:
+						instructionQueue.add("l");
+						break;
+					case North:
+						instructionQueue.add("r");
+						break;
+				}
 				computeFastestPath();
+				
+				
 			}
 			@Override
 			public void sendRobotInstruction(String jsonInstructions){
-				sendRobotInstructions(jsonInstruction);
+				if(instructionQueue.isEmpty()){
+					explore(inputLeftSensor, inputRightSensor, inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor);
+				}else{
+					sendRobotInstructions(jsonInstruction);
+				}
+				
 			}
 		});
 		
 		
 	}
 	
+	static int ignore=2;
+	
 	public static void parseMessageFromRobot(String json, RobotCallback inCallback){
-		callback=inCallback;
+		System.out.println("RAW MESSAGE : "+json);
 		String message=json.replace("{", "");
 		message=message.replace("}", "");
-		List<String> sensorList = Arrays.asList(message.split(","));
-		for(int i=0;i<sensorList.size();i++){
-			System.out.println("received "+sensorList.get(i));
-		}
 		
+		callback=inCallback;
 		if(isExplorin==true){
+			List<String> sensorList = Arrays.asList(message.split(","));
+			for(int i=0;i<sensorList.size();i++){
+				System.out.println("received "+sensorList.get(i));
+			}
 			explore(Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(1)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(3)),Integer.parseInt(sensorList.get(4)));
-		}else if(isReturning==true){
-			returnToStart(Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(1)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(3)),Integer.parseInt(sensorList.get(4)));
 		}else{
-			computeFastestPath();
+			if(ignore>0)
+				sendRobotInstructions(null);
+			ignore--;
+			if(ignore==0){
+				 MapUI.readyRobotAtStartPosition();
+			}
+			String instruction = (String) instructionQueue.peek();
+			if(instruction!=null&&ignore<0){
+				instruction = instruction.replace("H", "");
+				instruction = instruction.replace("|", "");
+				
+				switch(instruction.charAt(0)){
+				case 'l':
+					turnRobotUI(Direction.LEFT,1);
+					break;
+				case 'r':
+					turnRobotUI(Direction.RIGHT,1);
+					break;
+				case 'w':
+					moveRobotUIForward(1);
+					break;
+				}
+				
+				System.out.println(instructionQueue.peek());
+				sendRobotInstructions(null);
+			}
 		}
 		
-	}
-	
-	public static void startExploreTimer(){
-		explorationTimer = new Timer();
-		explorationTimer.scheduleAtFixedRate(new TimerTask() {
-		        public void run() {
-		        	--intervial;
-		        	if(intervial<=0){
-		        		endExploreTImer();
-		        	}
-		        }
-		    }, 1000, 1000);
-	}
-	public static void endExploreTImer(){
-		isExplorin=false;
-		isReturning=true;
 	}
 	
 	
 	public static void sendRobotInstructions(ArrayList<String> jsonInstructions){
-		String jsonInstructionsWraper="H[";
-		for(int i=0;i<jsonInstructions.size();i++){
-			jsonInstructionsWraper+=jsonInstructions.get(i);
-			if((i+1)!=jsonInstructions.size()){
-				jsonInstructionsWraper+=",";
-			}
-		}
-//		
-		jsonInstructionsWraper+="]";
+		String jsonInstructionsWraper="H";
+		jsonInstructionsWraper+=instructionQueue.poll();
+		jsonInstructionsWraper+="|";
+		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
+		callback.sendRobotInstruction(jsonInstructionsWraper);
+		
 		MapUI.saveMapToDescriptor();
 		Descriptor descriptor = new Descriptor();
 		String p1 = descriptor.readDescriptorFromFile(0);
 		String p2 = descriptor.readDescriptorFromFile(1);
-		
-//		callback.sendRobotInstruction(jsonInstructionsWraper);
-
 		jsonInstructionsWraper="";
 		jsonInstructionsWraper+="Agrid{"+p1+p2+"}";
-		System.out.println("jsonInstructionsWraper");
 		callback.sendRobotInstruction(jsonInstructionsWraper);
+
 		
 		jsonInstructionsWraper="";
 		
 		String robotBody="";
-		switch(algothrim.currentDirection){
+		switch(Algothrim.currentDirection){
 			case North:
-				robotBody = (algothrim.currentLocationFrontRow-1)+","+algothrim.currentLocationFrontCol;
+				robotBody = (Algothrim.currentLocationFrontRow+1)+","+Algothrim.currentLocationFrontCol;
 				break;
 			case South:
-				robotBody = (algothrim.currentLocationFrontRow+1)+","+algothrim.currentLocationFrontCol;
+				robotBody = (Algothrim.currentLocationFrontRow-1)+","+Algothrim.currentLocationFrontCol;
 				break;
 			case East:
-				robotBody = (algothrim.currentLocationFrontRow)+","+(algothrim.currentLocationFrontCol-1);
+				robotBody = (Algothrim.currentLocationFrontRow)+","+(Algothrim.currentLocationFrontCol-1);
 				break;
 			case West:
-				robotBody = (algothrim.currentLocationFrontRow)+","+(algothrim.currentLocationFrontCol+1);
+				robotBody = (Algothrim.currentLocationFrontRow)+","+(Algothrim.currentLocationFrontCol+1);
 				break;
 		}
 		
-		jsonInstructionsWraper ="robotPosition:"+robotBody+","+algothrim.currentLocationFrontRow+","+algothrim.currentLocationFrontCol;
+		jsonInstructionsWraper ="A{\"robotPosition\":["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]}";
 		callback.sendRobotInstruction(jsonInstructionsWraper);
 	}
 	public static String wrapDirectionChangeJson(Direction direction, int times){
-		String jsonString="{";
-		jsonString +="InstructionType=DirectionChange,"+direction.toString()+","+times+";";
+		String jsonString="";
+		if(direction==Direction.LEFT){
+			jsonString +="l";
+		}else if(direction==Direction.RIGHT){
+			jsonString +="r";
+		}
 		
-		return jsonString+="}";
+		
+		return jsonString+="";
 	}
 	public static String wrapMoveForwardChangeJson(int times){
-		String jsonString="{";
-		jsonString +="InstructionType=MoveForward,"+times+";";
-		return jsonString+="}";
+		String jsonString="";
+		for(int i=0;i<times;i++){
+			jsonString +="w";//w only
+		}
+		return jsonString+="";
 	}
 
 	public static void updateRobotUI(Direction direction, int times,boolean isForward){

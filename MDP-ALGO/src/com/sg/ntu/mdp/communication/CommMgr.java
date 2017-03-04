@@ -119,7 +119,7 @@ public class CommMgr {
 			String outputMsg = msgType + msg;
 
 			outputMsg = String.format("%-128s", outputMsg);
-			System.out.println("Sending out msg: " + outputMsg);
+//			System.out.println("Sending out msg: " + outputMsg);
 			
 			_osw.write(outputMsg);
 			_osw.flush();
@@ -128,9 +128,9 @@ public class CommMgr {
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("sendMsg() -> IOException");
+//			System.out.println("sendMsg() -> IOException");
 		} catch (Exception e) {
-			System.out.println("sendMsg() -> Exception");
+//			System.out.println("sendMsg() -> Exception");
 		}
 		
 		return false;

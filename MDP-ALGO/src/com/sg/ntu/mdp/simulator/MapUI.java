@@ -46,7 +46,7 @@ public class MapUI {
 	public JFrame getJFrame(){return this.frame;}
 	static Algothrim algothrim = new Algothrim(null,null,18,2); 
 	static int stepsPerSec=4;
-	static int timeToExplore = 70;
+	static int timeToExplore = 700;
 	private static JButton exploreBtn;
 	private static JButton startFastestBtn;
 	public static JLayeredPane mapPanel;
@@ -717,7 +717,6 @@ public class MapUI {
 		switch(Algothrim.currentDirection){
 			case North:
 				if(currentLocationFrontRow-1>=0){
-					System.out.println("CUCK");
 					frontMidSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol].getBackground()==Color.LIGHT_GRAY?1:0;
 					frontLeftSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol-1].getBackground()==Color.LIGHT_GRAY?1:0;
 					frontRightSensor = panels[19-(currentLocationFrontRow-1)][currentLocationFrontCol+1].getBackground()==Color.LIGHT_GRAY?1:0;
