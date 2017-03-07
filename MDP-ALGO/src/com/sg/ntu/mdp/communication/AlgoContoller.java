@@ -56,26 +56,24 @@ public class AlgoContoller {
 	}
 	
 	public static void explore(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
-		ArrayList<String> jsonInstruction = new ArrayList<String>();
 		
 		algothrim.godsExploration(inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor, inputRightSensor, inputLeftSensor, new RobotCallback(){
+			@SuppressWarnings("unchecked")
 			@Override
 			public void moveForward(int distance) {
 				System.out.println("moving for");
-				for(int i = 0;i<distance;i++)
-					instructionQueue.add(wrapMoveForwardChangeJson(distance));
-//				jsonInstruction.add(wrapMoveForwardChangeJson(distance));
+				instructionQueue.add(wrapMoveForwardChangeJson(distance));
 				updateRobotUI(null,distance,true);
 				
 			}
+			@SuppressWarnings("unchecked")
 			@Override
 			public void changeDirection(Direction direction, int times) {
-				for(int i = 0;i<times;i++)
-					instructionQueue.add(wrapDirectionChangeJson(direction,times));
-//				jsonInstruction.add(wrapDirectionChangeJson(direction,times));
+				instructionQueue.add(wrapDirectionChangeJson(direction,times));
 				updateRobotUI(direction,times,false);
 				
 			}
+			@SuppressWarnings({ "incomplete-switch", "unchecked" })
 			@Override
 			public void readyForFastestPath(){
 				instructionQueue.clear();
@@ -92,76 +90,114 @@ public class AlgoContoller {
 						break;
 				}
 				computeFastestPath();
-				
-				
 			}
 			@Override
 			public void sendRobotInstruction(String jsonInstructions){
 				if(instructionQueue.isEmpty()){
 					explore(inputLeftSensor, inputRightSensor, inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor);
 				}else{
-					sendRobotInstructions(jsonInstruction);
+					sendRobotInstructions();
 				}
-				
 			}
 		});
-		
-		
 	}
 	
 	static int ignore=2;
+	static boolean needCalibration=false;
 	
-	public static void parseMessageFromRobot(String json, RobotCallback inCallback){
-		System.out.println("RAW MESSAGE : "+json);
-		String message=json.replace("{", "");
-		message=message.replace("}", "");
-		
+	public void parseMessageFromRobot(String message, RobotCallback inCallback){
 		callback=inCallback;
-		if(isExplorin==true){
-			List<String> sensorList = Arrays.asList(message.split(","));
-			for(int i=0;i<sensorList.size();i++){
-				System.out.println("received "+sensorList.get(i));
+
+		if(message!=null&&!message.equals("")){
+			if(message.contains("start")&&isExplorin==true){
+				//start exploring by asking for sensor data
+				askForSensorData();
 			}
-			explore(Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(1)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(3)),Integer.parseInt(sensorList.get(4)));
-		}else{
-			if(ignore>0)
-				sendRobotInstructions(null);
-			ignore--;
-			if(ignore==0){
-				 MapUI.readyRobotAtStartPosition();
-			}
-			String instruction = (String) instructionQueue.peek();
-			if(instruction!=null&&ignore<0){
-				instruction = instruction.replace("H", "");
-				instruction = instruction.replace("|", "");
-				
-				switch(instruction.charAt(0)){
-				case 'l':
-					turnRobotUI(Direction.LEFT,1);
-					break;
-				case 'r':
-					turnRobotUI(Direction.RIGHT,1);
-					break;
-				case 'w':
-					moveRobotUIForward(1);
-					break;
+			else if((message.contains("start")&&isExplorin==false)||(isExplorin==false&&message.equals("f"))){
+				//comes here if exploring is finished and msg is start we just send the instruction in the queue for fastest path
+				if(ignore>0)
+					sendRobotInstructions();
+				ignore--;
+				if(ignore==0){
+					 MapUI.readyRobotAtStartPosition();
 				}
+				String instruction = (String) instructionQueue.peek();
+				if(instruction!=null&&ignore<0){
+					instruction = instruction.replace("H", "");
+					instruction = instruction.replace("|", "");
+					
+					switch(instruction.charAt(0)){
+					case 'l':
+						turnRobotUI(Direction.LEFT,1);
+						break;
+					case 'r':
+						turnRobotUI(Direction.RIGHT,1);
+						break;
+					case 'w':
+						moveRobotUIForward(1);
+						break;
+					}
+					
+					System.out.println(instructionQueue.peek());
+					sendRobotInstructions();
+			}
+			else{
 				
-				System.out.println(instructionQueue.peek());
-				sendRobotInstructions(null);
+				
+				//check if need calibration
+				if(needCalibration==true){
+					calibrateRobot();
+				}
+				else {
+					//i m receiving 'f' or sensor data
+					if(message.equals("f")){
+						if(instructionQueue.size()>0){
+							if(isExplorin==true)
+								sendRobotInstructions();
+						}else{
+							askForSensorData();
+						}
+					}else{
+						//sensor data
+						List<String> sensorList = Arrays.asList(message.split(","));
+						for(int i=0;i<sensorList.size();i++){
+							System.out.println("received "+sensorList.get(i));
+						}
+						explore(Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(1)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(3)),Integer.parseInt(sensorList.get(4)));
+					}
+				}
+			}
 			}
 		}
-		
 	}
+
+	public static void askForSensorData(){
+		callback.sendRobotInstruction("hc|");
+	}
+	public static void calibrateRobot(){
+		callback.sendRobotInstruction("ho|");
+		needCalibration=false;
+	}
+
 	
 	
-	public static void sendRobotInstructions(ArrayList<String> jsonInstructions){
+	
+	public static void sendRobotInstructions(){
+		
+		//sending instruction
+		String instructionString =(String) instructionQueue.poll();
+		if(instructionString.equals("l")||instructionString.equals("r")||instructionString.equals("x")){
+			needCalibration=true;
+		}
 		String jsonInstructionsWraper="H";
-		jsonInstructionsWraper+=instructionQueue.poll();
+		jsonInstructionsWraper+=instructionString;
 		jsonInstructionsWraper+="|";
 		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
 		callback.sendRobotInstruction(jsonInstructionsWraper);
 		
+		
+		
+		//sending map descriptor
 		MapUI.saveMapToDescriptor();
 		Descriptor descriptor = new Descriptor();
 		String p1 = descriptor.readDescriptorFromFile(0);
@@ -189,17 +225,21 @@ public class AlgoContoller {
 				break;
 		}
 		
+		//sending robot position
 		jsonInstructionsWraper ="A{\"robotPosition\":["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]}";
 		callback.sendRobotInstruction(jsonInstructionsWraper);
 	}
 	public static String wrapDirectionChangeJson(Direction direction, int times){
 		String jsonString="";
-		if(direction==Direction.LEFT){
-			jsonString +="l";
-		}else if(direction==Direction.RIGHT){
-			jsonString +="r";
+		if(times>1){
+			jsonString +="x";
+		}else{
+			if(direction==Direction.LEFT){
+				jsonString +="l";
+			}else if(direction==Direction.RIGHT){
+				jsonString +="r";
+			}
 		}
-		
 		
 		return jsonString+="";
 	}
