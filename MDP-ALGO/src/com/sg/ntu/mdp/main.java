@@ -1,14 +1,10 @@
 package com.sg.ntu.mdp;
 
 import java.awt.EventQueue;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 import com.sg.ntu.mdp.communication.AlgoContoller;
 import com.sg.ntu.mdp.communication.CommMgr;
-import com.sg.ntu.mdp.communication.Descriptor;
 import com.sg.ntu.mdp.simulator.MapUI;
 
 import model.Direction;
@@ -31,35 +27,72 @@ public class main {
 			}
 		});
 		
+//		
+//		while(commmgr.isConnected()==false){
+//			System.out.println("reconnecting...");
+//			commmgr.setConnection(999999999);
+//		}
+//		
+//		while(true){
+//			String message = commmgr.recvMsg();
+//			if(message!=null&&!message.equals("")){
+//				System.out.println("received Message :"+message);
+//				
+//				controller.parseMessageFromRobot(message, new RobotCallback(){
+//					@Override
+//					public void moveForward(int distance) {
+//					}
+//					@Override
+//					public void changeDirection(Direction direction, int times) {
+//					}
+//					@Override
+//					public void readyForFastestPath(){
+//					}
+//					@Override
+//					public void sendRobotInstruction(String Jsoninstructions){
+//						System.out.println("SENDING Message :"+Jsoninstructions);
+//						commmgr.sendMsg(Jsoninstructions, "", false);
+//					}
+//					
+//				});
+//			}
+//		}
 		
-		while(commmgr.isConnected()==false){
-			commmgr.setConnection(999999999);
-		}
 		
-		while(true){
-			String message = commmgr.recvMsg();
-			if(message!=null){
-				System.out.println("received Message :"+message);
+		
+		
+
+		Scanner sc= new Scanner(System.in);
+		String input= sc.nextLine();
+		while(input!="-1"){
+			controller.parseMessageFromRobot(input, new RobotCallback(){
+				@Override
+				public void moveForward(int distance) {
+				}
+				@Override
+				public void changeDirection(Direction direction, int times) {
+				}
+				@Override
+				public void readyForFastestPath(){
+				}
+				@Override
+				public void sendRobotInstruction(String Jsoninstructions){
+					System.out.println("SENDING Message :"+Jsoninstructions);
+//					commmgr.sendMsg(Jsoninstructions, "", false);
+				}
 				
-				controller.parseMessageFromRobot(message, new RobotCallback(){
-					@Override
-					public void moveForward(int distance) {
-					}
-					@Override
-					public void changeDirection(Direction direction, int times) {
-					}
-					@Override
-					public void readyForFastestPath(){
-					}
-					@Override
-					public void sendRobotInstruction(String Jsoninstructions){
-						commmgr.sendMsg(Jsoninstructions, "", false);
-					}
-					
-				});
-			}
+			});
+			input = sc.nextLine();
 		}
+		
+		
 	}
+	
+	
+	
+	
+	
+	
 	
 	
 }

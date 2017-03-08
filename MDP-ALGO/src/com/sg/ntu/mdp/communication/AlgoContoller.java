@@ -54,7 +54,7 @@ public class AlgoContoller {
 			}
 		});
 	}
-	
+	//fl,fmfr,lr
 	public static void explore(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
 		
 		algothrim.godsExploration(inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor, inputRightSensor, inputLeftSensor, new RobotCallback(){
@@ -63,14 +63,14 @@ public class AlgoContoller {
 			public void moveForward(int distance) {
 				System.out.println("moving for");
 				instructionQueue.add(wrapMoveForwardChangeJson(distance));
-				updateRobotUI(null,distance,true);
+				moveRobotUIForward(1);
 				
 			}
 			@SuppressWarnings("unchecked")
 			@Override
 			public void changeDirection(Direction direction, int times) {
 				instructionQueue.add(wrapDirectionChangeJson(direction,times));
-				updateRobotUI(direction,times,false);
+				turnRobotUI(direction,1);
 				
 			}
 			@SuppressWarnings({ "incomplete-switch", "unchecked" })
@@ -107,8 +107,9 @@ public class AlgoContoller {
 	
 	public void parseMessageFromRobot(String message, RobotCallback inCallback){
 		callback=inCallback;
-
+		
 		if(message!=null&&!message.equals("")){
+			message = message.replace("}", "");
 			if(message.contains("start")&&isExplorin==true){
 				//start exploring by asking for sensor data
 				askForSensorData();
@@ -137,46 +138,35 @@ public class AlgoContoller {
 						moveRobotUIForward(1);
 						break;
 					}
-					
-					System.out.println(instructionQueue.peek());
-					sendRobotInstructions();
-			}
-			else{
-				
-				
-				//check if need calibration
-				if(needCalibration==true){
-					calibrateRobot();
 				}
-				else {
-					//i m receiving 'f' or sensor data
-					if(message.equals("f")){
-						if(instructionQueue.size()>0){
-							if(isExplorin==true)
-								sendRobotInstructions();
-						}else{
-							askForSensorData();
-						}
+				System.out.println(instructionQueue.peek());
+				sendRobotInstructions();
+			}else{
+				System.out.println(message);
+				if(message.contains("if")||message.contains("cf")){
+					if(instructionQueue.size()>0){
+						if(isExplorin==false)
+							sendRobotInstructions();
 					}else{
-						//sensor data
-						List<String> sensorList = Arrays.asList(message.split(","));
-						for(int i=0;i<sensorList.size();i++){
-							System.out.println("received "+sensorList.get(i));
-						}
-						explore(Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(1)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(3)),Integer.parseInt(sensorList.get(4)));
+						askForSensorData();
 					}
+				}else{
+					//sensor data
+					
+					instructionQueue.clear();
+					List<String> sensorList = Arrays.asList(message.split("|"));
+//					for(int i=0;i<sensorList.size();i++){
+//						System.out.println("received "+sensorList.get(i));
+//					}
+					//fl,fmfr,l,r
+					explore(Integer.parseInt(sensorList.get(6)),Integer.parseInt(sensorList.get(8)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(4)));
 				}
-			}
 			}
 		}
 	}
 
 	public static void askForSensorData(){
 		callback.sendRobotInstruction("hc|");
-	}
-	public static void calibrateRobot(){
-		callback.sendRobotInstruction("ho|");
-		needCalibration=false;
 	}
 
 	
@@ -186,15 +176,12 @@ public class AlgoContoller {
 		
 		//sending instruction
 		String instructionString =(String) instructionQueue.poll();
-		if(instructionString.equals("l")||instructionString.equals("r")||instructionString.equals("x")){
-			needCalibration=true;
-		}
 		String jsonInstructionsWraper="H";
 		jsonInstructionsWraper+=instructionString;
-		jsonInstructionsWraper+="|";
-		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
-		callback.sendRobotInstruction(jsonInstructionsWraper);
-		
+		jsonInstructionsWraper+="";
+//		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
+//		callback.sendRobotInstruction(jsonInstructionsWraper);
+		System.out.println("queue size"+instructionQueue.size());
 		
 		
 		//sending map descriptor
@@ -202,12 +189,12 @@ public class AlgoContoller {
 		Descriptor descriptor = new Descriptor();
 		String p1 = descriptor.readDescriptorFromFile(0);
 		String p2 = descriptor.readDescriptorFromFile(1);
-		jsonInstructionsWraper="";
-		jsonInstructionsWraper+="Agrid{"+p1+p2+"}";
-		callback.sendRobotInstruction(jsonInstructionsWraper);
+//		jsonInstructionsWraper="";
+		jsonInstructionsWraper+="|agrid{"+p1+p2+"}";
+//		callback.sendRobotInstruction(jsonInstructionsWraper);
 
 		
-		jsonInstructionsWraper="";
+//		jsonInstructionsWraper="";
 		
 		String robotBody="";
 		switch(Algothrim.currentDirection){
@@ -226,7 +213,7 @@ public class AlgoContoller {
 		}
 		
 		//sending robot position
-		jsonInstructionsWraper ="A{\"robotPosition\":["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]}";
+		jsonInstructionsWraper +="|a{\"robotPosition\":["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]}";
 		callback.sendRobotInstruction(jsonInstructionsWraper);
 	}
 	public static String wrapDirectionChangeJson(Direction direction, int times){

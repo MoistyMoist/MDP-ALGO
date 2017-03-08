@@ -144,13 +144,12 @@ public class CommMgr {
 		    InputStream is = _conn.getInputStream();
 		    byte[] buffer = new byte[1024];
 		    int read;
-		    boolean messageReceive=false;
 		    String output="";
 		    while((read = is.read(buffer)) != -1) {
 		        output += new String(buffer, 0, read);
 		        if(output.contains("}"))
 		        	break;
-		        System.out.println(output+"  buffering..");
+		        System.out.println(output+"buffering..");
 		        System.out.flush();
 		    };
 //		    _conn.close();
