@@ -28,43 +28,72 @@ public class main {
 		});
 		
 //		
-//		while(commmgr.isConnected()==false){
-//			System.out.println("reconnecting...");
-//			commmgr.setConnection(999999999);
-//		}
-//		
-//		while(true){
-//			String message = commmgr.recvMsg();
-//			if(message!=null&&!message.equals("")){
-//				System.out.println("received Message :"+message);
-//				
-//				controller.parseMessageFromRobot(message, new RobotCallback(){
-//					@Override
-//					public void moveForward(int distance) {
-//					}
-//					@Override
-//					public void changeDirection(Direction direction, int times) {
-//					}
-//					@Override
-//					public void readyForFastestPath(){
-//					}
-//					@Override
-//					public void sendRobotInstruction(String Jsoninstructions){
-//						System.out.println("SENDING Message :"+Jsoninstructions);
-//						commmgr.sendMsg(Jsoninstructions, "", false);
-//					}
-//					
-//				});
-//			}
-//		}
+		/*while(commmgr.isConnected()==false){
+			System.out.println("reconnecting...");
+			commmgr.setConnection(999999999);
+		}
+		
+		while(true){
+			String message = commmgr.recvMsg();
+			if(message!=null&&!message.equals("")){
+				System.out.println("received Message :"+message);
+				
+				controller.parseMessageFromRobot(message, new RobotCallback(){
+					@Override
+					public void moveForward(int distance) {
+					}
+					@Override
+					public void changeDirection(Direction direction, int times) {
+					}
+					@Override
+					public void readyForFastestPath(){
+					}
+					@Override
+					public void sendRobotInstruction(String Jsoninstructions){
+						System.out.println("SENDING Message :"+Jsoninstructions);
+						commmgr.sendMsg(Jsoninstructions, "", false);
+					}
+					
+				});
+			}
+		}
+		*/
 		
 		
 		
+////
 		
-
+		
 		Scanner sc= new Scanner(System.in);
 		String input= sc.nextLine();
+		boolean loop=true;
 		while(input!="-1"){
+			
+			if(loop==true){
+				for(int i=0;i<120;i++){
+					input="0|0|0|0|0";
+					controller.parseMessageFromRobot(input, new RobotCallback(){
+						@Override
+						public void moveForward(int distance) {
+						}
+						@Override
+						public void changeDirection(Direction direction, int times) {
+						}
+						@Override
+						public void readyForFastestPath(){
+						}
+						@Override
+						public void sendRobotInstruction(String Jsoninstructions){
+							System.out.println("SENDING Message :"+Jsoninstructions);
+//							commmgr.sendMsg(Jsoninstructions, "", false);
+						}
+						
+					});
+				}
+				loop=false;
+			}
+			
+			
 			controller.parseMessageFromRobot(input, new RobotCallback(){
 				@Override
 				public void moveForward(int distance) {
@@ -84,7 +113,7 @@ public class main {
 			});
 			input = sc.nextLine();
 		}
-		
+//		
 		
 	}
 	

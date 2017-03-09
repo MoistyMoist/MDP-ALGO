@@ -128,9 +128,9 @@ public class CommMgr {
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
-//			System.out.println("sendMsg() -> IOException");
+			System.out.println("sendMsg() -> IOException");
 		} catch (Exception e) {
-//			System.out.println("sendMsg() -> Exception");
+			System.out.println("sendMsg() -> Exception");
 		}
 		
 		return false;

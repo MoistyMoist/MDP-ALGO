@@ -54,23 +54,20 @@ public class AlgoContoller {
 			}
 		});
 	}
-	//fl,fmfr,lr
 	public static void explore(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
-		
 		algothrim.godsExploration(inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor, inputRightSensor, inputLeftSensor, new RobotCallback(){
 			@SuppressWarnings("unchecked")
 			@Override
 			public void moveForward(int distance) {
-				System.out.println("moving for");
 				instructionQueue.add(wrapMoveForwardChangeJson(distance));
-				moveRobotUIForward(1);
+				moveRobotUIForward(distance);
 				
 			}
 			@SuppressWarnings("unchecked")
 			@Override
 			public void changeDirection(Direction direction, int times) {
 				instructionQueue.add(wrapDirectionChangeJson(direction,times));
-				turnRobotUI(direction,1);
+				turnRobotUI(direction,times);
 				
 			}
 			@SuppressWarnings({ "incomplete-switch", "unchecked" })
@@ -102,7 +99,7 @@ public class AlgoContoller {
 		});
 	}
 	
-	static int ignore=2;
+	static int ignore=1;
 	static boolean needCalibration=false;
 	
 	public void parseMessageFromRobot(String message, RobotCallback inCallback){
@@ -114,19 +111,21 @@ public class AlgoContoller {
 				//start exploring by asking for sensor data
 				askForSensorData();
 			}
-			else if((message.contains("start")&&isExplorin==false)||(isExplorin==false&&message.equals("f"))){
+			else if((message.contains("start")&&isExplorin==false)||(isExplorin==false&&message.equals("if"))){
 				//comes here if exploring is finished and msg is start we just send the instruction in the queue for fastest path
-				if(ignore>0)
-					sendRobotInstructions();
-				ignore--;
+				String instruction = (String) instructionQueue.peek();
 				if(ignore==0){
+					System.out.println("here");
 					 MapUI.readyRobotAtStartPosition();
 				}
-				String instruction = (String) instructionQueue.peek();
-				if(instruction!=null&&ignore<0){
+				if(ignore>=0){
+					sendRobotInstructions();
+					ignore--;
+				}
+				else if(instruction!=null){
 					instruction = instruction.replace("H", "");
 					instruction = instruction.replace("|", "");
-					
+					System.out.println(instruction);
 					switch(instruction.charAt(0)){
 					case 'l':
 						turnRobotUI(Direction.LEFT,1);
@@ -134,32 +133,38 @@ public class AlgoContoller {
 					case 'r':
 						turnRobotUI(Direction.RIGHT,1);
 						break;
+					case 'b':
+						turnRobotUI(Direction.RIGHT,2);
+						break;
 					case 'w':
 						moveRobotUIForward(1);
 						break;
 					}
+					sendRobotInstructions();
 				}
-				System.out.println(instructionQueue.peek());
-				sendRobotInstructions();
+				
+				
 			}else{
-				System.out.println(message);
+				if(message.contains("cf")){
+					needCalibration=false;
+				}
 				if(message.contains("if")||message.contains("cf")){
 					if(instructionQueue.size()>0){
-						if(isExplorin==false)
-							sendRobotInstructions();
+						sendRobotInstructions();							
 					}else{
 						askForSensorData();
 					}
 				}else{
 					//sensor data
-					
 					instructionQueue.clear();
 					List<String> sensorList = Arrays.asList(message.split("|"));
-//					for(int i=0;i<sensorList.size();i++){
-//						System.out.println("received "+sensorList.get(i));
-//					}
-					//fl,fmfr,l,r
-					explore(Integer.parseInt(sensorList.get(6)),Integer.parseInt(sensorList.get(8)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(4)));
+					if(needCalibration==true&&(Integer.parseInt(sensorList.get(0))==1&&Integer.parseInt(sensorList.get(4))==1)){
+						calibrateRobot();
+					}else{
+						System.out.println("exploring with "+message);
+						explore(Integer.parseInt(sensorList.get(6)),Integer.parseInt(sensorList.get(8)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(4)));
+						needCalibration=true;
+					}
 				}
 			}
 		}
@@ -168,34 +173,33 @@ public class AlgoContoller {
 	public static void askForSensorData(){
 		callback.sendRobotInstruction("hc|");
 	}
-
+	public static void calibrateRobot(){
+		callback.sendRobotInstruction("ho|");
+	}
 	
 	
 	
 	public static void sendRobotInstructions(){
-		
 		//sending instruction
 		String instructionString =(String) instructionQueue.poll();
 		String jsonInstructionsWraper="H";
 		jsonInstructionsWraper+=instructionString;
-		jsonInstructionsWraper+="";
-//		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
-//		callback.sendRobotInstruction(jsonInstructionsWraper);
+		jsonInstructionsWraper+="|";
+		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
+		callback.sendRobotInstruction(jsonInstructionsWraper);
 		System.out.println("queue size"+instructionQueue.size());
-		
-		
+
 		//sending map descriptor
 		MapUI.saveMapToDescriptor();
 		Descriptor descriptor = new Descriptor();
 		String p1 = descriptor.readDescriptorFromFile(0);
 		String p2 = descriptor.readDescriptorFromFile(1);
-//		jsonInstructionsWraper="";
-		jsonInstructionsWraper+="|agrid{"+p1+p2+"}";
+		//jsonInstructionsWraper ="|aMDP{"+p1+p2+"}";
 //		callback.sendRobotInstruction(jsonInstructionsWraper);
 
-		
+
 //		jsonInstructionsWraper="";
-		
+
 		String robotBody="";
 		switch(Algothrim.currentDirection){
 			case North:
@@ -211,15 +215,16 @@ public class AlgoContoller {
 				robotBody = (Algothrim.currentLocationFrontRow)+","+(Algothrim.currentLocationFrontCol+1);
 				break;
 		}
-		
+
 		//sending robot position
-		jsonInstructionsWraper +="|a{\"robotPosition\":["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]}";
+		jsonInstructionsWraper = "";
+		jsonInstructionsWraper +="aMDP|" +p1+p2+ "|" + "["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]";
 		callback.sendRobotInstruction(jsonInstructionsWraper);
 	}
 	public static String wrapDirectionChangeJson(Direction direction, int times){
 		String jsonString="";
 		if(times>1){
-			jsonString +="x";
+			jsonString +="b";
 		}else{
 			if(direction==Direction.LEFT){
 				jsonString +="l";
