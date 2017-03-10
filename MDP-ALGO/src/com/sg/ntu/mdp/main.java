@@ -27,8 +27,8 @@ public class main {
 			}
 		});
 		
-//		
-		/*while(commmgr.isConnected()==false){
+/*	
+		while(commmgr.isConnected()==false){
 			System.out.println("reconnecting...");
 			commmgr.setConnection(999999999);
 		}
@@ -58,10 +58,11 @@ public class main {
 			}
 		}
 		*/
+
 		
 		
 		
-////
+
 		
 		
 		Scanner sc= new Scanner(System.in);
@@ -69,30 +70,32 @@ public class main {
 		boolean loop=true;
 		while(input!="-1"){
 			
-			if(loop==true){
-				for(int i=0;i<120;i++){
-					input="0|0|0|0|0";
-					controller.parseMessageFromRobot(input, new RobotCallback(){
-						@Override
-						public void moveForward(int distance) {
-						}
-						@Override
-						public void changeDirection(Direction direction, int times) {
-						}
-						@Override
-						public void readyForFastestPath(){
-						}
-						@Override
-						public void sendRobotInstruction(String Jsoninstructions){
-							System.out.println("SENDING Message :"+Jsoninstructions);
-//							commmgr.sendMsg(Jsoninstructions, "", false);
-						}
-						
-					});
-				}
-				loop=false;
-			}
-			
+//			if(loop==true){
+//				for(int i=0;i<129;i++){
+//					input="0|0|0|0|0";
+////					if(i==0)
+////						input="1|1|1|0|0";
+//					controller.parseMessageFromRobot(input, new RobotCallback(){
+//						@Override
+//						public void moveForward(int distance) {
+//						}
+//						@Override
+//						public void changeDirection(Direction direction, int times) {
+//						}
+//						@Override
+//						public void readyForFastestPath(){
+//						}
+//						@Override
+//						public void sendRobotInstruction(String Jsoninstructions){
+//							System.out.println("SENDING Message :"+Jsoninstructions);
+////							commmgr.sendMsg(Jsoninstructions, "", false);
+//						}
+//						
+//					});
+//				}
+//				loop=false;
+//			}
+//			
 			
 			controller.parseMessageFromRobot(input, new RobotCallback(){
 				@Override
@@ -113,7 +116,8 @@ public class main {
 			});
 			input = sc.nextLine();
 		}
-//		
+		
+		
 		
 	}
 	

@@ -752,6 +752,7 @@ public class Algothrim {
 	//***********************************//
 	//		SHORTEST PATH METHODS		 //
 	//***********************************//
+	AlgoNode startNode;
 	public void findPath(RobotCallback callback){
 		System.out.println("finiding fastest path");
 		AlgoGraph tree1 = generateAlgoTree();
@@ -759,19 +760,20 @@ public class Algothrim {
 		
 			AlgoGraph tree = generateAlgoTree();
 			DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(tree);
-            dijkstra.execute(tree.getVertexes().get(1));
+            dijkstra.execute(startNode);
+            System.out.println("computing fastest path... "+startNode.getNodeRowIndex()+","+startNode.getNodeColIndex());
             LinkedList<AlgoNode> path = dijkstra.getPath(tree.getVertexes().get(tree.getVertexes().size()-1));
             
             //from 18,2
 //           MapUI.readyRobotAtStartPosition();//TODO:change this for simulation
             	 int tempRow = 18;
-                 int tempCol = 2;
+                 int tempCol = 1;
                  Direction tempDirection = Direction.East;
 //                 Direction tempDirection = currentDirection;//TODO:change this for simulation
            
-                 callback.moveForward(1);
-                 System.out.println("computing fastest path...");
+//                 callback.moveForward(1);
             	for(int i=1;i<path.size();i++){
+            		System.out.println("node "+path.get(i).getNodeRowIndex()+","+path.get(i).getNodeColIndex());
                 	switch(tempDirection){
                 		case North:
                 			if(path.get(i).getNodeRowIndex()<tempRow){
@@ -825,12 +827,14 @@ public class Algothrim {
                 			break;
                 		case East:
                 			if(path.get(i).getNodeRowIndex()<tempRow){
+                				System.out.println("move left");
                 				callback.changeDirection(Direction.LEFT, 1);
                 				callback.moveForward(1);
                 				tempDirection = Direction.North;
                 				tempRow=path.get(i).getNodeRowIndex();
                 				tempCol=path.get(i).getNodeColIndex();
                 			}else if(path.get(i).getNodeColIndex()>tempCol){
+                				System.out.println("move l");
                 				callback.moveForward(1);
                 				tempDirection = Direction.East;
                 				tempRow=path.get(i).getNodeRowIndex();
@@ -956,6 +960,9 @@ public class Algothrim {
 			for(int j=0;j<nodePool[i].length;j++){
 				AlgoNode child = new AlgoNode(18-i,j+1);
 				nodePool[i][j] = child;
+				if(child.getNodeRowIndex()==18&&child.getNodeColIndex()==1){
+					startNode = child;
+				}
 			}
 		}
 		return nodePool;

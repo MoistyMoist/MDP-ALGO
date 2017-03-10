@@ -1,0 +1,525 @@
+package com.sg.ntu.mdp.communication;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
+import com.sg.ntu.mdp.Algothrim;
+import com.sg.ntu.mdp.simulator.MapUI;
+
+import model.Direction;
+import model.RobotCallback;
+
+//communication between the robot and algo outputting json
+public class AlgoContoller {
+	
+	static Algothrim algothrim = new Algothrim(null,null,18,2); 
+	static RobotCallback callback;
+	static boolean isExplorin=true;
+	static boolean isReturning=false;
+	static int trashold=5;
+
+	@SuppressWarnings("rawtypes")
+	static Queue instructionQueue = new ArrayBlockingQueue(1000);
+	
+	public AlgoContoller (){
+	}
+	
+	public static void computeFastestPath(){
+		ArrayList<String> jsonInstruction = new ArrayList<String>();
+		boolean addedForward=false;
+		algothrim.findPath(new RobotCallback(){
+			@Override
+			public void moveForward(int distance) {
+				if(addedForward==false){
+					instructionQueue.add(wrapMoveForwardChangeJson(1));
+				}else{
+					instructionQueue.add(wrapMoveForwardChangeJson(distance));
+				}
+			}
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				System.out.println("herere");
+				instructionQueue.add(wrapDirectionChangeJson(direction,times));
+			}
+			@Override
+			public void readyForFastestPath(){
+				isExplorin=false;
+			}	
+			@Override
+			public void sendRobotInstruction(String jsonInstructions){
+			}
+		});
+	}
+	public static void explore(int inputLeftSensor, int inputRightSensor, int inputFrontMidSensor, int inputFrontLeftSensor, int inputFrontRightSensor){
+		algothrim.godsExploration(inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor, inputRightSensor, inputLeftSensor, new RobotCallback(){
+			@SuppressWarnings("unchecked")
+			@Override
+			public void moveForward(int distance) {
+				instructionQueue.add(wrapMoveForwardChangeJson(distance));
+				moveRobotUIForward(distance);
+				
+			}
+			@SuppressWarnings("unchecked")
+			@Override
+			public void changeDirection(Direction direction, int times) {
+				instructionQueue.add(wrapDirectionChangeJson(direction,times));
+				turnRobotUI(direction,times);
+				
+			}
+			@SuppressWarnings({ "incomplete-switch", "unchecked" })
+			@Override
+			public void readyForFastestPath(){
+				instructionQueue.clear();
+				switch(Algothrim.currentDirection){
+					case West:
+						instructionQueue.add("b");
+						sendRobotInstructions();
+						break;
+					case South:
+						instructionQueue.add("l");
+						sendRobotInstructions();
+						break;
+					case North:
+						instructionQueue.add("r");
+						sendRobotInstructions();
+						break;
+				}
+				MapUI.readyRobotAtStartPosition();
+				computeFastestPath();
+			}
+			@Override
+			public void sendRobotInstruction(String jsonInstructions){
+				if(instructionQueue.isEmpty()){
+					explore(inputLeftSensor, inputRightSensor, inputFrontMidSensor, inputFrontLeftSensor, inputFrontRightSensor);
+				}else{
+					sendRobotInstructions();
+				}
+			}
+		});
+	}
+	
+	static int ignore=1;
+	static boolean needCalibration=false;
+	
+	public void parseMessageFromRobot(String message, RobotCallback inCallback){
+		callback=inCallback;
+		
+		if(message!=null&&!message.equals("")){
+			message = message.replace("}", "");
+			if(message.contains("start")&&isExplorin==true){
+				//start exploring by asking for sensor data
+				askForSensorData();
+			}
+			else if((message.contains("start")&&isExplorin==false)||(isExplorin==false&&message.equals("if"))){
+				//comes here if exploring is finished and msg is start we just send the instruction in the queue for fastest path
+				String instruction = (String) instructionQueue.peek();
+//				if(ignore==0){
+//					System.out.println("here");
+//					 MapUI.readyRobotAtStartPosition();
+//				}
+//				if(ignore>=0){
+//					sendRobotInstructions();
+//					ignore--;
+//				}
+				if(instruction!=null){
+					instruction = instruction.replace("H", "");
+					instruction = instruction.replace("|", "");
+					System.out.println(instruction);
+					switch(instruction.charAt(0)){
+					case 'l':
+						turnRobotUI(Direction.LEFT,1);
+						break;
+					case 'r':
+						turnRobotUI(Direction.RIGHT,1);
+						break;
+					case 'b':
+						turnRobotUI(Direction.RIGHT,2);
+						break;
+					case 'w':
+						moveRobotUIForward(1);
+						break;
+					}
+					sendRobotInstructions();
+				}
+				
+				
+			}else{
+				if(message.contains("cf")){
+					needCalibration=false;
+				}
+				if(message.contains("if")||message.contains("cf")){
+					if(instructionQueue.size()>0){
+						sendRobotInstructions();							
+					}else{
+						askForSensorData();
+					}
+				}else{
+					//sensor data
+					instructionQueue.clear();
+					List<String> sensorList = Arrays.asList(message.split("|"));
+					
+					if(trashold==0&&isNearWall(callback)){
+						//will move to wall
+					}
+					else if(needCalibration==true&&(Integer.parseInt(sensorList.get(0))==1&&Integer.parseInt(sensorList.get(4))==1)){
+						calibrateRobot();
+					}else{
+						System.out.println("exploring with "+message);
+						explore(Integer.parseInt(sensorList.get(6)),Integer.parseInt(sensorList.get(8)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(4)));
+						if(trashold==0)
+							needCalibration=true;
+					}
+				}
+			}
+		}
+	}
+
+	public static boolean isNearWall(RobotCallback callback){
+		boolean isNearWall=false;
+		int currentRow=Algothrim.currentLocationFrontRow;
+		int currentCol=Algothrim.currentLocationFrontCol;
+		switch(Algothrim.currentDirection){
+		case North:
+			if(currentRow-1<0){
+				//front have wall
+				needCalibration=true;
+				calibrateRobot();
+				System.out.println("front have wall to calibrate");
+			}else if(currentRow+3>19){
+				//back have wall
+				callback.changeDirection(Direction.RIGHT, 2);
+				needCalibration=true;
+				System.out.println("back have wall to calibrate");
+			}else if(currentCol-2<0){
+				//left have wall
+				callback.changeDirection(Direction.LEFT, 1);
+				needCalibration=true;
+				System.out.println("left have wall to calibrate");
+			}else if(currentCol+2>14){
+				//right have wall
+				callback.changeDirection(Direction.RIGHT, 1);
+				needCalibration=true;
+				System.out.println("right have wall to calibrate");
+			}
+			break;
+		case South:
+			
+			break;
+		case East:
+			break;
+		case West:
+			break;
+		}
+		return isNearWall;
+	}
+	
+	public static void askForSensorData(){
+		callback.sendRobotInstruction("hc|");
+	}
+	public static void calibrateRobot(){
+		callback.sendRobotInstruction("ho|");
+	}
+	
+	
+	
+	public static void sendRobotInstructions(){
+		//sending instruction
+		String instructionString =(String) instructionQueue.poll();
+		String jsonInstructionsWraper="";
+
+		//sending map descriptor
+		MapUI.saveMapToDescriptor();
+		Descriptor descriptor = new Descriptor();
+		String p1 = descriptor.readDescriptorFromFile(0);
+		String p2 = descriptor.readDescriptorFromFile(1);
+		//jsonInstructionsWraper ="|aMDP{"+p1+p2+"}";
+//		callback.sendRobotInstruction(jsonInstructionsWraper);
+
+
+//		jsonInstructionsWraper="";
+
+		String robotBody="";
+		switch(Algothrim.currentDirection){
+			case North:
+				robotBody = (Algothrim.currentLocationFrontRow+1)+","+Algothrim.currentLocationFrontCol;
+				break;
+			case South:
+				robotBody = (Algothrim.currentLocationFrontRow-1)+","+Algothrim.currentLocationFrontCol;
+				break;
+			case East:
+				robotBody = (Algothrim.currentLocationFrontRow)+","+(Algothrim.currentLocationFrontCol-1);
+				break;
+			case West:
+				robotBody = (Algothrim.currentLocationFrontRow)+","+(Algothrim.currentLocationFrontCol+1);
+				break;
+		}
+
+		//sending robot position
+		jsonInstructionsWraper = "";
+		jsonInstructionsWraper +="aMDP|" +p1+p2+ "|" + "["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]";
+		callback.sendRobotInstruction(jsonInstructionsWraper);
+		
+		
+		jsonInstructionsWraper="H";
+		jsonInstructionsWraper+=instructionString;
+		jsonInstructionsWraper+="|";
+		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
+		callback.sendRobotInstruction(jsonInstructionsWraper);
+		System.out.println("queue size"+instructionQueue.size());
+		trashold--;
+	}
+	public static String wrapDirectionChangeJson(Direction direction, int times){
+		String jsonString="";
+		if(times>1){
+			jsonString +="b";
+		}else{
+			if(direction==Direction.LEFT){
+				jsonString +="l";
+			}else if(direction==Direction.RIGHT){
+				jsonString +="r";
+			}
+		}
+		
+		return jsonString+="";
+	}
+	public static String wrapMoveForwardChangeJson(int times){
+		String jsonString="";
+		for(int i=0;i<times;i++){
+			jsonString +="w";//w only
+		}
+		return jsonString+="";
+	}
+
+	public static void updateRobotUI(Direction direction, int times,boolean isForward){
+		System.out.println("CURRENT ROW IS "+Algothrim.currentLocationFrontRow);
+		if(isForward==true){
+			moveRobotUIForward(times);
+		}else{
+			turnRobotUI(direction,times);
+		}
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	private static void moveRobotUIForward(int distance){
+		MapUI.mapPanel.remove(MapUI.robotHead);
+    	MapUI.mapPanel.remove(MapUI.robotBody);
+		switch(Algothrim.currentDirection){
+			case North:
+				MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+distance;
+				MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy;
+				MapUI.robotBodyConstrain.gridx = MapUI.robotBodyConstrain.gridx+distance;
+				MapUI.robotBodyConstrain.gridy = MapUI.robotBodyConstrain.gridy;
+				
+				Algothrim.currentLocationFrontRow=Algothrim.currentLocationFrontRow-1;
+				break;
+			case South:
+				MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-distance;
+				MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy;
+				MapUI.robotBodyConstrain.gridx = MapUI.robotBodyConstrain.gridx-distance;
+				MapUI.robotBodyConstrain.gridy = MapUI.robotBodyConstrain.gridy;
+				
+				Algothrim.currentLocationFrontRow=Algothrim.currentLocationFrontRow+1;
+				break;
+			case East:
+				MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx;
+				MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+distance;
+				MapUI.robotBodyConstrain.gridx = MapUI.robotBodyConstrain.gridx;
+				MapUI.robotBodyConstrain.gridy = MapUI.robotBodyConstrain.gridy+distance;
+				
+				Algothrim.currentLocationFrontCol=Algothrim.currentLocationFrontCol+1;
+				break;
+			case West:
+				MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx;
+				MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy-distance;
+				MapUI.robotBodyConstrain.gridx = MapUI.robotBodyConstrain.gridx;
+				MapUI.robotBodyConstrain.gridy = MapUI.robotBodyConstrain.gridy-distance;
+				
+				Algothrim.currentLocationFrontCol=Algothrim.currentLocationFrontCol-1;
+				break;
+		}
+//		System.out.println("CUrrent row = "+Algothrim.currentLocationFrontRow);
+//		System.out.println("CUrrent COl = "+Algothrim.currentLocationFrontCol);
+	
+		
+		MapUI.labels[MapUI.robotBodyConstrain.gridx+1][MapUI.robotBodyConstrain.gridy].setText("1");
+		MapUI.labels[MapUI.robotBodyConstrain.gridx-1][MapUI.robotBodyConstrain.gridy].setText("1");
+		MapUI.labels[MapUI.robotBodyConstrain.gridx][MapUI.robotBodyConstrain.gridy+1].setText("1");
+		MapUI.labels[MapUI.robotBodyConstrain.gridx+1][MapUI.robotBodyConstrain.gridy+1].setText("1");
+		MapUI.labels[MapUI.robotBodyConstrain.gridx-1][MapUI.robotBodyConstrain.gridy+1].setText("1");
+		MapUI.labels[MapUI.robotBodyConstrain.gridx][MapUI.robotBodyConstrain.gridy-1].setText("1");
+		MapUI.labels[MapUI.robotBodyConstrain.gridx+1][MapUI.robotBodyConstrain.gridy-1].setText("1");
+		MapUI.labels[MapUI.robotBodyConstrain.gridx-1][MapUI.robotBodyConstrain.gridy-1].setText("1");
+
+		Algothrim.exploredData=MapUI.saveExploredData(MapUI.labels);
+		
+		MapUI.mapPanel.add(MapUI.robotHead, MapUI.robotHeadConstrain,1);
+		MapUI.mapPanel.add(MapUI.robotBody, MapUI.robotBodyConstrain,2);
+		MapUI.mapPanel.repaint();
+		MapUI.mapPanel.revalidate();
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	private static void turnRobotUI(Direction direction, int times){
+		MapUI.mapPanel.remove(MapUI.robotHead);
+		switch(direction){
+			case LEFT:
+				switch(Algothrim.currentDirection){
+					case North:
+						if(times==1){
+							Algothrim.currentDirection=Direction.West;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy-1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+						}else{
+							Algothrim.currentDirection=Direction.South;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-2;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +2;
+						}
+						break;
+					case South:
+						if(times==1){
+							Algothrim.currentDirection=Direction.East;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.North;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-2;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+						}
+						break;
+					case East:
+						if(times==1){
+							Algothrim.currentDirection=Direction.North;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy-1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.West;
+							
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy-2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -2;
+						}
+						break;
+					case West:
+						if(times==1){
+							Algothrim.currentDirection=Direction.South;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+						}else{
+							Algothrim.currentDirection=Direction.East;
+							
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +2;
+						}
+						break;
+				}
+				break;
+			case RIGHT:
+				switch(Algothrim.currentDirection){
+					case North:
+						if(times==1){
+							Algothrim.currentDirection=Direction.East;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+						}else{
+							Algothrim.currentDirection=Direction.South;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-2;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +2;
+						}
+						break;
+					case South:
+						if(times==1){
+							Algothrim.currentDirection=Direction.West;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy-1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.North;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+2;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy;
+							
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
+						}
+						break;
+					case East:
+						if(times==1){
+							Algothrim.currentDirection=Direction.South;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy-1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow +1;
+						}else{
+							Algothrim.currentDirection=Direction.West;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy-2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol -2;
+						}
+						break;
+					case West:
+						if(times==1){
+							Algothrim.currentDirection=Direction.North;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+1;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+1;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +1;
+							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -1;
+						}else{
+							Algothrim.currentDirection=Direction.East;
+							
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx;
+							MapUI.robotHeadConstrain.gridy = MapUI.robotHeadConstrain.gridy+2;
+							
+							Algothrim.currentLocationFrontCol = Algothrim.currentLocationFrontCol +2;
+						}
+						break;
+				}
+				break;
+		}
+		System.out.println("ROBOT FACING : "+Algothrim.currentDirection);
+		MapUI.mapPanel.add(MapUI.robotHead, MapUI.robotHeadConstrain,1);
+		MapUI.mapPanel.repaint();
+		MapUI.mapPanel.revalidate();
+	}
+}

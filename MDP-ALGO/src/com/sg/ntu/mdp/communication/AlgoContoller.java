@@ -21,6 +21,7 @@ public class AlgoContoller {
 	static RobotCallback callback;
 	static boolean isExplorin=true;
 	static boolean isReturning=false;
+	static int trashold=5;
 
 	@SuppressWarnings("rawtypes")
 	static Queue instructionQueue = new ArrayBlockingQueue(1000);
@@ -30,24 +31,24 @@ public class AlgoContoller {
 	
 	public static void computeFastestPath(){
 		ArrayList<String> jsonInstruction = new ArrayList<String>();
-		
+		boolean addedForward=false;
 		algothrim.findPath(new RobotCallback(){
 			@Override
 			public void moveForward(int distance) {
-				for(int i = 0;i<distance;i++)
+				if(addedForward==false){
+					instructionQueue.add(wrapMoveForwardChangeJson(1));
+				}else{
 					instructionQueue.add(wrapMoveForwardChangeJson(distance));
-//				jsonInstruction.add(wrapMoveForwardChangeJson(distance));
+				}
 			}
 			@Override
 			public void changeDirection(Direction direction, int times) {
-				for(int i = 0;i<times;i++)
-					instructionQueue.add(wrapDirectionChangeJson(direction,times));
-//				jsonInstruction.add(wrapDirectionChangeJson(direction,times));
+				System.out.println("herere");
+				instructionQueue.add(wrapDirectionChangeJson(direction,times));
 			}
 			@Override
 			public void readyForFastestPath(){
 				isExplorin=false;
-//				sendRobotInstructions(jsonInstruction);
 			}	
 			@Override
 			public void sendRobotInstruction(String jsonInstructions){
@@ -76,16 +77,19 @@ public class AlgoContoller {
 				instructionQueue.clear();
 				switch(Algothrim.currentDirection){
 					case West:
-						instructionQueue.add("r");
-						instructionQueue.add("r");
+						instructionQueue.add("b");
+						sendRobotInstructions();
 						break;
 					case South:
 						instructionQueue.add("l");
+						sendRobotInstructions();
 						break;
 					case North:
 						instructionQueue.add("r");
+						sendRobotInstructions();
 						break;
 				}
+				MapUI.readyRobotAtStartPosition();
 				computeFastestPath();
 			}
 			@Override
@@ -114,15 +118,15 @@ public class AlgoContoller {
 			else if((message.contains("start")&&isExplorin==false)||(isExplorin==false&&message.equals("if"))){
 				//comes here if exploring is finished and msg is start we just send the instruction in the queue for fastest path
 				String instruction = (String) instructionQueue.peek();
-				if(ignore==0){
-					System.out.println("here");
-					 MapUI.readyRobotAtStartPosition();
-				}
-				if(ignore>=0){
-					sendRobotInstructions();
-					ignore--;
-				}
-				else if(instruction!=null){
+//				if(ignore==0){
+//					System.out.println("here");
+//					 MapUI.readyRobotAtStartPosition();
+//				}
+//				if(ignore>=0){
+//					sendRobotInstructions();
+//					ignore--;
+//				}
+				if(instruction!=null){
 					instruction = instruction.replace("H", "");
 					instruction = instruction.replace("|", "");
 					System.out.println(instruction);
@@ -154,27 +158,193 @@ public class AlgoContoller {
 					}else{
 						askForSensorData();
 					}
+					if(message.contains("cf")){
+						trashold=5;
+					}
 				}else{
 					//sensor data
 					instructionQueue.clear();
 					List<String> sensorList = Arrays.asList(message.split("|"));
-					if(needCalibration==true&&(Integer.parseInt(sensorList.get(0))==1&&Integer.parseInt(sensorList.get(4))==1)){
+					
+					if(trashold==0&&isNearWall(callback)){
+						//will move to wall
+					}
+					else if(needCalibration==true&&(Integer.parseInt(sensorList.get(0))==1&&Integer.parseInt(sensorList.get(4))==1)){
 						calibrateRobot();
 					}else{
 						System.out.println("exploring with "+message);
 						explore(Integer.parseInt(sensorList.get(6)),Integer.parseInt(sensorList.get(8)),Integer.parseInt(sensorList.get(2)),Integer.parseInt(sensorList.get(0)),Integer.parseInt(sensorList.get(4)));
-						needCalibration=true;
+						if(trashold==0)
+							needCalibration=true;
 					}
 				}
 			}
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static boolean isNearWall(RobotCallback callback){
+		boolean isNearWall=false;
+		int currentRow=Algothrim.currentLocationFrontRow;
+		int currentCol=Algothrim.currentLocationFrontCol;
+		switch(Algothrim.currentDirection){
+		case North:
+			if(currentRow-1<0){
+				//front have wall
+				needCalibration=true;
+				calibrateRobot();
+				trashold=5;
+				System.out.println("front have wall to calibrate");
+				isNearWall=true;
+			}else if(currentRow+3>19){
+				//back have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,2));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,2);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("back have wall to calibrate");
+				isNearWall=true;
+			}else if(currentCol-2<0){
+				//left have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.LEFT,1));
+				turnRobotUI(Direction.LEFT,1);
+				instructionQueue.add("o");
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("left have wall to calibrate");
+				isNearWall=true;
+			}else if(currentCol+2>14){
+				//right have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,1));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,1);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("right have wall to calibrate");
+				isNearWall=true;
+			}
+			break;
+		case South:
+			if(currentRow+1>19){
+				//front have wall
+				needCalibration=true;
+				calibrateRobot();
+				trashold=5;
+				System.out.println("front have wall to calibrate");
+				isNearWall=true;
+			}else if(currentRow-3<0){
+				//back have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,2));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,2);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("back have wall to calibrate");
+				isNearWall=true;
+			}else if(currentCol+2>14){
+				//left have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.LEFT,1));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.LEFT,1);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("left have wall to calibrate");
+				isNearWall=true;
+			}else if(currentCol-2<0){
+				//right have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,1));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,1);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("right have wall to calibrate");
+				isNearWall=true;
+			}
+			break;
+		case East:
+			if(currentRow+2>19){
+				//right have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,1));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,1);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("right have wall to calibrate");
+				isNearWall=true;
+			}else if(currentRow-2<0){
+				//LEFT have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.LEFT,1));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.LEFT,1);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("right have wall to calibrate");
+				isNearWall=true;
+			}else if(currentCol+1>14){
+				//front have wall
+				needCalibration=true;
+				calibrateRobot();
+				trashold=5;
+				System.out.println("front have wall to calibrate");
+				isNearWall=true;
+			}else if(currentCol-3<0){
+				//back have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,2));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,2);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("back have wall to calibrate");
+				isNearWall=true;
+			}
+			break;
+		case West:
+			if(currentRow+2>19){
+				//left have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.LEFT,1));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.LEFT,1);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("left have wall to calibrate");
+				isNearWall=true;
+			}else if(currentRow-2<0){
+				//right have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,1));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,1);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("right have wall to calibrate");
+				isNearWall=true;
+			}else if(currentCol+1>14){
+				//front have wall
+				needCalibration=true;
+				calibrateRobot();
+				trashold=5;
+				System.out.println("front have wall to calibrate");
+			}else if(currentCol-3<0){
+				//back have wall
+				instructionQueue.add(wrapDirectionChangeJson(Direction.RIGHT,2));
+				instructionQueue.add("o");
+				turnRobotUI(Direction.RIGHT,2);
+				sendRobotInstructions();
+				needCalibration=true;
+				System.out.println("back have wall to calibrate");
+				isNearWall=true;
+			}
+			break;
+		}
+		return isNearWall;
+	}
+	
 	public static void askForSensorData(){
 		callback.sendRobotInstruction("hc|");
 	}
 	public static void calibrateRobot(){
 		callback.sendRobotInstruction("ho|");
+		trashold=5;
 	}
 	
 	
@@ -182,12 +352,7 @@ public class AlgoContoller {
 	public static void sendRobotInstructions(){
 		//sending instruction
 		String instructionString =(String) instructionQueue.poll();
-		String jsonInstructionsWraper="H";
-		jsonInstructionsWraper+=instructionString;
-		jsonInstructionsWraper+="|";
-		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
-		callback.sendRobotInstruction(jsonInstructionsWraper);
-		System.out.println("queue size"+instructionQueue.size());
+		String jsonInstructionsWraper="";
 
 		//sending map descriptor
 		MapUI.saveMapToDescriptor();
@@ -220,6 +385,15 @@ public class AlgoContoller {
 		jsonInstructionsWraper = "";
 		jsonInstructionsWraper +="aMDP|" +p1+p2+ "|" + "["+robotBody+","+(algothrim.currentLocationFrontRow)+","+algothrim.currentLocationFrontCol+"]";
 		callback.sendRobotInstruction(jsonInstructionsWraper);
+		
+		
+		jsonInstructionsWraper="H";
+		jsonInstructionsWraper+=instructionString;
+		jsonInstructionsWraper+="|";
+		System.out.println("ROBOT INSTRUCTION = "+jsonInstructionsWraper);
+		callback.sendRobotInstruction(jsonInstructionsWraper);
+		System.out.println("queue size"+instructionQueue.size());
+		trashold--;
 	}
 	public static String wrapDirectionChangeJson(Direction direction, int times){
 		String jsonString="";
@@ -347,7 +521,7 @@ public class AlgoContoller {
 						}else{
 							Algothrim.currentDirection=Direction.North;
 							
-							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx-2;
+							MapUI.robotHeadConstrain.gridx = MapUI.robotHeadConstrain.gridx+2;
 							
 							Algothrim.currentLocationFrontRow = Algothrim.currentLocationFrontRow -2;
 						}
